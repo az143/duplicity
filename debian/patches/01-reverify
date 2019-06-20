@@ -1,0 +1,16 @@
+Author: Alexander Zangerl <az@debian.org>
+Subject: fix #659009 by disabling validate_encryption_settings, which cannot work with public key encryption
+
+--- a/bin/duplicity
++++ b/bin/duplicity
+@@ -376,7 +376,9 @@ def write_multivol(backup_type, tarblock
+         mf = globals.restart.last_backup.get_local_manifest()
+         globals.restart.checkManifest(mf)
+         globals.restart.setLastSaved(mf)
+-        validate_encryption_settings(globals.restart.last_backup, mf)
++# az [2012-03-11 Sun 12:11]
++# this conflicts with public key encryption
++#       validate_encryption_settings(globals.restart.last_backup, mf)
+         mf.fh = man_outfp
+         last_block = globals.restart.last_block
+         log.Notice(_(u"Restarting after volume %s, file %s, block %s") %

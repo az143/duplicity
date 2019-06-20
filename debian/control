@@ -1,40 +1,17 @@
 Source: duplicity
 Section: utils
 Priority: optional
-Maintainer: Duplicity Team <duplicity-team@lists.launchpad.net>
-Build-Depends: debhelper (>= 7),
-               dh-python | python (>= 2.6.6-3~),
-               gnupg,
-               librsync-dev (>= 0.9.6),
-               par2,
-               pep8,
-               pylint,
-               python-dev,
-               python-fasteners,
-               python-future,
-               python-mock,
-               python-pexpect,
-               python-setuptools,
-               rdiff,
-               rename,
-               rsync,
-Homepage: https://launchpad.net/duplicity
-Standards-Version: 3.9.5
-X-Python-Version: >= 3.5
+Maintainer: Alexander Zangerl <az@debian.org>
+Build-Depends: debhelper (>= 9.0.0), librsync-dev (>=0.9.6), python-dev (>= 2.6.6-3), dh-python, python-setuptools, rdiff, gnupg | gnupg1, par2, python-lockfile (>> 0.9), python-mock, python-pexpect, python-fasteners, python-requests, python-urllib3, python-coverage, python-pycodestyle, pylint, python-pytest, python-pytest-runner, tox, python-future
+Standards-Version: 4.1.3.0
+Homepage: http://duplicity.nongnu.org/
+
 
 Package: duplicity
 Architecture: any
-Depends: ${misc:Depends},
-         ${python:Depends},
-         ${shlibs:Depends},
-         gnupg,
-         python-fasteners,
-         python-future,
-         python-pexpect,
-Suggests: ncftp,
-          python-boto,
-          python-paramiko,
-          python-kerberos,
+Depends: ${shlibs:Depends}, ${python:Depends}, ${misc:Depends}, python-lockfile (>> 1:0.9), python-fasteners, gnupg | gnupg1
+Recommends: rsync, python-paramiko, python-pexpect, python-urllib3, python-oauthlib
+Suggests: python-boto, ncftp, python-cloudfiles, lftp, python-gdata, tahoe-lafs, python-swiftclient, python-pip
 Description: encrypted bandwidth-efficient backup
  Duplicity backs directories by producing encrypted tar-format volumes
  and uploading them to a remote or local file server. Because duplicity
@@ -42,3 +19,4 @@ Description: encrypted bandwidth-efficient backup
  record the parts of files that have changed since the last backup.
  Because duplicity uses GnuPG to encrypt and/or sign these archives, they
  will be safe from spying and/or modification by the server.
+

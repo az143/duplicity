@@ -1,0 +1,18 @@
+Author: Alexander Zangerl <az@debian.org>
+Subject: fix unicode decode-does-encode-and-fail problems with iso8859 locales
+
+--- a/bin/duplicity
++++ b/bin/duplicity
+@@ -36,6 +36,12 @@ import duplicity.errors
+ import copy
+ import gzip
+ import os
++
++# override locale to avoid bug #682837, until
++# the logger finally deals with locales cleanly
++os.environ['LC_ALL']="POSIX"
++
++
+ import platform
+ import re
+ import resource

@@ -1,0 +1,31 @@
+Description: silence lintian warnings re manpage line breaks
+Author: Alexander Zangerl <az@debian.org>
+--- a/bin/duplicity.1
++++ b/bin/duplicity.1
+@@ -1169,7 +1169,7 @@ file://[relative|/absolute]/local/path
+ .BR "FISH" " (Files transferred over Shell protocol) over ssh"
+ .PP
+ .RS
+-fish://user[:password]@other.host[:port]/[relative|/absolute]_path
++fish://user[:pwd]@other.host[:port]/[relative|/absolute]_path
+ .RE
+ .PP
+ .B "FTP"
+@@ -1269,7 +1269,7 @@ See also
+ .RS
+ scp://.. or
+ .br
+-sftp://user[:password]@other.host[:port]/[relative|/absolute]_path
++sftp://user[:pwd]@other.host[:port]/[relative|/absolute]_path
+ .PP
+ .BR "defaults" " are paramiko+scp:// and paramiko+sftp://"
+ .br
+@@ -2196,7 +2196,7 @@ error message.
+ 
+ .SH OPERATION AND DATA FORMATS
+ This section describes duplicity's basic operation and the format of
+-its data files.  It should not necessary to read this section to use
++its data files.  It should not be necessary to read this section to use
+ duplicity.
+ 
+ The files used by duplicity to store backup data are tarfiles in GNU

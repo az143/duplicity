@@ -1,0 +1,143 @@
+Author: Michael Terry <mterry@ubuntu.com>
+Subject: Disable some tests for being flaky
+
+--- a/testing/functional/test_restart.py
++++ b/testing/functional/test_restart.py
+@@ -111,6 +111,7 @@ class RestartTest(FunctionalTestCase):
+         # there should be 2 differences found, one missing file, one mtime change
+         # self.verify(u"testfiles/largefiles")
+ 
++    @unittest.skip("Flaky test because it relies on knowing how many volumes the source files will be split into")
+     def test_last_file_missing_at_end(self):
+         u"""
+         Test restart when the last file being backed up is missing on restart.
+--- a/testing/unit/test_gpg.py
++++ b/testing/unit/test_gpg.py
+@@ -131,6 +131,7 @@ class GPGTest(UnitTestCase):
+         sig = decrypted_file.get_signature()
+         assert sig == self.sign_key, sig
+ 
++    @unittest.skip("Flaky test because it relies on compressed size of random bytes")
+     def test_GPGWriteFile(self):
+         u"""Test GPGWriteFile"""
+         size = 400 * 1000
+@@ -146,6 +147,7 @@ class GPGTest(UnitTestCase):
+                          profile, size=size)
+         # print os.stat("testfiles/output/gpgwrite.gpg").st_size
+ 
++    @unittest.skip("Flaky test because it relies on compressed size of random bytes")
+     def test_GzipWriteFile(self):
+         u"""Test GzipWriteFile"""
+         size = 400 * 1000
+--- a/testing/unit/test_selection.py
++++ b/testing/unit/test_selection.py
+@@ -172,6 +172,7 @@ class MatchingTest(UnitTestCase):
+         assert select.glob_get_sf(u"**", 0)(root) == 0
+         assert select.glob_get_sf(u"/foo/*", 0)(root) is None
+ 
++    @unittest.skip("unreliable ass-U-me wrt / and /usr on one fs")
+     def test_other_filesystems(self):
+         u"""Test to see if --exclude-other-filesystems works correctly"""
+         root = Path(u"/")
+@@ -870,8 +871,11 @@ testfiles/select**/2
+                         (u"--exclude", u"testfiles/select2/**")],
+                        self.expected_restored_tree)
+ 
++    @unittest.skip("Doesn't seem to work with python2.x")
+     def test_unicode_paths_non_globbing(self):
+         u"""Test functional test test_unicode_paths_non_globbing as a unittest"""
++
++
+         self.root = Path(u"testfiles/select-unicode")
+         self.ParseTest([(u"--exclude", u"testfiles/select-unicode/прыклад/пример/例/Παράδειγμα/उदाहरण.txt"),
+                         (u"--exclude", u"testfiles/select-unicode/прыклад/пример/例/Παράδειγμα/דוגמא.txt"),
+--- a/testing/unit/test_statistics.py
++++ b/testing/unit/test_statistics.py
+@@ -59,6 +59,7 @@ class StatsObjTest(UnitTestCase):
+         s1 = StatsDeltaProcess()
+         assert s1.get_stat(u'SourceFiles') == 0
+ 
++    @unittest.skip("TZ setting seems to fail under sbuild, #880251")
+     def test_get_stats_string(self):
+         u"""Test conversion of stat object into string"""
+         s = StatsObj()
+--- a/testing/__init__.py
++++ b/testing/__init__.py
+@@ -79,10 +79,12 @@ class DuplicityTestCase(unittest.TestCas
+             self._update_env(key, self.savedEnviron[key])
+         for key in self.savedGlobals:
+             setattr(globals, key, self.savedGlobals[key])
++        os.system(u"chmod -R a+rwx testfiles 2>/dev/null")
+         assert not os.system(u"rm -rf testfiles")
+         super(DuplicityTestCase, self).tearDown()
+ 
+     def unpack_testfiles(self):
++        os.system(u"chmod -R a+rwx testfiles 2>/dev/null")
+         assert not os.system(u"rm -rf testfiles")
+         assert not os.system(u"tar xzf testfiles.tar.gz > /dev/null 2>&1")
+         assert not os.system(u"mkdir testfiles/output testfiles/cache")
+--- a/testing/functional/__init__.py
++++ b/testing/functional/__init__.py
+@@ -101,7 +101,7 @@ class FunctionalTestCase(DuplicityTestCa
+                 cmd_list.extend([u"-w"])
+         else:
+             cmd_list = []
+-        cmd_list.extend([u"duplicity"])
++        cmd_list.extend([u"../bin/duplicity"])
+         cmd_list.extend(options)
+         cmd_list.extend([u"-v0"])
+         cmd_list.extend([u"--no-print-statistics"])
+--- a/testing/unit/test_globmatch.py
++++ b/testing/unit/test_globmatch.py
+@@ -243,6 +243,7 @@ class TestDoubleAsterisk(UnitTestCase):
+ class TestSimpleUnicode(UnitTestCase):
+     u"""Test simple unicode comparison"""
+ 
++    @unittest.skip("Doesn't seem to work with python2.x")
+     def test_simple_unicode(self):
+         u"""Test simple unicode comparison"""
+         self.assertEqual(inc_sel_file(u"прыклад/пример/例/Παράδειγμα/उदाहरण.txt",
+@@ -261,8 +262,11 @@ class TestSquareBrackets(UnitTestCase):
+         self.assertEqual(inc_sel_file(u"/test/f[s,o,p]lder/foo.txt",
+                                       u"/test/folder/foo.txt"), 1)
+ 
++    @unittest.skip("Doesn't seem to work with python2.x")
+     def test_square_bracket_options_unicode(self):
+         u"""Test file including options in []s"""
++
++
+         self.assertEqual(inc_sel_file(u"прыклад/пр[и,j,l]мер/例/Παράδειγμα/उदाहरण.txt",
+                                       u"прыклад/пример/例/Παράδειγμα/उदाहरण.txt"), 1)
+         self.assertEqual(inc_sel_file(u"прыклад/п[a,b,c]имер/例/Παράδειγμα/उदाहरण.txt",
+--- a/testing/unit/test_util.py
++++ b/testing/unit/test_util.py
+@@ -20,6 +20,7 @@ import duplicity
+ 
+ class TestExc(unittest.TestCase):
+ 
++    @unittest.skip("Doesn't seem to work with python2.x")
+     def test_uexc(self):
+ 
+         e = Exception(u'test')
+--- a/testing/functional/test_log.py
++++ b/testing/functional/test_log.py
+@@ -39,7 +39,7 @@ class LogTest(FunctionalTestCase):
+         u"""Check notification of a simple error code"""
+ 
+         # Run actual duplicity command (will fail, because no arguments passed)
+-        os.system(u"duplicity --log-file=/tmp/duplicity.log >/dev/null 2>&1")
++        os.system(u"../bin/duplicity --log-file=/tmp/duplicity.log >/dev/null 2>&1")
+ 
+         # The format of the file should be:
+         # """ERROR 2
+--- a/testing/functional/test_rdiffdir.py
++++ b/testing/functional/test_rdiffdir.py
+@@ -34,7 +34,7 @@ class RdiffdirTest(FunctionalTestCase):
+ 
+     def run_rdiffdir(self, argstring):
+         u"""Run rdiffdir with given arguments"""
+-        self.run_cmd(u"rdiffdir " + argstring)
++        self.run_cmd(u"../bin/rdiffdir " + argstring)
+ 
+     def run_cycle(self, dirname_list):
+         u"""Run diff/patch cycle on directories in dirname_list"""
