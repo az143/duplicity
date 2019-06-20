@@ -1,0 +1,35 @@
+##### basic requirements #####
+
+fasteners
+future
+mock
+requests
+urllib3
+
+
+##### testing libraries #####
+
+coverage
+pexpect
+pycodestyle
+pylint
+pytest
+pytest-runner
+tox
+
+
+##### backend libraries #####
+
+# azure
+# b2
+# boto
+# dropbox==6.9.0
+# gdata
+# jottalib
+# mediafire
+# paramiko
+# pydrive
+# pyrax
+# python-cloudfiles
+# python-swiftclient
+# requests_oauthlib
