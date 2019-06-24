@@ -1,9 +1,11 @@
 duplicity (0.8.00-1) unstable; urgency=low
 
   * New upstream release (closes: #929949)
-  * updated build-depends, patched test suite
+  * duplicity is now built for python 3
+  * updated package depends and suggests
+  * test suite has been patched to skip various problematic tests
 
- -- Alexander Zangerl <az@debian.org>  Sun, 09 Jun 2019 13:09:08 +0200
+ -- Alexander Zangerl <az@debian.org>  Sun, 23 Jun 2019 09:11:05 +0200
 
 duplicity (0.7.18.2-1) unstable; urgency=medium
 

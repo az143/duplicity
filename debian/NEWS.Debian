@@ -1,3 +1,12 @@
+duplicity (0.8.00-1) unstable; urgency=low
+
+  duplicity is now built with and for python 3. if you are using
+  one of the backends that require unpackaged external python modules,
+  then you'll have to (re)get those with pip3 (e.g. cloudfiles,
+  backblaze b2).
+
+ -- Alexander Zangerl <az@debian.org>  Sun, 23 Jun 2019 09:11:15 +0200
+
 duplicity (0.7.17-1) unstable; urgency=medium
 
   backblaze backend changes

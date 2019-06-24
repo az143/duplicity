@@ -1,11 +1,9 @@
 #!/usr/bin/make -f
-PYVERS = $(shell pyversions -r -v)
+PYVERS = $(shell py3versions -rv)
 
 %:
-	dh $@ --with python2
+	dh $@ --with python3 --buildsystem=pybuild
 
-# this does not seem to help setup.py test - it STILL builds and uses .pyc and .so files in duplicity...
-# python sucks.
 override_dh_auto_test:
 ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 	set -e -x;\
@@ -14,14 +12,19 @@ ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
   done
 endif
 
+override_dh_auto_build:
+	set -ex; for py in $(PYVERS); do \
+	python$$py setup.py build; \
+	done
+
 override_dh_auto_install:
 	dh_auto_install
-
 # docs in just one place, /usr/share/doc/duplicity.
 	rm -r debian/duplicity/usr/share/doc/duplicity-*
 
 override_dh_clean:
+	dh_auto_clean
 	dh_clean
 # the test suite leaves a mess behind 
-	rm -f testing/gnupg/random_seed duplicity/_librsync.so
-	rm -rf .cache .eggs
+	rm -f testing/gnupg/random_seed duplicity/_librsync*.so
+	rm -rf .cache .eggs testing/testfiles build

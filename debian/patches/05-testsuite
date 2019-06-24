@@ -141,3 +141,24 @@ Subject: Disable some tests for being flaky
  
      def run_cycle(self, dirname_list):
          u"""Run diff/patch cycle on directories in dirname_list"""
+--- a/testing/unit/test_backend_instance.py
++++ b/testing/unit/test_backend_instance.py
+@@ -70,7 +70,9 @@ class BackendInstanceBase(UnitTestCase):
+             self.assertTrue(hasattr(self.backend, u'_delete_list'))
+             return
+         self.backend._put(self.local, b'a')
++        self.assertTrue(b'a' in self.backend._list())
+         self.backend._put(self.local, b'b')
++        self.assertTrue(b'b' in self.backend._list())
+         self.backend._delete(b'a')
+         self.assertFalse(b'a' in self.backend._list())
+         self.assertTrue(b'b' in self.backend._list())
+@@ -208,7 +210,7 @@ class TahoeBackendTest(BackendInstanceBa
+         self.backend = duplicity.backend.get_backend_object(url)
+         self.assertEqual(self.backend.__class__.__name__, u'TAHOEBackend')
+ 
+-
++@unittest.skip("hsi helper output seems unparsable with python 3")
+ class HSIBackendTest(BackendInstanceBase):
+     def setUp(self):
+         super(HSIBackendTest, self).setUp()
