@@ -13,17 +13,17 @@ The default prefix is /usr, so files are put in /usr/bin,
 --prefix=<prefix> option.  For example:
 
         python setup.py install --prefix=/usr/local
-        export PYTHONPATH='/usr/local/lib/python2.x/site-packages/'
+        export PYTHONPATH='/usr/local/lib/python.x/site-packages/'
         /usr/local/bin/duplicity -V
 
 
 REQUIREMENTS:
 
- * Python v2.7
+ * Python 2.7, 3.6, 3.7
  * librsync v0.9.6 or later
  * GnuPG for encryption
  * fasteners 0.14.1 or later for concurrency locking
- * for scp/sftp -- python-paramiko and python-pycryptopp
+ * for scp/sftp -- python-paramiko
  * for ftp -- lftp version 3.7.15 or later
  * Boto 2.0 or later for single-processing S3 or GCS access (default)
  * Boto 2.1.1 or later for multi-processing S3 access

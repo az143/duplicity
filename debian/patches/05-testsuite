@@ -3,7 +3,7 @@ Subject: Disable some tests for being flaky
 
 --- a/testing/functional/test_restart.py
 +++ b/testing/functional/test_restart.py
-@@ -111,6 +111,7 @@ class RestartTest(FunctionalTestCase):
+@@ -115,6 +115,7 @@ class RestartTest(FunctionalTestCase):
          # there should be 2 differences found, one missing file, one mtime change
          # self.verify(u"testfiles/largefiles")
  
@@ -13,7 +13,7 @@ Subject: Disable some tests for being flaky
          Test restart when the last file being backed up is missing on restart.
 --- a/testing/unit/test_gpg.py
 +++ b/testing/unit/test_gpg.py
-@@ -131,6 +131,7 @@ class GPGTest(UnitTestCase):
+@@ -139,6 +139,7 @@ class GPGTest(UnitTestCase):
          sig = decrypted_file.get_signature()
          assert sig == self.sign_key, sig
  
@@ -21,7 +21,7 @@ Subject: Disable some tests for being flaky
      def test_GPGWriteFile(self):
          u"""Test GPGWriteFile"""
          size = 400 * 1000
-@@ -146,6 +147,7 @@ class GPGTest(UnitTestCase):
+@@ -154,6 +155,7 @@ class GPGTest(UnitTestCase):
                           profile, size=size)
          # print os.stat("testfiles/output/gpgwrite.gpg").st_size
  
@@ -31,7 +31,7 @@ Subject: Disable some tests for being flaky
          size = 400 * 1000
 --- a/testing/unit/test_selection.py
 +++ b/testing/unit/test_selection.py
-@@ -172,6 +172,7 @@ class MatchingTest(UnitTestCase):
+@@ -176,6 +176,7 @@ class MatchingTest(UnitTestCase):
          assert select.glob_get_sf(u"**", 0)(root) == 0
          assert select.glob_get_sf(u"/foo/*", 0)(root) is None
  
@@ -39,7 +39,7 @@ Subject: Disable some tests for being flaky
      def test_other_filesystems(self):
          u"""Test to see if --exclude-other-filesystems works correctly"""
          root = Path(u"/")
-@@ -870,8 +871,11 @@ testfiles/select**/2
+@@ -874,8 +875,11 @@ testfiles/select**/2
                          (u"--exclude", u"testfiles/select2/**")],
                         self.expected_restored_tree)
  
@@ -53,7 +53,7 @@ Subject: Disable some tests for being flaky
                          (u"--exclude", u"testfiles/select-unicode/прыклад/пример/例/Παράδειγμα/דוגמא.txt"),
 --- a/testing/unit/test_statistics.py
 +++ b/testing/unit/test_statistics.py
-@@ -59,6 +59,7 @@ class StatsObjTest(UnitTestCase):
+@@ -63,6 +63,7 @@ class StatsObjTest(UnitTestCase):
          s1 = StatsDeltaProcess()
          assert s1.get_stat(u'SourceFiles') == 0
  
@@ -63,7 +63,7 @@ Subject: Disable some tests for being flaky
          s = StatsObj()
 --- a/testing/__init__.py
 +++ b/testing/__init__.py
-@@ -79,10 +79,12 @@ class DuplicityTestCase(unittest.TestCas
+@@ -83,10 +83,12 @@ class DuplicityTestCase(unittest.TestCas
              self._update_env(key, self.savedEnviron[key])
          for key in self.savedGlobals:
              setattr(globals, key, self.savedGlobals[key])
@@ -76,20 +76,9 @@ Subject: Disable some tests for being flaky
          assert not os.system(u"rm -rf testfiles")
          assert not os.system(u"tar xzf testfiles.tar.gz > /dev/null 2>&1")
          assert not os.system(u"mkdir testfiles/output testfiles/cache")
---- a/testing/functional/__init__.py
-+++ b/testing/functional/__init__.py
-@@ -101,7 +101,7 @@ class FunctionalTestCase(DuplicityTestCa
-                 cmd_list.extend([u"-w"])
-         else:
-             cmd_list = []
--        cmd_list.extend([u"duplicity"])
-+        cmd_list.extend([u"../bin/duplicity"])
-         cmd_list.extend(options)
-         cmd_list.extend([u"-v0"])
-         cmd_list.extend([u"--no-print-statistics"])
 --- a/testing/unit/test_globmatch.py
 +++ b/testing/unit/test_globmatch.py
-@@ -243,6 +243,7 @@ class TestDoubleAsterisk(UnitTestCase):
+@@ -250,6 +250,7 @@ class TestDoubleAsterisk(UnitTestCase):
  class TestSimpleUnicode(UnitTestCase):
      u"""Test simple unicode comparison"""
  
@@ -97,7 +86,7 @@ Subject: Disable some tests for being flaky
      def test_simple_unicode(self):
          u"""Test simple unicode comparison"""
          self.assertEqual(inc_sel_file(u"прыклад/пример/例/Παράδειγμα/उदाहरण.txt",
-@@ -261,8 +262,11 @@ class TestSquareBrackets(UnitTestCase):
+@@ -268,8 +269,11 @@ class TestSquareBrackets(UnitTestCase):
          self.assertEqual(inc_sel_file(u"/test/f[s,o,p]lder/foo.txt",
                                        u"/test/folder/foo.txt"), 1)
  
@@ -111,7 +100,7 @@ Subject: Disable some tests for being flaky
          self.assertEqual(inc_sel_file(u"прыклад/п[a,b,c]имер/例/Παράδειγμα/उदाहरण.txt",
 --- a/testing/unit/test_util.py
 +++ b/testing/unit/test_util.py
-@@ -20,6 +20,7 @@ import duplicity
+@@ -24,6 +24,7 @@ import duplicity
  
  class TestExc(unittest.TestCase):
  
@@ -119,31 +108,9 @@ Subject: Disable some tests for being flaky
      def test_uexc(self):
  
          e = Exception(u'test')
---- a/testing/functional/test_log.py
-+++ b/testing/functional/test_log.py
-@@ -39,7 +39,7 @@ class LogTest(FunctionalTestCase):
-         u"""Check notification of a simple error code"""
- 
-         # Run actual duplicity command (will fail, because no arguments passed)
--        os.system(u"duplicity --log-file=/tmp/duplicity.log >/dev/null 2>&1")
-+        os.system(u"../bin/duplicity --log-file=/tmp/duplicity.log >/dev/null 2>&1")
- 
-         # The format of the file should be:
-         # """ERROR 2
---- a/testing/functional/test_rdiffdir.py
-+++ b/testing/functional/test_rdiffdir.py
-@@ -34,7 +34,7 @@ class RdiffdirTest(FunctionalTestCase):
- 
-     def run_rdiffdir(self, argstring):
-         u"""Run rdiffdir with given arguments"""
--        self.run_cmd(u"rdiffdir " + argstring)
-+        self.run_cmd(u"../bin/rdiffdir " + argstring)
- 
-     def run_cycle(self, dirname_list):
-         u"""Run diff/patch cycle on directories in dirname_list"""
 --- a/testing/unit/test_backend_instance.py
 +++ b/testing/unit/test_backend_instance.py
-@@ -70,7 +70,9 @@ class BackendInstanceBase(UnitTestCase):
+@@ -74,7 +74,9 @@ class BackendInstanceBase(UnitTestCase):
              self.assertTrue(hasattr(self.backend, u'_delete_list'))
              return
          self.backend._put(self.local, b'a')
@@ -153,12 +120,3 @@ Subject: Disable some tests for being flaky
          self.backend._delete(b'a')
          self.assertFalse(b'a' in self.backend._list())
          self.assertTrue(b'b' in self.backend._list())
-@@ -208,7 +210,7 @@ class TahoeBackendTest(BackendInstanceBa
-         self.backend = duplicity.backend.get_backend_object(url)
-         self.assertEqual(self.backend.__class__.__name__, u'TAHOEBackend')
- 
--
-+@unittest.skip("hsi helper output seems unparsable with python 3")
- class HSIBackendTest(BackendInstanceBase):
-     def setUp(self):
-         super(HSIBackendTest, self).setUp()

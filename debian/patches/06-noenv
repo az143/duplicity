@@ -1,7 +1,7 @@
 --- a/bin/duplicity
 +++ b/bin/duplicity
 @@ -1,4 +1,4 @@
--#!/usr/bin/env python3
+-#!/usr/bin/env python
 +#!/usr/bin/python3
  # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
  #
@@ -9,7 +9,7 @@
 --- a/testing/find_unadorned_strings.py
 +++ b/testing/find_unadorned_strings.py
 @@ -1,4 +1,4 @@
--#!/usr/bin/env python3
+-#!/usr/bin/env python
 +#!/usr/bin/python3
  # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
  #
@@ -17,7 +17,7 @@
 --- a/testing/fix_unadorned_strings.py
 +++ b/testing/fix_unadorned_strings.py
 @@ -1,4 +1,4 @@
--#!/usr/bin/env python3
+-#!/usr/bin/env python
 +#!/usr/bin/python3
  # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
  #
@@ -25,15 +25,15 @@
 --- a/bin/rdiffdir
 +++ b/bin/rdiffdir
 @@ -1,4 +1,4 @@
--#!/usr/bin/env python2
+-#!/usr/bin/env python
 +#!/usr/bin/python3
  # rdiffdir -- Extend rdiff functionality to directories
- # Version 0.8.00 released May 29, 2019
+ # Version 0.8.04 released August 31, 2019
  #
 --- a/dist/makedist
 +++ b/dist/makedist
 @@ -1,4 +1,4 @@
--#!/usr/bin/env python2
+-#!/usr/bin/env python
 +#!/usr/bin/python3
  # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
  #
@@ -46,96 +46,51 @@
  # -*- coding: utf-8 -*-
  # Copyright (c) 2014 Gu1
  # Licensed under the MIT license
---- a/duplicity/compilec.py
-+++ b/duplicity/compilec.py
-@@ -1,4 +1,4 @@
--#!/usr/bin/env python2
-+#!/usr/bin/python3
- # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
- #
- # Copyright 2002 Ben Escoto <ben@emerose.org>
 --- a/testing/manual/backendtest
 +++ b/testing/manual/backendtest
 @@ -1,4 +1,4 @@
--#!/usr/bin/env python2
+-#!/usr/bin/env python
 +#!/usr/bin/python3
  # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
  #
  # Copyright 2002 Ben Escoto <ben@emerose.org>
 --- a/testing/overrides/bin/lftp
 +++ b/testing/overrides/bin/lftp
-@@ -1,11 +1,11 @@
--#!/usr/bin/env python2
-+#!/usr/bin/python3
- 
- import os
- import subprocess
- import sys
- 
- if sys.argv[1] == '--version':
--    print 'blah | blah 1.0'
-+    print('blah | blah 1.0')
-     sys.exit(0)
- 
- command = ""
---- a/testing/overrides/bin/ncftpget
-+++ b/testing/overrides/bin/ncftpget
 @@ -1,4 +1,4 @@
--#!/usr/bin/env python2
+-#!/usr/bin/env python
 +#!/usr/bin/python3
  
- import subprocess
- import sys
+ from __future__ import print_function
+ from future import standard_library
 --- a/testing/overrides/bin/ncftpls
 +++ b/testing/overrides/bin/ncftpls
 @@ -1,4 +1,4 @@
--#!/usr/bin/env python2
+-#!/usr/bin/env python
 +#!/usr/bin/python3
  
- from duplicity.backend import ParsedUrl
- import os
-@@ -6,7 +6,7 @@ import subprocess
- import sys
- 
- if sys.argv[1] == '-v':
--    print 'blah 3.2.1'
-+    print('blah 3.2.1')
-     sys.exit(8)  # really, the backend expects 8 as the return
- 
- for arg in sys.argv:
+ from __future__ import print_function
+ from future import standard_library
 --- a/testing/overrides/bin/ncftpput
 +++ b/testing/overrides/bin/ncftpput
 @@ -1,4 +1,4 @@
--#!/usr/bin/env python2
+-#!/usr/bin/env python
 +#!/usr/bin/python3
  
- import subprocess
- import sys
+ from __future__ import print_function
+ from future import standard_library
 --- a/testing/overrides/bin/tahoe
 +++ b/testing/overrides/bin/tahoe
 @@ -1,4 +1,4 @@
--#!/usr/bin/env python2
+-#!/usr/bin/env python
 +#!/usr/bin/python3
  
- import subprocess
- import sys
+ from __future__ import print_function
+ from future import standard_library
 --- a/testing/overrides/bin/hsi
 +++ b/testing/overrides/bin/hsi
-@@ -1,5 +1,6 @@
--#!/usr/bin/env python2
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
 +#!/usr/bin/python3
  
-+from __future__ import print_function
- import subprocess
- import sys
- 
-@@ -10,7 +11,7 @@ elif cmd[0] == 'put':
-     cmd = ['cp', cmd[1], cmd[3]]
- elif cmd[0] == 'ls':
-     # output some expected header lines
--    print >> sys.stderr, 'one'
--    print >> sys.stderr, 'two'
-+    print('one', file=sys.stderr)
-+    print('two', file=sys.stderr)
- 
- sys.exit(subprocess.call(' '.join(cmd) + ' 1>&2', shell=True))
+ from __future__ import print_function
+ from future import standard_library

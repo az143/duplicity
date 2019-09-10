@@ -19,6 +19,9 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+
 import os
 import sys
 import subprocess
@@ -106,7 +109,7 @@ class CodeTest(DuplicityTestCase):
 
     @skipCodeTest
     def test_unadorned_string_literals(self):
-        u"""For predictable results in python2/3 all string literals need to be marked as unicode, bytes or raw"""
+        u"""For predictable results in python/3 all string literals need to be marked as unicode, bytes or raw"""
 
         ignored_files = [
                          # These are not source files we want to check

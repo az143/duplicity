@@ -19,6 +19,10 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+
 import unittest
 import os
 
@@ -34,7 +38,7 @@ class RdiffdirTest(FunctionalTestCase):
 
     def run_rdiffdir(self, argstring):
         u"""Run rdiffdir with given arguments"""
-        self.run_cmd(u"rdiffdir " + argstring)
+        self.run_cmd(u"../bin/rdiffdir " + argstring)
 
     def run_cycle(self, dirname_list):
         u"""Run diff/patch cycle on directories in dirname_list"""

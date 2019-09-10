@@ -1,3 +1,225 @@
+2019-08-31  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in translation updates
+    * Prep for 0.8.04
+
+2019-08-29  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Made some changes to the Docker infrastructure:
+      - All scripts run from any directory, assuming directory
+        structure remains the same.
+      - Changed from Docker's COPY internal command which is slow to
+        using external rsync which is faster and allows excludes.
+      - Removed a couple of unused files.
+
+2019-08-26  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in lp:~aaron-whitehouse/duplicity/08-docker-local-import
+      - Convert the Docker infrastructure to pull the local branch into
+        duplicity_test. This allows testing the local branch with the
+        known-good Docker environment, even if it has not yet been
+        committed to trunk.
+      - As a consequence, remove the -r option to build-duplicity_test.sh.
+        This functionality can be achieved by branching that revision
+        before running the script.
+
+2019-08-21  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in lp:~aaron-whitehouse/duplicity/08-README-TESTING
+      - Change README-TESTING to be correct for running individual tests
+        now that we have moved to Tox/Pytest.
+    * Merged in lp:~kaffeekiffer/duplicity/azure-filename
+      - Encode Azure back-end paths
+
+2019-08-18  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Ran futurize selectively filter-by-filter to find the ones that work.
+
+2019-08-17  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in lp:~aaron-whitehouse/duplicity/08-snap-python2
+      - Add packaging code for Snapcraft/Snap packages
+    * Fixed build on Launchpad for 0.8.x, so now there is a new PPA at
+      https://launchpad.net/~duplicity-team/+archive/ubuntu/daily-dev-trunk
+
+2019-08-13  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1839886 with hint from denick
+      - Duplicity crashes when using --file-prefix
+    * Removed socket.settimeout from backend.py.
+      It was already set in commandline.py.
+    * Removed pycryptopp from README requirements
+
+2019-08-12  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1839728 with info from Avleen Vig
+      - b2 backend requires additional import
+
+2019-08-09  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in translation updates
+    * Prep for 0.8.03
+
+2019-08-08  Kenneth Loafman  <kenneth@loafman.com>
+
+    * More changes to provide Python test coverage:
+      - Moved bulk of code from bin/duplicity to
+        duplicity/dup_main.py for coverage.
+    * Fixed some 2to3 issues in dup_main.py
+    * Fixed division differences with futurize
+
+2019-08-05  Kenneth Loafman  <kenneth@loafman.com>
+
+    * More changes to provide Python test coverage:
+      - Now covers functional tests spawning duplicity
+      - Does not cover bin/duplicity for some reason
+
+2019-08-02  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bugs #1838427 and #1838702 with a fix
+      suggested by Stephen Miller.  The fix was to
+      supply tarfile with a unicode grpid, not bytes.
+
+2019-08-01  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Some changes to provide Python test coverage:
+      - Coverage runs with every test cycle
+      - Does not cover functional tests that spawn
+        duplicity itself.  Next pass.
+      - After a run use 'coverage report html' to see
+        an overview list and links to drill down.  It
+        shows up in htmlcov/index.html.
+
+2019-07-25  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fix dist/makedist to run on python2/3
+
+2019-07-24  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1829416 with help from charlie4096
+      - onedrive: Can’t convert ‘bytes’ object to str implicitly
+    * Merged in po-updates.
+
+2019-07-22  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Enhanced build_duplicity_test.sh
+      - Use -h to get help and defaults
+      - Takes arguments for distro, revno, help
+      - Distros supported are 18.04, 18.10, 19.04, 19.10
+      - Revnos are passed to bzr -r option
+
+2019-07-19  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fix so Docker image duplicity_test will update and pull
+      new bzr revisions if changed since last build.
+
+2019-07-18  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Removed python-gettext from setup.py.  Whoops!
+    * Merged in lp:~mterry/duplicity/pytest-runner-move
+      - Move pytest-runner to testing requirements in setup
+    * Fix language classifiers in setup.py
+    * Remove speedup in testing backup.  The math was correct,
+      but it's failing on Docker and Launchpad testing.
+
+2019-07-17  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Remove python-gettext from requirements.txt.  Normal
+      Python installation includes gettext.
+    * Mod README to include Python 3.6 and 3.7
+    * Fixed bug #1836829 progress.py: old_div not defined
+      - also fixed old_div in _boto_multi.py
+    * Merged in lp:~limburgher/duplicity/dropbox
+      - Fixes bug #1836611 dropbox mixing bytes and strings
+    * Merged in lp:~stragerneds/duplicity/duplicity
+      - Cache results of filename parsing for speedup
+
+2019-07-14  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Install python3.6 and 3.7 explicitly in Dockerfile.  Tox and Docker
+      now support testing Python 2,7, 3.6, and 3.7.
+    * Comment out HSIBackendTest since shim is not up-to-date.
+    * Merged in po-updates.
+
+2019-07-11  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Another unadorned string.
+    * Cleanup some trailing spaces/lines in Docker files.
+    * Make sure test filenames a bytes not unicode.
+    * Fix test_glob_to_regex to work on Python 3.7
+
+2019-07-10  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fix warning in _librsync.c module.
+    * Add encoding to logging.FileHandler call to make log file utf8
+    * Ensure _librsync.so is regenned before tox testing.
+    * Adjust POTFILES.in for compilec.py move.
+    * Fix so we start duplicity with the base python we run under.
+    * Cleanup some trailing spaces/lines in Docker files.
+
+2019-07-04  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fix some issues found by test_code.py.
+
+2019-07-03  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fix reversed port assignments (FTP & SSH) in docker-compose.yml.
+
+2019-06-29  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Normalize shebang to just python, no version number
+    * Fix so most testing/*.py files have the future suggested lines
+      - from __future__ import print_function
+        from future import standard_library
+        standard_library.install_aliases()
+    * Merged lp:~mterry/duplicity/boto-import
+      - A couple functions in the boto backend were using the boto module
+        without importing it first.
+    * Merged in lp:~aaron-whitehouse/duplicity/08-dockerfixes
+      - Update duplicity_test Dockerfile:
+        * Use 18.04 instead of 16.04
+        * Use Ubuntu 18.04 version of pip
+        * Add Python3 and 2to3 as a dependencies
+        * Set docker locale as UTF-8
+    * Merged in lp:~mterry/duplicity/s3fsdecode
+      - Fix s3 backups by encoding remote filenames
+    * Fix reimport problem where "from future.builtins" was being treated
+      the differently than "from builtins".  They are both the same, so
+      converted to shorter form "from builtins" and removed duplicates.
+
+2019-06-21  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1833573 0.8.00 does not work on Python 2
+      - Fixed shebang to use /usr/bin/python instead of python
+    * Fixed bug #1833559 0.8 test fails with 'duplicity not found' errors
+      - Fixed assumption that duplicity/rdiffdir were in $PATH
+    * Fixed failing test in testing/unit/test_globmatch.py
+      - Someone is messing with regex.  Fix same.
+      - See https://bugs.python.org/issue29995 for details
+
+2019-06-17  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fix some import conflicts with the "past" module
+      - Rename collections.py to dup_collections.py
+      - Remove all "from future.utils import old_div"
+      - Replace old_div() with "//" (in py27 for a while).
+      - All tests run for py3, unit tests run for py2.  The new
+        import fail is "from future import standard_library"
+    * Fixed bug #1831178 sequence item 0: expected str instance, int found
+      - Simply converted int to str when making list
+    * Merged in lp:~kaffeekiffer/duplicity/azure-python3-fix
+      - Use util.fsencode to encode file string
+
+2019-06-11  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in lp:~mterry/duplicity/uexc-string
+      - The return type of util.uexc should always be a string.
+
+2019-05-29  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in lp:~mterry/duplicity/gio-pydrive-fsdecode
+      - Fix gio and pydrive backends to use fsdecode
+
 2019-05-29  Kenneth Loafman  <kenneth@loafman.com>
 
     * Merged in lp:~stragerneds/duplicity/duplicity
@@ -782,7 +1004,7 @@
 
 2016-07-03  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Merged in lp:~aaron-whitehouse/duplicity/remove-python26
+    * Merged in lp:~aaron-whitehouse/duplicity/remove-python6
       - Remove Python 2.6 support references and tests.
 
 2016-07-02  Kenneth Loafman  <kenneth@loafman.com>
@@ -1233,7 +1455,7 @@
 
     * Merged in lp:~aaron-whitehouse/duplicity/trailing_slash_match_dirs
       - Made globs with trailing slashes only match directories, not files, fixing Bug #1479545.
-    * Merged in lp:~aaron-whitehouse/duplicity/improve_tox_and_python2-6_testing
+    * Merged in lp:~aaron-whitehouse/duplicity/improve_tox_and_python-6_testing
       - Testing improvements, particularly in relation to testing against Python version 2.6:
         * tox.ini fixed so that it is possible to run individual tests against both Python 2.6 and 2.7;
         * updated test_code.py to use unittest2 for Python versions < 2.7 (instead of failing);
@@ -1763,7 +1985,7 @@
         identifier to the lock filename (we don't need a separate lock per thread,
         since our locking is per process).
       - I've tested with 2.6.0 and 2.7.6 (both extremes of our current support).
-    * Update shebang line to python2 instead of python to avoid confusion.
+    * Update shebang line to python instead of python to avoid confusion.
 
 2014-05-07  Kenneth Loafman  <kenneth@loafman.com>
 
@@ -1865,7 +2087,7 @@
 
     * Merged in lp:~mterry/duplicity/2.6isms
       - Here's a whole stack of minor syntax modernizations that will become
-        necessary in python3. They all work in python2.6.
+        necessary in python3. They all work in python.6.
       - I've added a new test to keep us honest and prevent backsliding on these
         modernizations. It runs 2to3 and will fail the test if 2to3 finds anything
         that needs fixing (with a specific set of exceptions carved out).
@@ -1880,7 +2102,7 @@
       - Drop static.py.
       - This is some of the oldest code in duplicity! A bzr blame says it is
         unmodified (except for whitespace / comment changes) since revision 1.
-      - But it's not needed anymore. Not really even since we updated to python2.4,
+      - But it's not needed anymore. Not really even since we updated to python.4,
         which introduced the @staticmethod decorator. So this branch drops it and
         its test file.
     * Merged in lp:~mterry/duplicity/encode-for-print
@@ -2493,7 +2715,7 @@
 
     probably fix
 
-    File "/usr/local/lib/python2.7/dist-packages/duplicity/backends/_ssh_pexpect.py", line 223, in run_sftp_command
+    File "/usr/local/lib/python.7/dist-packages/duplicity/backends/_ssh_pexpect.py", line 223, in run_sftp_command
     log.Warn("Running '%s' with commands:\n %s\n failed (attempt #%d): %s" % (commandline, "\n ".join(commands), n, msg))
     UnboundLocalError: local variable 'msg' referenced before assignment
 
@@ -3368,7 +3590,7 @@
 
 2011-08-23  Michael Terry  <mike@mterry.name>
 
-    use python2.7's tarfile instead of whichever version comes with user's python
+    use python.7's tarfile instead of whichever version comes with user's python
 
 2011-08-20  Michael Terry  <mike@mterry.name>
 

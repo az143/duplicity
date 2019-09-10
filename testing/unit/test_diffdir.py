@@ -20,6 +20,11 @@ from __future__ import print_function
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+from __future__ import print_function
+from builtins import object
+from future import standard_library
+standard_library.install_aliases()
+
 import unittest
 
 from duplicity.path import *  # @UnusedWildImport
@@ -209,7 +214,7 @@ class DDTest(UnitTestCase):
 
     def test_combine_path_iters(self):
         u"""Test diffdir.combine_path_iters"""
-        class Dummy:
+        class Dummy(object):
             def __init__(self, index, other=None):
                 self.index = index
                 self.other = other

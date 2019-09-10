@@ -3,8 +3,8 @@ Subject: fix unicode decode-does-encode-and-fail problems with iso8859 locales
 
 --- a/bin/duplicity
 +++ b/bin/duplicity
-@@ -36,6 +36,12 @@ import duplicity.errors
- import copy
+@@ -40,6 +40,12 @@ import copy
+ import fasteners
  import gzip
  import os
 +
