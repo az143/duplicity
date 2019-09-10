@@ -21,6 +21,10 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+
 import sys
 import unittest
 
@@ -85,7 +89,10 @@ class TestGlobToRegex(UnitTestCase):
                          u"[abc]el[^de][^fg]h")
 
         # see https://bugs.python.org/issue29995 for details
-        if sys.version_info[:2] >= (3, 6):
+        if sys.version_info[:2] == (3, 6):
+            self.assertEqual(glob_to_regex(u"/usr/*/bin/"),
+                             u"\\/usr\\/[^/]*\\/bin\\/")
+        elif sys.version_info[:2] == (3, 7):
             self.assertEqual(glob_to_regex(u"/usr/*/bin/"),
                              u"/usr/[^/]*/bin/")
         else:

@@ -29,7 +29,6 @@ associates stat information with filenames
 from builtins import filter
 from builtins import str
 from builtins import object
-from future.builtins import filter
 
 import stat
 import errno
@@ -314,7 +313,7 @@ class ROPath(object):
             try:
                 ti.gname = cached_ops.getgrgid(ti.gid)[0]
             except KeyError:
-                ti.gname = b''
+                ti.gname = u''
 
             if ti.type in (tarfile.CHRTYPE, tarfile.BLKTYPE):
                 if hasattr(os, u"major") and hasattr(os, u"minor"):

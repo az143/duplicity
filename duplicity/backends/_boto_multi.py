@@ -24,7 +24,6 @@ from __future__ import division
 from future import standard_library
 standard_library.install_aliases()
 from builtins import range
-from past.utils import old_div
 import os
 import sys
 import threading
@@ -114,6 +113,8 @@ class BotoBackend(BotoSingleBackend):
         self._pool.join()
 
     def upload(self, filename, key, headers=None):
+        import boto  # pylint: disable=import-error
+
         chunk_size = globals.s3_multipart_chunk_size
 
         # Check minimum chunk size for S3
@@ -127,7 +128,7 @@ class BotoBackend(BotoSingleBackend):
         if bytes < chunk_size:
             chunks = 1
         else:
-            chunks = old_div(bytes, chunk_size)
+            chunks = bytes / chunk_size
             if (bytes % chunk_size):
                 chunks += 1
 
@@ -216,8 +217,8 @@ def multipart_upload_worker(scheme, parsed_url, storage_uri, bucket_name, multip
                         log.Debug((u"{name}: Uploaded chunk {chunk}"
                                    u"at roughly {speed} bytes/second").format(name=worker_name,
                                                                               chunk=offset + 1,
-                                                                              speed=(old_div(bytes, max(1,
-                                                                                             abs(end - start))))))
+                                                                              speed=(bytes /
+                                                                                     max(1, abs(end - start)))))
                     break
             conn.close()
             conn = None

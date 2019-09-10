@@ -21,7 +21,6 @@
 
 from __future__ import division
 from builtins import str
-from past.utils import old_div
 import os
 import time
 
@@ -30,6 +29,7 @@ from duplicity import globals
 from duplicity import log
 from duplicity.errors import FatalBackendException, BackendException
 from duplicity import progress
+from duplicity import util
 
 BOTO_MIN_VERSION = u"2.1.1"
 
@@ -133,7 +133,7 @@ class BotoBackend(duplicity.backend.Backend):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
         try:
-            import boto
+            import boto  # pylint: disable=import-error
             from boto.s3.connection import Location
         except ImportError:
             raise
@@ -183,6 +183,8 @@ class BotoBackend(duplicity.backend.Backend):
         del self.storage_uri
 
     def resetConnection(self):
+        import boto  # pylint: disable=import-error
+
         if getattr(self, u'conn', False):
             self.conn.close()
         self.bucket = None
@@ -202,6 +204,8 @@ class BotoBackend(duplicity.backend.Backend):
         self.resetConnection()
 
     def _put(self, source_path, remote_filename):
+        remote_filename = util.fsdecode(remote_filename)
+
         if globals.s3_european_buckets:
             if not globals.s3_use_new_style:
                 raise FatalBackendException(u"European bucket creation was requested, but not new-style "
@@ -260,12 +264,13 @@ class BotoBackend(duplicity.backend.Backend):
         self.upload(source_path.name, key, headers)
         upload_end = time.time()
         total_s = abs(upload_end - upload_start) or 1  # prevent a zero value!
-        rough_upload_speed = old_div(os.path.getsize(source_path.name), total_s)
+        rough_upload_speed = os.path.getsize(source_path.name) / total_s
         log.Debug(u"Uploaded %s/%s to %s Storage at roughly %f bytes/second" %
                   (self.straight_url, remote_filename, storage_class,
                    rough_upload_speed))
 
     def _get(self, remote_filename, local_path):
+        remote_filename = util.fsdecode(remote_filename)
         key_name = self.key_prefix + remote_filename
         self.pre_process_download(remote_filename, wait=True)
         key = self._listed_keys[key_name]
@@ -299,9 +304,11 @@ class BotoBackend(duplicity.backend.Backend):
         return filename_list
 
     def _delete(self, filename):
+        filename = util.fsdecode(filename)
         self.bucket.delete_key(self.key_prefix + filename)
 
     def _query(self, filename):
+        filename = util.fsdecode(filename)
         key = self.bucket.lookup(self.key_prefix + filename)
         if key is None:
             return {u'size': -1}

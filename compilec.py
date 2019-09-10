@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
@@ -23,22 +23,36 @@
 import sys
 import os
 
-# Avoid conflict on python 2 with collections.py vs. built-in collections module
-sp = sys.path
-sys.path = sys.path[1:]
-#  https://github.com/PyCQA/pylint/issues/73
 from distutils.core import setup, Extension  # pylint: disable=import-error,no-name-in-module
-sys.path = sp
 
 assert len(sys.argv) == 1
 sys.argv.append(u"build")
+
+os.chdir(u"duplicity")
+
+incdir_list = libdir_list = None
+
+if os.name == u'posix':
+    LIBRSYNC_DIR = os.environ.get(u'LIBRSYNC_DIR', u'')
+    args = sys.argv[:]
+    for arg in args:
+        if arg.startswith(u'--librsync-dir='):
+            LIBRSYNC_DIR = arg.split(u'=')[1]
+            sys.argv.remove(arg)
+    if LIBRSYNC_DIR:
+        incdir_list = [os.path.join(LIBRSYNC_DIR, u'include')]
+        libdir_list = [os.path.join(LIBRSYNC_DIR, u'lib')]
 
 setup(name=r"CModule",
       version=u"cvs",
       description=u"duplicity's C component",
       ext_modules=[Extension(name=r"_librsync",
                              sources=[r"_librsyncmodule.c"],
+                             include_dirs=incdir_list,
+                             library_dirs=libdir_list,
                              libraries=[u"rsync"])])
 
 assert not os.system(u"mv `find build -name '_librsync*.so'` .")
 assert not os.system(u"rm -rf build")
+
+os.chdir(u"..")

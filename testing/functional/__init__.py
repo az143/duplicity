@@ -1,4 +1,3 @@
-from __future__ import print_function
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
 #
 # Copyright 2012 Canonical Ltd
@@ -19,7 +18,10 @@ from __future__ import print_function
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from future.builtins import map
+from __future__ import print_function
+from builtins import range
+from future import standard_library
+standard_library.install_aliases()
 
 import os
 import pexpect
@@ -101,7 +103,11 @@ class FunctionalTestCase(DuplicityTestCase):
                 cmd_list.extend([u"-w"])
         else:
             cmd_list = []
-        cmd_list.extend([u"duplicity"])
+        basepython = os.environ.get(u'TOXPYTHON', None)
+        if basepython is not None:
+            cmd_list.extend([basepython])
+            cmd_list.extend([u"-m", u"coverage", u"run", u"--source=duplicity", u"-p"])
+        cmd_list.extend([u"../bin/duplicity"])
         cmd_list.extend(options)
         cmd_list.extend([u"-v0"])
         cmd_list.extend([u"--no-print-statistics"])
@@ -170,14 +176,11 @@ class FunctionalTestCase(DuplicityTestCase):
         before_files = self.get_backend_files()
 
         # If a chain ends with time X and the next full chain begins at time X,
-        # we may trigger an assert in collections.py.  If needed, sleep to
+        # we may trigger an assert in dup_collections.py.  If needed, sleep to
         # avoid such problems
         now = time.time()
         if self.last_backup == int(now):
-            seconds_to_sleep = (self.last_backup + 1) - now
-            assert 0 <= seconds_to_sleep <= 1
-            time.sleep(seconds_to_sleep)
-            assert int(time.time()) != self.last_backup
+            time.sleep(1)
 
         result = self.run_duplicity(options=options, **kwargs)
         self.last_backup = int(time.time())
