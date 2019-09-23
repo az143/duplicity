@@ -1,3 +1,11 @@
+duplicity (0.8.04-2) unstable; urgency=high
+
+  * updated control x-python-version from 3.5 to 3.7,
+    as building on 3.5 fails (lots of testsuite kabooms)
+  * fixed statement ordering in ssh-pexpect backend (closes: #940986)
+
+ -- Alexander Zangerl <az@debian.org>  Mon, 23 Sep 2019 10:56:31 +1000
+
 duplicity (0.8.04-1) unstable; urgency=high
 
   * New upstream release (closes: #936458, #929949)
