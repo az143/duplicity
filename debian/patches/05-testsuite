@@ -8,20 +8,20 @@ Subject: Disable some tests for being flaky
          # self.verify(u"testfiles/largefiles")
  
 +    @unittest.skip("Flaky test because it relies on knowing how many volumes the source files will be split into")
+     @unittest.skipIf(u"ppc64el" in platform.machine(),
+                      u"Skip on ppc64el machines")
      def test_last_file_missing_at_end(self):
-         u"""
-         Test restart when the last file being backed up is missing on restart.
 --- a/testing/unit/test_gpg.py
 +++ b/testing/unit/test_gpg.py
-@@ -139,6 +139,7 @@ class GPGTest(UnitTestCase):
+@@ -140,6 +140,7 @@ class GPGTest(UnitTestCase):
          sig = decrypted_file.get_signature()
          assert sig == self.sign_key, sig
  
 +    @unittest.skip("Flaky test because it relies on compressed size of random bytes")
+     @unittest.skipIf(u"ppc64el" in platform.machine(),
+                      u"Skip on ppc64el machines")
      def test_GPGWriteFile(self):
-         u"""Test GPGWriteFile"""
-         size = 400 * 1000
-@@ -154,6 +155,7 @@ class GPGTest(UnitTestCase):
+@@ -157,6 +158,7 @@ class GPGTest(UnitTestCase):
                           profile, size=size)
          # print os.stat("testfiles/output/gpgwrite.gpg").st_size
  

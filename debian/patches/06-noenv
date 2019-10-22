@@ -28,7 +28,7 @@
 -#!/usr/bin/env python
 +#!/usr/bin/python3
  # rdiffdir -- Extend rdiff functionality to directories
- # Version 0.8.04 released August 31, 2019
+ # Version 0.8.05 released October 06, 2019
  #
 --- a/dist/makedist
 +++ b/dist/makedist

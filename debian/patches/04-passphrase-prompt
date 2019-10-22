@@ -1,6 +1,6 @@
 --- a/duplicity/dup_main.py
 +++ b/duplicity/dup_main.py
-@@ -186,14 +186,14 @@ def get_passphrase(n, action, for_signin
+@@ -185,14 +185,14 @@ def get_passphrase(n, action, for_signin
                      if use_cache and globals.gpg_profile.passphrase:
                          pass1 = globals.gpg_profile.passphrase
                      else:

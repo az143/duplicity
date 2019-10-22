@@ -288,7 +288,7 @@ class WebDAVBackend(duplicity.backend.Backend):
         Returns the basic auth header
         """
         auth_string = u'%s:%s' % (self.username, self.password)
-        return u'Basic %s' % base64.encodestring(auth_string).strip()
+        return u'Basic %s' % base64.b64encode(auth_string.encode()).strip().decode()
 
     def get_digest_authorization(self, path):
         u"""
@@ -407,7 +407,7 @@ class WebDAVBackend(duplicity.backend.Backend):
             return None
 
     def _get(self, remote_filename, local_path):
-        url = self.directory + remote_filename
+        url = self.directory + util.fsdecode(remote_filename)
         response = None
         try:
             target_file = local_path.open(u"wb")
@@ -433,7 +433,7 @@ class WebDAVBackend(duplicity.backend.Backend):
                 response.close()
 
     def _put(self, source_path, remote_filename):
-        url = self.directory + remote_filename
+        url = self.directory + util.fsdecode(remote_filename)
         response = None
         try:
             source_file = source_path.open(u"rb")
@@ -455,7 +455,7 @@ class WebDAVBackend(duplicity.backend.Backend):
                 response.close()
 
     def _delete(self, filename):
-        url = self.directory + filename
+        url = self.directory + util.fsdecode(filename)
         response = None
         try:
             response = self.request(u"DELETE", url)

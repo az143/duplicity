@@ -1,3 +1,55 @@
+2019-10-06  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in translation updates
+    * Prep for 0.8.05
+
+2019-10-05  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fix bug #1843995 - B2 fails on string concatenation.
+      - use util.fsdecode() to get a string not bytes.
+    * Fix bug #1844750 - RsyncBackend fails if used with multi-backend.
+      - used patch provided by KDM to fix.
+    * Fixed bug reported on maillist - Python error in Webdav backend.  See:
+      https://lists.nongnu.org/archive/html/duplicity-talk/2019-09/msg00026.html
+    * Fixed bug #1846167 - webdavbackend.py: expected bytes-like object, not str
+      - base64 now returns bytes where it used to be strings, so just decode().
+    * Fixed bug #1844950 - ssh-pexpect backend syntax error
+      - put the global before the import.
+    * Fixed bug #1846678 - --exclude-device-files and -other-filesystems crashes
+      - assuming all options had arguments was fixed.
+
+2019-10-04  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Add testenv:coverage and took it out of defaults.  Some cleanup.
+    * Clean up some pylint warnings.
+
+2019-09-28  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fix MacOS tempfile selection to avoid /tmp and /var/tmp.  See thread:
+      https://lists.nongnu.org/archive/html/duplicity-talk/2019-09/msg00000.html
+
+2019-09-26  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Sort of fix bugs #1836887 and #1836888 by skipping the
+      tests under question when running on ppc64el machines.
+
+2019-09-22  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Set to allow pydevd usage during tox testing.
+    * Adjust exclusion list for rsync into duplicity_test.
+    * Fix exc.args handling.  Sometimes it's (message, int),
+      other times its (int, message).  We look for the
+      message and use that for the exception report.
+    * Added more python future includes to support using
+      python3 code mixed with python2.
+
+2019-09-05  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Changed dist/makedist to fall back to dist/relfiles.txt
+      in case bzr or git is not available to get files list.
+      Tox sdist needs setup.py which needs dist/makedist.
+    * Updatated LINGUAS file to add four new translations.
+
 2019-08-31  Kenneth Loafman  <kenneth@loafman.com>
 
     * Merged in translation updates

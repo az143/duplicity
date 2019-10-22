@@ -3,7 +3,7 @@ Subject: fix #659009 by disabling validate_encryption_settings, which cannot wor
 
 --- a/duplicity/dup_main.py
 +++ b/duplicity/dup_main.py
-@@ -371,7 +371,9 @@ def write_multivol(backup_type, tarblock
+@@ -370,7 +370,9 @@ def write_multivol(backup_type, tarblock
          mf = globals.restart.last_backup.get_local_manifest()
          globals.restart.checkManifest(mf)
          globals.restart.setLastSaved(mf)

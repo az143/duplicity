@@ -1,3 +1,9 @@
+duplicity (0.8.05-1) unstable; urgency=medium
+
+  * New upstream release (closes: #942593)
+
+ -- Alexander Zangerl <az@debian.org>  Tue, 22 Oct 2019 19:52:00 +1000
+
 duplicity (0.8.04-2) unstable; urgency=high
 
   * updated control x-python-version from 3.5 to 3.7,
