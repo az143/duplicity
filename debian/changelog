@@ -1,3 +1,12 @@
+duplicity (0.8.05-2) unstable; urgency=medium
+
+  * build-depend on pylint, not pylint3 (closes: #943541)
+  * build-depend on python3-all-dev (closes: #943741)
+  * applied more patches from upstream to fix
+  	the backblaze backend properly (closes: #942593)
+
+ -- Alexander Zangerl <az@debian.org>  Sat, 26 Oct 2019 15:47:10 +1000
+
 duplicity (0.8.05-1) unstable; urgency=medium
 
   * New upstream release (closes: #942593)
