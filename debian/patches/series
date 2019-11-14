@@ -5,3 +5,5 @@
 05-testsuite
 06-noenv
 07-b2backend
+07-giobackend
+08-pcabackend

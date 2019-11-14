@@ -3,14 +3,59 @@ Subject: fix #659009 by disabling validate_encryption_settings, which cannot wor
 
 --- a/duplicity/dup_main.py
 +++ b/duplicity/dup_main.py
-@@ -370,7 +370,9 @@ def write_multivol(backup_type, tarblock
-         mf = globals.restart.last_backup.get_local_manifest()
-         globals.restart.checkManifest(mf)
-         globals.restart.setLastSaved(mf)
--        validate_encryption_settings(globals.restart.last_backup, mf)
-+        # az [2012-03-11 Sun 12:11]
-+        # this conflicts with public key encryption
-+        ## validate_encryption_settings(globals.restart.last_backup, mf)
-         mf.fh = man_outfp
-         last_block = globals.restart.last_block
-         log.Notice(_(u"Restarting after volume %s, file %s, block %s") %
+@@ -153,14 +153,14 @@ def get_passphrase(n, action, for_signin
+     # there is no sign_key and there are recipients
+     elif (action == u"full" and
+           (globals.gpg_profile.recipients or globals.gpg_profile.hidden_recipients) and not
+-          globals.gpg_profile.sign_key and not globals.restart):
++          globals.gpg_profile.sign_key):
+         return u""
+ 
+     # for an inc backup, we don't need a password if
+     # there is no sign_key and there are recipients
+     elif (action == u"inc" and
+           (globals.gpg_profile.recipients or globals.gpg_profile.hidden_recipients) and not
+-          globals.gpg_profile.sign_key and not globals.restart):
++          globals.gpg_profile.sign_key):
+         return u""
+ 
+     # Finally, ask the user for the passphrase
+@@ -346,6 +346,13 @@ def write_multivol(backup_type, tarblock
+         from encrypted to non in the middle of a backup chain), so we check
+         that the vol1 filename on the server matches the settings of this run.
+         """
++        if ((globals.gpg_profile.recipients or globals.gpg_profile.hidden_recipients) and
++                not globals.gpg_profile.sign_key):
++            # When using gpg encryption without a signing key, we skip this validation
++            # step to ensure that we can still backup without needing the secret key
++            # on the machine.
++            return
++
+         vol1_filename = file_naming.get(backup_type, 1,
+                                         encrypted=globals.encryption,
+                                         gzipped=globals.compression)
+--- a/testing/functional/test_restart.py
++++ b/testing/functional/test_restart.py
+@@ -79,6 +79,22 @@ class RestartTest(FunctionalTestCase):
+         self.backup(u"full", u"testfiles/largefiles")
+         self.verify(u"testfiles/largefiles")
+ 
++    def test_restart_encrypt_without_password(self):
++        u"""
++        Test that we can successfully restart a encrypt-key-only backup without
++        providing a password for it. (Normally, we'd need to decrypt the first
++        volume, but there is special code to skip that with an encrypt key.)
++        """
++        self.set_environ(u'PASSPHRASE', None)
++        self.set_environ(u'SIGN_PASSPHRASE', None)
++        self.make_largefiles()
++        enc_opts = [u"--encrypt-key", self.encrypt_key1]
++        self.backup(u"full", u"testfiles/largefiles", options=enc_opts, fail=2)
++        self.backup(u"full", u"testfiles/largefiles", options=enc_opts)
++
++        self.set_environ(u'PASSPHRASE', self.sign_passphrase)
++        self.verify(u"testfiles/largefiles")
++
+     def test_restart_sign_and_encrypt(self):
+         u"""
+         Test restarting a backup using same key for sign and encrypt

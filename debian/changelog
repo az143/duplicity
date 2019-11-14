@@ -1,3 +1,12 @@
+duplicity (0.8.05-3) unstable; urgency=medium
+
+  * applied patch to properly handle the interaction between
+    resumed backup, passphrase and/or encryption/sign key (closes: #944512)
+  * applied patch for giobackend type errors (closes: #944427)
+  * applied patch for pcabackend type errors (closes: #944317)
+
+ -- Alexander Zangerl <az@debian.org>  Thu, 14 Nov 2019 19:32:08 +1000
+
 duplicity (0.8.05-2) unstable; urgency=medium
 
   * build-depend on pylint, not pylint3 (closes: #943541)

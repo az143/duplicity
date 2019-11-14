@@ -1,0 +1,11 @@
+--- a/duplicity/backends/giobackend.py
++++ b/duplicity/backends/giobackend.py
+@@ -33,7 +33,7 @@ def ensure_dbus():
+     # when required.  So we make sure that such a bus exists and that our
+     # environment points to it.
+     if u'DBUS_SESSION_BUS_ADDRESS' not in os.environ:
+-        output = subprocess.Popen([u'dbus-launch'], stdout=subprocess.PIPE).communicate()[0]
++        output = subprocess.Popen([u'dbus-launch'], stdout=subprocess.PIPE).communicate()[0].decode("utf8", errors="replace")
+         lines = output.split(u'\n')
+         for line in lines:
+             parts = line.split(u'=', 1)
