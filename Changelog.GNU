@@ -1,3 +1,120 @@
+2019-11-14  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in translation updates
+    * Prep for 0.8.07
+
+2019-11-13  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in lp:~mterry/duplicity/pydrive-cache-fix
+      - The pydrive backend had another of the ongoing bytes/string issues. :)
+      - This time, it was saving a bytes filename in its internal cache after
+        each volume upload. Then when asked for a list of files later, it
+        would add the byte-filenames from its cache to the results.
+        And we'd end up thinking there were two of the same filename on the backend,
+        which would cause a crash at the end of an otherwise successful backup,
+        because the collections code would assert on the filenames being unique.
+    * Merged in lp:~mterry/duplicity/resume-encrypt-no-pass
+      - This branch arose from a Debian patch that has been disabling the
+        encryption validation of volume1 during restarts for years.
+      - Debian has been preserving the ability to back up with just an encrypt
+        key and no password (i.e. to have no secrets on the backup machine).
+    * Fixed bug #1851727 - InvalidBackendURL for multi backend
+      - Encode to utf8 only on Python2, otherwise leave as unicode
+
+2019-11-12  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Added dist/makesnap to make spaps automagically.
+    * Fixed bug #1851167 with help from Aspen Barnes
+      - Had Popen() to return strings not bytes
+
+2019-11-09  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Added b2sdk to snapcraft.yaml
+    * Fixed bug #1850440 with suggestion from Paolo Montrasio
+      - TypeError: Can't mix strings and bytes in path components
+    * Fixed bug #1850990 with suggestion from Jon Wilson
+      - --s3-use-glacier and --no-encryption cause slow backups
+
+2019-11-05  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in translation updates
+    * Prep for 0.8.06
+
+2019-11-04  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Updated snapcraft.yaml to remove rdiffdir and add libatm1 to stage.
+    * Updated snapcraft.yaml to remove python-lockfile and fix spelling.
+
+2019-11-03  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Updated snapcraft.yaml to include rdiffdir and did some reformatting.
+
+2019-10-28  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Removed file() call in swiftbackend.  It's been deprecated since py2.
+
+2019-10-27  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Revisited bug #1848783 - par2+webdav raises TypeError on Python 3
+      - Fixed so bytes filenames were compared as unicode in re.match()
+
+2019-10-25  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1849661 with patch from Graham Cobb
+      - The problem is that b2backend uses 'quote_plus' on the
+        destination URL without specifying the 'safe' argument as
+        '/'. Note that 'quote' defaults 'safe' to '/', but
+        'quote_plus' does not!
+    * Added additional fsdecode's to uses of local_path.name and
+      source_path.name in b2backend's _get() and _put.  See bug
+      #1847885 for more details.
+    * Removed a couple of disables from pylint code test.
+      - E1103 - Maybe has no member
+      - E0712 - Catching an exception which doesn't inherit from BaseException
+
+2019-10-23  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1848166 - Swift backend fails on string concat
+      - added util.fsdecode() where needed
+
+2019-10-19  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1848783 with patch from Jacob Middag
+      - Don't use byte strings in regex
+
+2019-10-17  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1626061 with patch from Michael Apozyan
+      - While doing multipart upload to s3 we need to report the
+        total size of uploaded data, and not the size of each part
+        individually.  So we need to keep track of all parts
+        uploaded so far and sum it up on the fly.
+
+2019-10-15  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1848203 with patch from Michael Apozyan
+      - convert to integer division
+
+2019-10-12  Adam Jacobs  <alj@boxyfrog.com>
+
+    * Updated b2 backend to work with both v0 and v1 of b2sdk
+    * Fixed bug #1847885 - B2 fails on string concatenation.
+      - use util.fsdecode() to get a string not bytes.
+      - Partially fixed in bug #1843995, this applies same fix to
+        remaining instances of the problem
+
+2019-10-08  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed Resouce warnings when using paramiko.  It turns out
+      that duplicity's ssh_paramiko_backend.py was not handling
+      warning suppression and ended up clearing all warnings,
+      including those that default to off.
+
+2019-10-07  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Removed a setting in tox.ini that causes coverage to
+      be activated during testing duplicity.
+
 2019-10-06  Kenneth Loafman  <kenneth@loafman.com>
 
     * Merged in translation updates

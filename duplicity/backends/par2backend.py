@@ -131,8 +131,8 @@ class Par2Backend(backend.Backend):
 
             if returncode:
                 log.Warn(u"File is corrupt. Try to repair %s" % remote_filename)
-                par2volumes = list(filter(re.compile(b'%s\\.vol[\\d+]*\\.par2' % remote_filename).match,
-                                          self.wrapped_backend._list()))
+                c = re.compile(u'%s\\.vol[\\d+]*\\.par2' % remote_filename)
+                par2volumes = [f for f in self.wrapped_backend._list() if c.match(util.fsdecode(f))]
 
                 for filename in par2volumes:
                     file = par2temp.append(filename)
@@ -161,9 +161,9 @@ class Par2Backend(backend.Backend):
 
         remote_list = self.unfiltered_list()
 
-        c = re.compile(b'%s(?:\\.vol[\\d+]*)?\\.par2' % filename)
+        c = re.compile(u'%s(?:\\.vol[\\d+]*)?\\.par2' % filename)
         for remote_filename in remote_list:
-            if c.match(remote_filename):
+            if c.match(util.fsdecode(remote_filename)):
                 self.wrapped_backend._delete(remote_filename)
 
     def delete_list(self, filename_list):
@@ -172,9 +172,9 @@ class Par2Backend(backend.Backend):
         remote_list = self.unfiltered_list()
 
         for filename in filename_list[:]:
-            c = re.compile(b'%s(?:\\.vol[\\d+]*)?\\.par2' % filename)
+            c = re.compile(u'%s(?:\\.vol[\\d+]*)?\\.par2' % filename)
             for remote_filename in remote_list:
-                if c.match(remote_filename):
+                if c.match(util.fsdecode(remote_filename)):
                     # insert here to make sure par2 files will be removed first
                     filename_list.insert(0, remote_filename)
 
@@ -192,10 +192,10 @@ class Par2Backend(backend.Backend):
         """
         remote_list = self.wrapped_backend._list()
 
-        c = re.compile(b'(?!.*\\.par2$)')
+        c = re.compile(u'(?!.*\\.par2$)')
         filtered_list = []
         for filename in remote_list:
-            if c.match(filename):
+            if c.match(util.fsdecode(filename)):
                 filtered_list.append(filename)
         return filtered_list
 
