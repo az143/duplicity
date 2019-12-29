@@ -1,8 +1,9 @@
-duplicity (0.8.07-2) unstable; urgency=medium
+duplicity (0.8.08-1) unstable; urgency=medium
 
-  * patch test suite for python 3.8 (closes: #945423)
+  * new upstream release
+  * upstream has disabled the test suite (closes: #945423)
 
- -- Alexander Zangerl <az@debian.org>  Mon, 02 Dec 2019 18:17:51 +1000
+ -- Alexander Zangerl <az@debian.org>  Sun, 29 Dec 2019 11:43:53 +1000
 
 duplicity (0.8.07-1) unstable; urgency=medium
 

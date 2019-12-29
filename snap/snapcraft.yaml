@@ -1,5 +1,5 @@
 name: duplicity
-version: 0.8.07
+version: 0.8.08
 summary: Efficient, encrypted backup to local or remote hosts
 description: |
   Duplicity backs directories by producing encrypted tar-format volumes and uploading
@@ -48,7 +48,6 @@ parts:
             - tahoe-lafs            # tahoebackend.py
             - sx                    # sxbackend.py
         python-packages:
-            - b2                    # b2backend.py
             - b2sdk                 # b2backend.py
             - dropbox               # dpbxbackend.py
             - jottalib              # jottalib backend (new in 0.8 series)
