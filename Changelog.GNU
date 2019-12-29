@@ -1,3 +1,56 @@
+2019-12-07  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1854554 with help from Tommy Nguyen
+      - Fixed a typo made during Python 3 conversion.
+
+2019-12-06  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1855379 with patch from Daniel González Gasull
+      - Issue warning on temporary connection loss.
+
+2019-12-05  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in lp:~carlalex/duplicity/duplicity
+      - Fixes bug #1840044: Migrate boto backend to boto3
+      - New module uses boto3+s3:// as schema.
+
+2019-11-25  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1853809 - Tests failing with Python 3.8 / Deprecation warnings
+      - Fixed the deprecation warnings with patch from Sebastien Bacher
+      - Fixed test_globmatch to handle python 3.8 same as 3.7
+      - Fixed tox.ini to include python 3.8 in future tests
+
+2019-11-24  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1853655 - duplicity crashes with --exclude-older-than
+      - The exclusion setup checked for valid string only.  Made
+        the code comprehend datetime (int) as well.
+
+2019-11-20  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1851668 with help from Wolfgang Rohdewald
+      - Applied patches to handle translations.
+
+2019-11-18  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Added build signing to dist/makesnap.
+    * Fixed bug #1852876 '_io.BufferedReader' object has no attribute 'uc_name'
+      - Fixed a couple of instances where str() was used in place of util.uexc()
+      - The file was opened with builtins, so use name, not uc_name
+
+2019-11-16  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1852848 with patch from Tomas Krizek
+      - B2 moved the API from "b2" package into a separate "b2sdk" package.
+        Using the old "b2" package is now deprecated. See link:
+        https://github.com/Backblaze/B2_Command_Line_Tool/blob/master/b2/_sdk_deprecation.py
+      - b2backend.py currently depends on both "b2" and "b2sdk", but use of "b2"
+        is enforced and "b2sdk" isn't used at all.
+      - The attached patch uses "b2sdk" as the primary dependency. If the new
+        "b2sdk" module isn't available, it falls back to using the old "b2" in
+        order to keep backward compatibility with older installations.
+
 2019-11-14  Kenneth Loafman  <kenneth@loafman.com>
 
     * Merged in translation updates

@@ -27,7 +27,7 @@ import socket
 
 
 # The current version of duplicity
-version = u"0.8.07"
+version = u"0.8.08"
 
 # Prefix for all files (appended before type-specific prefixes)
 file_prefix = b""
@@ -199,6 +199,9 @@ s3_use_ia = False
 
 # Whether to use S3 Glacier Storage
 s3_use_glacier = False
+
+# Whether to use S3 Glacier Deep Archive Storage
+s3_use_deep_archive = False
 
 # Whether to use S3 One Zone Infrequent Access Storage
 s3_use_onezone_ia = False
