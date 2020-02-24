@@ -1,4 +1,4 @@
-.TH DUPLICITY 1 "December 08, 2019" "Version 0.8.08" "User Manuals" \"  -*- nroff -*-
+.TH DUPLICITY 1 "$reldate" "Version $version" "User Manuals" \"  -*- nroff -*-
 .\" disable justification (adjust text to left margin only)
 .\" command line examples stay readable through that
 .ad l
@@ -45,7 +45,7 @@ target_url
 target_url
 
 .B duplicity cleanup
-.I [options] [--force] [--extra-clean]
+.I [options] [--force]
 target_url
 
 .B duplicity replicate
@@ -244,7 +244,7 @@ recent backup chain will be kept intact.  Note that
 will be needed to delete the files instead of just listing them.
 
 .TP
-.BI "cleanup " "[--force] [--extra-clean] <url>"
+.BI "cleanup " "[--force] <url>"
 Delete the extraneous duplicity files on the given backend.
 Non-duplicity files, or files in complete data sets will not be
 deleted.  This should only be necessary after a duplicity session
@@ -450,28 +450,6 @@ option, this option does not match files in a directory it matches.
 See the
 .B FILE SELECTION
 section for more information.
-
-.TP
-.BI --extra-clean
-When cleaning up, be more aggressive about saving space.  For example, this
-may delete signature files for old backup chains.
-
-.B Caution:
-Without signature files those old backup chains are unrestorable. Do not
-use --extra-clean unless you know what you're doing.
-
-See the
-.B cleanup
-argument for more information.
-
-.TP
-.BI "--file-changed " path
-This option may be given in collection-status mode, causing only
-.I path
-status to be collect instead of the entire contents of the backup archive.
-.I path
-should be given relative to the root of the directory backed up.
-
 
 .TP
 .BI "--file-prefix, --file-prefix-manifest, --file-prefix-archive, --file-prefix-signature
@@ -1321,13 +1299,16 @@ s3://host[:port]/bucket_name[/prefix]
 .br
 s3+http://bucket_name[/prefix]
 .br
-boto3+s3://bucket_name[/prefix]
+.BR "defaults" " to the legacy boto backend based on boto v2 (last update 2018/07)"
+.br
+.BR "alternatively" " try the newer boto3+s3://bucket_name[/prefix]"
 .PP
-See also
+For details see
 .B "A NOTE ON AMAZON S3"
-and
+and see also
 .B "A NOTE ON EUROPEAN S3 BUCKETS"
 below.
+.RE
 .PP
 .B "SCP/SFTP access"
 .PP

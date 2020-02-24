@@ -1,3 +1,181 @@
+2020-02-14  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed to work around par2 0.8.1 core dump on short name
+      - https://github.com/Parchive/par2cmdline/issues/145
+    * Merged in translation updates
+    * Prep for 0.8.11
+
+2020-02-14  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1857818 - startswith first arg must be bytes
+      - use util.fsdecode on filename
+
+2020-02-13  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1863018 - mediafire backend fails on py3
+      - Fixed handling of bytes filename in url.
+
+2020-02-12  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1236248 - --extra-clean clobbers old backups
+      - Removed --extra-clean, code, and docs
+    * Add rclone requirement to snapcraft.yaml
+
+2020-02-10  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1860405 - Auth mechanism not supported
+      - Added python3-boto3 requirement to snapcraft.yaml
+    * Fixed bug #1862672 - test_log does not respect TMPDIR
+      - Patch supplied by Jan Tojnar.
+
+2020-02-06  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Renamed botobackend.py to s3_boto_backend.py
+
+2020-02-01  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Reworked setup.py to build a pip-compatible
+      distribution tarball of duplicity.
+    * Added dist/makepip for convenience.
+
+2020-01-29  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Adjust Dockerfiles to new requirements.
+    * Fixed bug #1861287 - Removing old backup chains
+      fails using pexpect+sftp
+
+2020-01-27  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Enhance setup.py/cfg to allow install by pip
+
+2020-01-25  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Gave up fighting the fascist version control
+      munging on snapcraft.io.  Duplicity now has the
+      form 0.8.10.1558, where the last number is the
+      bzr revno.  Can't do something nice like having
+      a dev/fin indicator like 0.8.10dev1558 for dev
+      versions and a fin for release or final.
+
+2020-01-23  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in translation updates
+    * Prep for 0.8.10
+
+2020-01-21  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1858207 missing targets in multibackend
+      - Made it possible to return default value instead
+        of taking a fatal exception on an operation by
+        operation approach.  The only use case now is for
+        multibackend to be able to list all targets and
+        report back on the ones that don't work.
+
+2020-01-19  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1858204 - ENODEV should be added to
+      list of recognized error stringa
+
+2020-01-17  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Clean up some TODO tasks in testing code.
+    * Clean up deprecation errors in Python 3.8
+
+2020-01-16  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Move to single-sourceing the package version
+      - Rework setup.py, dist/makedist, dist/makesnap,
+        etc., to get version from duplicity/__init__.py
+      - Drop dist/relfiles.  It was problematic.
+    * Fixed bug #1859877 - syntax warning on python 3.8
+    * Skip functional/test_selection::TestUnicode if
+      python version is less than 3.7.
+
+2020-01-12  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1859304 with patch from Arduous
+      - Backup and restore do not work on SCP backend
+
+2020-01-10  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Removed some unneeded includes of gettext
+
+2020-01-09  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Switched to python3 for snaps.
+    * Fixed bug #1858713 - paramiko socket.timeout
+      - chan.recv() can return bytes or str based on
+        the phase of the moon.  Make allowances.
+
+2020-01-07  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in translation updates
+    * Prep for 0.8.09
+
+2020-01-06  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Add snapcraft login to makesnap
+    * Fixed bug #1858295 - Unicode error in source filename
+      - decode arg if it comes in as bytes
+    * Fixed bug #1855736 again - Duplicity fails to start
+      - remove decode from unicode string
+
+2020-01-02  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fix bytes/string differences in subprocess_popen()
+      - Now returns unicode string not bytes, like python2
+    * Fixed bug #1857734 - TypeError in ssh_paramiko_backend
+      - conn.recv() can return bytes or string, make string
+    * Fixed bug #1858153 with patch from az
+      - mega backend: fails to create directory
+
+2019-12-28  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Convert all shebangs to python3 for bug #1855736
+
+2019-12-26  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1857554 name 'file' is not defined
+      - file() calls replaced by open() in 3 places.
+
+2019-12-20  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Renamed testing/infrastructure to testing/docker
+    * Merged in lp:~ed.so/duplicity/boto.fixup
+      - fix manpage indention
+      - clarify difference between boto backends
+      - add boto+s3:// for future use when boto3+s3://
+        will become default s3 backend
+
+2019-12-15  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed a mess I made.  setup.py was shebanged to
+      Py3, duplicity was shebanged to Py2.  This meant
+      that duplicity ran as Py2 but could not find its
+      modules because they were under Py3.  AArgh!
+
+2019-12-15  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1856447 with hint from Enno L
+      - Replaced with formatted string
+    * Fixed bug #1855736 - duplicity fails to start
+      - Made imports absolute in dup_main.py
+
+2019-12-11  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1855736 with help from Michael Terry
+      - Decode Popen output to utf8
+
+2019-12-09  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1855636 with patch from Filip Slunecko
+      - Wrong buf type returned on error.  Make bytes.
+
+2019-12-08  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in translation updates
+    * Prep for 0.8.08
+
 2019-12-07  Kenneth Loafman  <kenneth@loafman.com>
 
     * Fixed bug #1854554 with help from Tommy Nguyen
@@ -175,9 +353,9 @@
 
 2019-10-05  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Fix bug #1843995 - B2 fails on string concatenation.
+    * Fixed bug #1843995 - B2 fails on string concatenation.
       - use util.fsdecode() to get a string not bytes.
-    * Fix bug #1844750 - RsyncBackend fails if used with multi-backend.
+    * Fixed bug #1844750 - RsyncBackend fails if used with multi-backend.
       - used patch provided by KDM to fix.
     * Fixed bug reported on maillist - Python error in Webdav backend.  See:
       https://lists.nongnu.org/archive/html/duplicity-talk/2019-09/msg00026.html
@@ -200,7 +378,7 @@
 
 2019-09-26  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Sort of fix bugs #1836887 and #1836888 by skipping the
+    * Sort of Fixed bugs #1836887 and #1836888 by skipping the
       tests under question when running on ppc64el machines.
 
 2019-09-22  Kenneth Loafman  <kenneth@loafman.com>
@@ -465,7 +643,7 @@
 
     * Merged in lp:~mgorse/duplicity/0.8-series
       - Python 3 fixes to imapbackend.py
-      - Fix bug 1828869: refresh CollectionsStatus after sync
+      - Fixed bug 1828869: refresh CollectionsStatus after sync
     * Fixed bug #1828662 with patch from Bas Hulsken
       - string.split() had been deprecated in 2, removed in 3.7
 
@@ -497,7 +675,7 @@
       - Removed "pylint: disable=bad-string-format-type" comment, which was throwing
         an error and does not seem to be needed.
     * Removed last mention of copy.com from man page with help from edso.
-    * Fix bug #1811114 with revised onedrivebackend.py from David Martin
+    * Fixed bug #1811114 with revised onedrivebackend.py from David Martin
       - Adapt to new Microsoft Graph API
 
 2019-02-25  Kenneth Loafman  <kenneth@loafman.com>
@@ -896,7 +1074,7 @@
 
 2017-06-02  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Fix bug #1672540 with patch from Benoit Nadeau
+    * Fixed bug #1672540 with patch from Benoit Nadeau
       - Rename would fail to move par files when moving across filesystems.
       - Patch uses shutil.move() to do the rename instead.
 
@@ -1110,7 +1288,7 @@
 
 2016-12-29  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Fix Bug #1642813 with patch from Ravi
+    * Fixed bug #1642813 with patch from Ravi
       - If stat() returns None, don't attempt to set perms.
     * Merged in lp:~breunigs/duplicity/amazondrive3
       - As reported on the mailinglist, if a space is entered while duplicity asks for the URL, it fails.
@@ -1136,7 +1314,7 @@
 
 2016-11-21  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Fix bug using 40-char sign keys, from Richard McGraw on mail list
+    * Fixed bug using 40-char sign keys, from Richard McGraw on mail list
       - Remove truncation of argument and adjust comments
     * Merged in lp:~dernils/duplicity/robust-dropbox-backend
       - Added new command line option --backend-retry-delay
@@ -1328,7 +1506,7 @@
 
 2016-03-07  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Fix bug reported on the mailing list from Mark Grandi (assertion error
+    * Fixed bug reported on the mailing list from Mark Grandi (assertion error
       while backing up).  In file_naming.parse() the filename was being lower
       cased prior to parsing.  If you had used a prefix with mixed case, we
       were writing the file properly, but could not find it in the backend.
@@ -1407,7 +1585,7 @@
 
 2016-02-02  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Fix bug #1540279 - mistake in --help
+    * Fixed bug #1540279 - mistake in --help
 
 2016-01-29  Kenneth Loafman  <kenneth@loafman.com>
 
@@ -1439,16 +1617,16 @@
       - skips Boto's Exception processing for this check
       - dupe of bug #1507109 and bug #1537185
     * Merged in lp:~mifchip/duplicity/duplicity
-      - fix bug #1313964, absolute path doesn't work for FTP
+      - Fixed bug #1313964, absolute path doesn't work for FTP
 
 2016-01-11  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Applied changes from ralle-ubuntu to fix bug 1072130.
+    * Applied changes from ralle-ubuntu to Fixed bug 1072130.
       - duplicity does not support ftpes://
 
 2016-01-10  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Applied patch from abeverly to fix bug #1475890
+    * Applied patch from abeverly to Fixed bug #1475890
       - allow port to be specified along with hostname on S3
       - adjusted help text and man page to reflect the change
     * Undo changes to test_restart.py.  GNU tar is needed.
@@ -1456,7 +1634,7 @@
 
 2016-01-07  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Applied patch from shaochun to fix bug #1531154,
+    * Applied patch from shaochun to Fixed bug #1531154,
       - --file-changed failed when file contains spaces
 
 2016-01-06  Kenneth Loafman  <kenneth@loafman.com>
@@ -1514,13 +1692,13 @@
 
 2015-11-30  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Fix bug #1520691 - Shell Code Injection in hsi backend (2)
+    * Fixed bug #1520691 - Shell Code Injection in hsi backend (2)
       - Added code to expand relative program path to full path.
       - Fix hisbackend where it expected a list not a string.
 
 2015-11-28  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Fix bug #1520691 - Shell Code Injection in hsi backend
+    * Fixed bug #1520691 - Shell Code Injection in hsi backend
       - Replace use of os.popen3() with subprocess equivalent.
 
 2015-11-25  Kenneth Loafman  <kenneth@loafman.com>
@@ -1608,8 +1786,8 @@
 
 2015-09-06  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Fix bug #1493573.  Correct option name in man page.
-    * Fix bug #1494228 CygWin: TypeError: basis_file must be a (true) file
+    * Fixed bug #1493573.  Correct option name in man page.
+    * Fixed bug #1494228 CygWin: TypeError: basis_file must be a (true) file
       - The problem that caused the change to tempfile.TemporaryFile was due
         to the fact that os.tmpfile always creates its file in the system
         temp directory, not in the directory specified.  The fix applied was
@@ -1793,7 +1971,7 @@
 2015-04-20  Kenneth Loafman  <kenneth@loafman.com>
 
     * Merge in lp:~cemsbr/duplicity/duplicity
-      - Fix bug 1432229 in Copy.com backend:
+      - Fixed bug 1432229 in Copy.com backend:
         Reply header has no content-type for JSON detection. Now, we also check
         whether the content starts with '{'.
     * Fixed bug 1444404 with patch from Samu Nuutamo
@@ -1810,17 +1988,17 @@
 
 2015-03-29  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Fix bug 1437789 with patch from pdf
+    * Fixed bug 1437789 with patch from pdf
       - par2backend.py incorrect syntax in get()
 
 2015-03-22  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Fix bug 1434702 with help from Robin Nehls
+    * Fixed bug 1434702 with help from Robin Nehls
       - incorrect response BackendException while downloading signatures file.
 
 2015-03-18  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Fix bug 1432999 with hint from Antoine Afalo.
+    * Fixed bug 1432999 with hint from Antoine Afalo.
       - '/'s at end of destination cause problems with onedrivebackend.
 
 2015-03-13  Kenneth Loafman  <kenneth@loafman.com>
@@ -1859,7 +2037,7 @@
 
 2015-02-12  Kenneth Loafman  <kenneth@loafman.com>
 
-    * Really fix bug 1416344 based on comment #5 by Roman Tereshonkov.
+    * Really Fixed bug 1416344 based on comment #5 by Roman Tereshonkov.
 
 2015-02-09  Kenneth Loafman  <kenneth@loafman.com>
 
@@ -1906,7 +2084,7 @@
       - Aligned commandline.py options and manpage contents.
     * Changed --s3_multipart_max_timeout to --s3-multipart-max-timeout to be
       consistent with commandline option naming conventions.
-    * Applied patch from Adam Reichold to fix bug # 1413792.
+    * Applied patch from Adam Reichold to Fixed bug # 1413792.
 
 2015-01-22  Kenneth Loafman  <kenneth@loafman.com>
 
@@ -1965,7 +2143,7 @@
 2015-01-11  Kenneth Loafman  <kenneth@loafman.com>
 
     * Merged in lp:~9-sa/duplicity/FixBug1408289
-      - Fix bug #1408289
+      - Fixed bug #1408289
       - Wrong attribute name prevented raise of client exception, working now
     * Merged in lp:~noizyland/duplicity/azurebackend
       - Add backend for Azure Blob Storage Service
@@ -2520,7 +2698,7 @@
 2013-11-17  Kenneth Loafman  <kenneth@loafman.com>
 
     * Merged in lp:~verb/duplicity/bucket_root_fix
-      - Fix bug that prevents backing up to the root of a bucket with boto backend.
+      - Fixed bug that prevents backing up to the root of a bucket with boto backend.
     * Merged in lp:~gliptak/duplicity/415619
       - Better error message when chown fails
     * Merged in lp:~mterry/duplicity/log-path-type
@@ -5666,7 +5844,7 @@
 
 2009-07-28  Kenneth Loafman  <kenneth@loafman.com>
 
-    Fix bug 405646 Small i18n error.
+    Fixed bug 405646 Small i18n error.
 
 2009-07-25  Larry Gilbert  <from-launchpad@l2g.to>
 
@@ -5813,7 +5991,7 @@
 
 2009-07-07  Kenneth Loafman  <kenneth@loafman.com>
 
-    Fix Bug #395826 "No such file or directory" when backing up second time
+    Fixed bug #395826 "No such file or directory" when backing up second time
 
 2009-07-06  Kenneth Loafman  <kenneth@loafman.com>
 
@@ -5836,7 +6014,7 @@
 
 2009-07-05  Kenneth Loafman  <kenneth@loafman.com>
 
-    Fix bug #394629 Hang on first collection-status
+    Fixed bug #394629 Hang on first collection-status
 
 2009-07-04  Kenneth Loafman  <kenneth@loafman.com>
 

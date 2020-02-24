@@ -1,8 +1,6 @@
-#!/usr/bin/env python3
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
 #
 # duplicity -- Encrypted bandwidth efficient backup
-# Version $version released $reldate
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -51,24 +49,25 @@ import types
 from datetime import datetime
 from os import statvfs
 
-from . import asyncscheduler
-from . import commandline
-from . import diffdir
-from . import dup_collections
-from . import dup_temp
-from . import dup_time
-from . import errors
-from . import file_naming
-from . import globals
-from . import gpg
-from . import log
-from . import manifest
-from . import patchdir
-from . import path
-from . import progress
-from . import robust
-from . import tempdir
-from . import util
+from duplicity import __version__
+from duplicity import asyncscheduler
+from duplicity import commandline
+from duplicity import diffdir
+from duplicity import dup_collections
+from duplicity import dup_temp
+from duplicity import dup_time
+from duplicity import errors
+from duplicity import file_naming
+from duplicity import globals
+from duplicity import gpg
+from duplicity import log
+from duplicity import manifest
+from duplicity import patchdir
+from duplicity import path
+from duplicity import progress
+from duplicity import robust
+from duplicity import tempdir
+from duplicity import util
 
 
 # If exit_val is not None, exit with given value at end.
@@ -893,7 +892,7 @@ def cleanup(col_stats):
     @rtype: void
     @return: void
     """
-    ext_local, ext_remote = col_stats.get_extraneous(globals.extra_clean)
+    ext_local, ext_remote = col_stats.get_extraneous()
     extraneous = ext_local + ext_remote
     if not extraneous:
         log.Warn(_(u"No extraneous files found, nothing deleted in cleanup."))
@@ -1428,7 +1427,7 @@ def log_startup_parms(verbosity=log.INFO):
     log Python, duplicity, and system versions
     """
     log.Log(u'=' * 80, verbosity)
-    log.Log(u"duplicity $version ($reldate)", verbosity)
+    log.Log(u"duplicity %s" % __version__, verbosity)
     u_args = (util.fsdecode(arg) for arg in sys.argv)
     log.Log(u"Args: %s" % u' '.join(u_args), verbosity)
     log.Log(u' '.join(platform.uname()), verbosity)

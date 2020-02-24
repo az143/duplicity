@@ -36,7 +36,9 @@ import json
 
 import duplicity.backend
 from duplicity.errors import BackendException
+from duplicity import globals
 from duplicity import log
+from duplicity import util
 
 
 class MultiBackend(duplicity.backend.Backend):
@@ -217,7 +219,7 @@ class MultiBackend(duplicity.backend.Backend):
 
     def _eligible_stores(self, filename):
         if self.__affinities:
-            matching_prefixes = [k for k in list(self.__affinities.keys()) if filename.startswith(k)]
+            matching_prefixes = [k for k in list(self.__affinities.keys()) if util.fsdecode(filename).startswith(k)]
             matching_stores = {store for prefix in matching_prefixes for store in self.__affinities[prefix]}
             if matching_stores:
                 # Distinct stores with matching prefix
@@ -301,11 +303,16 @@ class MultiBackend(duplicity.backend.Backend):
     def _list(self):
         lists = []
         for s in self.__stores:
+            globals.are_errors_fatal[u'list'] = (False, [])
             l = s.list()
-            log.Log(_(u"MultiBackend: list from %s: %s")
-                    % (s.backend.parsed_url.url_string, l),
-                    log.DEBUG)
-            lists.append(s.list())
+            log.Notice(_(u"MultiBackend: %s: %d files")
+                       % (s.backend.parsed_url.url_string, len(l)))
+            if len(l) == 0 and duplicity.backend._last_exception:
+                log.Warn(_(u"Exception during list of %s: %s"
+                           % (s.backend.parsed_url.url_string,
+                              util.uexc(duplicity.backend._last_exception))))
+                duplicity.backend._last_exception = None
+            lists.append(l)
         # combine the lists into a single flat list w/o duplicates via set:
         result = list({item for sublist in lists for item in sublist})
         log.Log(_(u"MultiBackend: combined list: %s")
