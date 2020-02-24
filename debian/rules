@@ -4,10 +4,8 @@ PYVERS = $(shell py3versions -rv)
 %:
 	dh $@ --with python3 --buildsystem=pybuild
 
+# test suite is broken.
 override_dh_auto_test:
-# Disabling autotest.  I have run tests on all Ubuntu releases since 18.04, so the code works.
-# To run tests manually, run tox from the main directory.  Maybe LP build will work again soon.
-#      ./setup.py test
 #ifeq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
 #	set -e -x;\
 #	for py in $(PYVERS); do \

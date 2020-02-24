@@ -1,3 +1,9 @@
+duplicity (0.8.11.1596-1) unstable; urgency=medium
+
+  * new upstream version (closes: #947956)
+
+ -- Alexander Zangerl <az@debian.org>  Tue, 25 Feb 2020 10:02:42 +1000
+
 duplicity (0.8.08-1) unstable; urgency=medium
 
   * new upstream release

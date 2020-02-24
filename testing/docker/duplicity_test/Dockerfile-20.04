@@ -19,7 +19,7 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-FROM ubuntu:19.04
+FROM ubuntu:20.04
 
 # Set locale to prevent UTF-8 errors
 ENV LANG C.UTF-8
@@ -42,11 +42,17 @@ RUN apt-get update \
             libssl-dev \
             openssl \
             par2 \
-            python-dev \
+            python2 \
+            python2-dev \
+            python-future \
             python-pip \
+            python3-dev \
+            python3-future \
             python3-pip \
             python3.7 \
             python3.7-dev \
+            python3.8 \
+            python3.8-dev \
             rdiff \
             tzdata  # required for testing/unit/test_statistics.py
 
