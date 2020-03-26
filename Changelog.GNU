@@ -1,3 +1,63 @@
+2020-03-19  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Merged in translation updates
+    * Prep for 0.8.12
+
+2020-03-17  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1867742 - TypeError: fsdecode()
+      takes 1 positional argument but 2 were given
+      with PCA backend
+
+2020-03-16  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1867529 - UnicodeDecodeError: 'ascii'
+      codec can't decode byte 0x85 in position 0:
+      ordinal not in range(128) with PCA
+
+2020-03-15  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1867468 - UnboundLocalError (local
+      variable 'ch_err' referenced before assignment)
+      in ssh_paramiko_backend.py
+
+2020-03-14  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1867435 - TypeError: must be str,
+      not bytes using PCA backend
+    * Fixed bug #1867444 - UnicodeDecodeError: 'ascii'
+      codec can't decode byte 0x85 in position 0:
+      ordinal not in range(128) using PCA backend
+
+2020-03-07  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Cleaned up some setup issues where the man pages
+      and snapcraft.yaml were not getting versioned.
+
+2020-03-06  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1755955 - best order is unclear,
+      of exclude-if-present and exclude-device-files
+      - Removed warning and will now allow these two to
+        be in any order.  If encountered outside of the
+        first two slots, duplicity will silently move
+        them to be in the first two slots.  Within those
+        two slots the order does not matter.
+    * Fixed bug #1769267 - [enhancement] please consider
+      using rclone as backend.
+
+2020-03-03  Kenneth Loafman  <kenneth@loafman.com>
+
+    * Fixed bug #1865648 - module 'multiprocessing.dummy' has
+      no attribute 'cpu_count'.
+      - replaced with module psutil for cpu_count() only
+      - appears Arch Linux does not support multiprocessing
+    * Fixed a couple of file history bugs:
+      - #1044715 Provide a file history feature
+        + removed neutering done between series
+      - #1526557 --file-changed does not work
+        + fixed str/bytes issue finding filename
+
 2020-02-14  Kenneth Loafman  <kenneth@loafman.com>
 
     * Fixed to work around par2 0.8.1 core dump on short name
