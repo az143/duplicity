@@ -1,3 +1,5 @@
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+#
 # Copyright 2013 Germar Reitze <germar.reitze@gmail.com>
 #
 # This file is part of duplicity.
@@ -16,14 +18,12 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-from builtins import filter
-
 import os
 import re
 from duplicity import backend
 from duplicity.errors import BackendException
 from duplicity import log
-from duplicity import globals
+from duplicity import config
 from duplicity import util
 
 
@@ -44,12 +44,12 @@ class Par2Backend(backend.Backend):
 
         self.parsed_url = parsed_url
         try:
-            self.redundancy = globals.par2_redundancy
+            self.redundancy = config.par2_redundancy
         except AttributeError:
             self.redundancy = 10
 
         try:
-            self.common_options = globals.par2_options + u" -q -q"
+            self.common_options = config.par2_options + u" -q -q"
         except AttributeError:
             self.common_options = u"-q -q"
 
@@ -125,8 +125,8 @@ class Par2Backend(backend.Backend):
             self.wrapped_backend._get(par2file.get_filename(), par2file)
 
             par2verify = u'par2 v %s %s %s' % (self.common_options,
-                                               par2file.get_canonical(),
-                                               local_path_temp.get_canonical())
+                                               util.fsdecode(par2file.get_canonical()),
+                                               util.fsdecode(local_path_temp.get_canonical()))
             out, returncode = pexpect.run(par2verify, None, True)
 
             if returncode:
@@ -139,8 +139,8 @@ class Par2Backend(backend.Backend):
                     self.wrapped_backend._get(filename, file)
 
                 par2repair = u'par2 r %s %s %s' % (self.common_options,
-                                                   par2file.get_canonical(),
-                                                   local_path_temp.get_canonical())
+                                                   util.fsdecode(par2file.get_canonical()),
+                                                   util.fsdecode(local_path_temp.get_canonical()))
                 out, returncode = pexpect.run(par2repair, None, True)
 
                 if returncode:

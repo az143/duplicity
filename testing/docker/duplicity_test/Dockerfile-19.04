@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
 #
 # Copyright 2019 Nils Tekampe <nils@tekampe.org>,
 # Kenneth Loafman <kenneth@loafman.com> and Aaron Whitehouse <code@whitehouse.kiwi.nz>
@@ -34,7 +34,7 @@ RUN apt-get update \
     && apt-get install -y \
             2to3 \
             build-essential \
-            bzr \
+            git \
             intltool \
             lftp \
             librsync-dev \
@@ -65,6 +65,7 @@ RUN apt-get install -y \
 
 # Installing requirements w/pip
 COPY requirements.txt /tmp
+RUN pip install --upgrade pip
 RUN pip install --requirement /tmp/requirements.txt
 
 # Delete root's password so we can do 'su -'

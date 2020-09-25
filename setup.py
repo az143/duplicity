@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -23,33 +23,38 @@
 from __future__ import print_function
 
 import os
-import sys
+import re
 import shutil
+import sys
+import time
 
+from distutils.command.build_scripts import build_scripts
+from distutils.command.install_data import install_data
 from setuptools import setup, Extension
-from setuptools.command.test import test
 from setuptools.command.install import install
 from setuptools.command.sdist import sdist
-from distutils.command.build_scripts import build_scripts
+from setuptools.command.test import test
 from subprocess import Popen, PIPE
-
-from duplicity import __version__
 
 
 # check that we can function here
-if not (sys.version_info[:2] >= (3, 6) or (sys.version_info[0] == 2 and sys.version_info[:2] >= (2, 7))):
-    print(u"Sorry, duplicity requires version 2.7 or version 3.6 or later of Python.")
+if not (sys.version_info[:2] >= (3, 5) or (sys.version_info[0] == 2 and sys.version_info[:2] >= (2, 7))):
+    print(u"Sorry, duplicity requires version 2.7 or version 3.5 or later of Python.")
     sys.exit(1)
 
 
-# get version string, major.minor.bug.revno
-try:
-    bzr = Popen([u"bzr", u"revno"], stdout=PIPE, universal_newlines=True)
-    revno = bzr.communicate()[0].split()[0].strip()
-except Exception:
-    revno = u'0'
+scm_version_args = {
+    u'tag_regex': r'^(?P<prefix>rel.)?(?P<version>[^\+]+)(?P<suffix>.*)?$',
+    u'local_scheme': u'no-local-version',
+    }
 
-version_string = __version__ + u'.' + revno
+try:
+    from setuptools_scm import get_version
+    Version = get_version(**scm_version_args)
+except Exception as e:
+    Version = u"0.8.15"
+    print(u"Unable to get SCM version: defaulting to %s" % (Version,))
+Reldate = time.strftime(u"%B %d, %Y", time.localtime())
 
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
@@ -88,7 +93,7 @@ def get_data_files():
                 u'bin/rdiffdir.1'
                 ]
             ),
-            (u'share/doc/duplicity-%s' % version_string,
+            (u'share/doc/duplicity-%s' % Version,
                 [
                 u'AUTHORS',
                 u'CHANGELOG',
@@ -130,6 +135,56 @@ def get_data_files():
     return data_files
 
 
+def VersionedCopy(source, dest):
+    u"""
+    Copy source to dest, substituting $version with version
+    $reldate with today's date, i.e. December 28, 2008.
+    """
+    with open(source, u"rt") as fd:
+        buffer = fd.read()
+
+    buffer = re.sub(u"\$version", Version, buffer)
+    buffer = re.sub(u"\$reldate", Reldate, buffer)
+
+    with open(dest, u"wt") as fd:
+        fd.write(buffer)
+
+
+class SdistCommand(sdist):
+
+    def run(self):
+        sdist.run(self)
+
+        orig = u"%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
+        tardir = u"duplicity-%s" % (Version)
+        tarfile = u"%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
+
+        assert not os.system(u"tar xf %s" % orig)
+        assert not os.remove(orig)
+
+        # make sure executables are
+        assert not os.chmod(os.path.join(tardir, u"setup.py"), 0o755)
+        assert not os.chmod(os.path.join(tardir, u"bin", u"duplicity"), 0o755)
+        assert not os.chmod(os.path.join(tardir, u"bin", u"rdiffdir"), 0o755)
+
+        # recopy the unversioned files and add correct version
+        VersionedCopy(os.path.join(u"bin", u"duplicity.1"),
+                      os.path.join(tardir, u"bin", u"duplicity.1"))
+        VersionedCopy(os.path.join(u"bin", u"rdiffdir.1"),
+                      os.path.join(tardir, u"bin", u"rdiffdir.1"))
+        VersionedCopy(os.path.join(u"duplicity", u"__init__.py"),
+                      os.path.join(tardir, u"duplicity", u"__init__.py"))
+        VersionedCopy(os.path.join(u"snap", u"snapcraft.yaml"),
+                      os.path.join(tardir, u"snap", u"snapcraft.yaml"))
+
+        # set COPYFILE_DISABLE to disable appledouble file creation
+        os.environ[u'COPYFILE_DISABLE'] = u'true'
+
+        # make the new tarfile and remove tardir
+        assert not os.system(u"tar czf %s %s" % (tarfile, tardir))
+        assert not shutil.rmtree(tardir)
+
+
 class TestCommand(test):
 
     def run(self):
@@ -166,16 +221,31 @@ class InstallCommand(install):
         self.run_command(u'build')
         self.skip_build = True
 
-        # This should always be true, but just to make sure!
+        # remove testing dir
         top_dir = os.path.dirname(os.path.abspath(__file__))
         if self.build_lib != top_dir:
             testing_dir = os.path.join(self.build_lib, u'testing')
-            os.system(u"rm -rf %s" % testing_dir)
+            shutil.rmtree(testing_dir)
 
         install.run(self)
 
 
-class BSCommand (build_scripts):
+class InstallDataCommand(install_data):
+
+    def run(self):
+        install_data.run(self)
+
+        # version the man pages
+        for tup in self.data_files:
+            base, filenames = tup
+            if base == u'share/man/man1':
+                for fn in filenames:
+                    fn = os.path.split(fn)[-1]
+                    path = os.path.join(self.install_dir, base, fn)
+                    VersionedCopy(path, path)
+
+
+class BuildScriptsCommand(build_scripts):
     u'''Build but don't touch my shebang!'''
 
     def run(self):
@@ -221,7 +291,7 @@ with open(u"README") as fh:
 
 
 setup(name=u"duplicity",
-    version=version_string,
+    version=Version,
     description=u"Encrypted backup using rsync algorithm",
     long_description=long_description,
     long_description_content_type=u"text/plain",
@@ -230,7 +300,7 @@ setup(name=u"duplicity",
     maintainer=u"Kenneth Loafman <kenneth@loafman.com>",
     maintainer_email=u"kenneth@loafman.com",
     url=u"http://duplicity.nongnu.org/index.html",
-    python_requires=u">2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, <4",
+    python_requires=u">2.6, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4",
     platforms=[u"any"],
     packages=[
         u"duplicity",
@@ -248,12 +318,17 @@ setup(name=u"duplicity",
     ext_modules=ext_modules,
     scripts=[
         u"bin/rdiffdir",
-        u"bin/duplicity"
+        u"bin/duplicity",
         ],
     data_files=get_data_files(),
+    include_package_data=True,
+    setup_requires=[
+        u"setuptools",
+        u"setuptools_scm",
+        ],
     install_requires=[
         u"fasteners",
-        u"future"
+        u"future",
         ],
     tests_require=[
         u"fasteners",
@@ -265,8 +340,10 @@ setup(name=u"duplicity",
         ],
     test_suite=u"testing",
     cmdclass={
-        u"build_scripts": BSCommand,
+        u"build_scripts": BuildScriptsCommand,
         u"install": InstallCommand,
+        u"install_data": InstallDataCommand,
+        u"sdist": SdistCommand,
         u"test": TestCommand,
         },
     classifiers=[
@@ -279,6 +356,7 @@ setup(name=u"duplicity",
         u"Programming Language :: Python :: 2",
         u"Programming Language :: Python :: 2.7",
         u"Programming Language :: Python :: 3",
+        u"Programming Language :: Python :: 3.5",
         u"Programming Language :: Python :: 3.6",
         u"Programming Language :: Python :: 3.7",
         u"Programming Language :: Python :: 3.8",

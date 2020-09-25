@@ -5,6 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    duplicity.backends
 
@@ -12,11 +13,13 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 4
 
    duplicity.asyncscheduler
    duplicity.backend
    duplicity.cached_ops
    duplicity.commandline
+   duplicity.config
    duplicity.diffdir
    duplicity.dup_collections
    duplicity.dup_main
@@ -26,7 +29,6 @@ Submodules
    duplicity.errors
    duplicity.file_naming
    duplicity.filechunkio
-   duplicity.globals
    duplicity.globmatch
    duplicity.gpg
    duplicity.gpginterface

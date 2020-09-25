@@ -1,3 +1,4 @@
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
 #
 # Copyright (c) 2015 Matthew Bentley
 #
@@ -22,19 +23,18 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from builtins import object
 from future import standard_library
 standard_library.install_aliases()
+from builtins import object
 
-import os
-import hashlib
 from urllib.parse import quote_plus  # pylint: disable=import-error
 
-import duplicity.backend
-from duplicity.errors import BackendException, FatalBackendException
 from duplicity import log
 from duplicity import progress
 from duplicity import util
+from duplicity import config
+from duplicity.errors import BackendException, FatalBackendException
+import duplicity.backend
 
 
 class B2ProgressListener(object):
@@ -119,7 +119,7 @@ class B2Backend(duplicity.backend.Backend):
                                     util.fsdecode(local_path.name)),
                 log.INFO)
         self.bucket.download_file_by_name(quote_plus(self.path + util.fsdecode(remote_filename), u'/'),
-                                          DownloadDestLocalFile(util.fsdecode(local_path.name)))
+                                          DownloadDestLocalFile(local_path.name))
 
     def _put(self, source_path, remote_filename):
         u"""
@@ -144,9 +144,14 @@ class B2Backend(duplicity.backend.Backend):
         u"""
         Delete filename from remote server
         """
-        log.Log(u"Delete: %s" % self.path + util.fsdecode(filename), log.INFO)
-        file_version_info = self.file_info(quote_plus(self.path + util.fsdecode(filename), u'/'))
-        self.bucket.delete_file_version(file_version_info.id_, file_version_info.file_name)
+        full_filename = self.path + util.fsdecode(filename)
+        log.Log(u"Delete: %s" % full_filename, log.INFO)
+
+        if config.b2_hide_files:
+            self.bucket.hide_file(full_filename)
+        else:
+            file_version_info = self.file_info(quote_plus(full_filename, u'/'))
+            self.bucket.delete_file_version(file_version_info.id_, file_version_info.file_name)
 
     def _query(self, filename):
         u"""
