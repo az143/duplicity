@@ -1,10 +1,9 @@
-duplicity-src8
-==============
+duplicity-git
+=============
 
 .. toctree::
    :maxdepth: 4
 
-   compilec
    duplicity
    setup
    testing

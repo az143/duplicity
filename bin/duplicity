@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
 #
 # duplicity -- Encrypted bandwidth efficient backup
 #
@@ -29,27 +29,10 @@
 from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
-from builtins import filter
-from builtins import map
-from builtins import next
-from builtins import object
-from builtins import range
 
-import copy
-import fasteners
-import gzip
+import json
 import os
-import platform
-import re
-import resource
 import sys
-import time
-import traceback
-import types
-
-
-from datetime import datetime
-from os import statvfs
 
 from duplicity.dup_main import main
 import duplicity.errors
@@ -61,8 +44,29 @@ from duplicity import util
 
 
 if u'--pydevd' in sys.argv or os.getenv(u'PYDEVD', None):
+    # modify this for your configuration.
+    # client = base path in machine that Liclipse is on
+    # server = base path in machine that duplicity is on
+    client = u'/Users/ken/workspace/duplicity-git'
+    server = u'/home/ken/workspace/duplicity-git'
+
+    # relative paths under duplicity root
+    duppaths = [
+        u'',
+        u'bin',
+        u'duplicity',
+        u'duplicity/backends',
+        u'testing',
+        u'testing/functional',
+        u'testing/unit',
+    ]
+    pathlist = [(os.path.normpath(os.path.join(client, p)),
+                 os.path.normpath(os.path.join(server, p))) for p in duppaths]
+    os.environ[u'PATHS_FROM_ECLIPSE_TO_PYTHON'] = json.dumps(pathlist)
+
     import pydevd  # pylint: disable=import-error
-    pydevd.settrace()
+    pydevd.settrace(u'dione.local', port=5678, stdoutToServer=True, stderrToServer=True)
+
     # In a dev environment the path is screwed so fix it.
     base = sys.path.pop(0)
     base = base.split(os.path.sep)[:-1]

@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
 #
 # Copyright 2017 Tomas Vondra (Launchpad id: tomas-v)
 # Copyright 2017 Kenneth Loafman <kenneth@loafman.com>
@@ -22,11 +22,7 @@
 from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
-from builtins import str
-from builtins import range
-from builtins import object
 
-from duplicity import log
 from duplicity import util
 from duplicity.errors import BackendException
 import duplicity.backend
@@ -102,16 +98,18 @@ class MegaBackend(duplicity.backend.Backend):
         u'uploads file to Mega (deletes it first, to ensure it does not exist)'
 
         try:
-            self.delete(remote_filename)
+            self.delete(util.fsdecode(remote_filename))
         except Exception:
             pass
 
-        self.upload(local_file=source_path.get_canonical(), remote_file=remote_filename)
+        self.upload(local_file=util.fsdecode(source_path.get_canonical()),
+                    remote_file=util.fsdecode(remote_filename))
 
     def _get(self, remote_filename, local_path):
         u'downloads file from Mega'
 
-        self.download(remote_file=remote_filename, local_file=local_path.name)
+        self.download(remote_file=util.fsdecode(remote_filename),
+                      local_file=util.fsdecode(local_path.name))
 
     def _list(self):
         u'list files in the backup folder'
@@ -121,7 +119,7 @@ class MegaBackend(duplicity.backend.Backend):
     def _delete(self, filename):
         u'deletes remote '
 
-        self.delete(remote_file=filename)
+        self.delete(remote_file=util.fsdecode(filename))
 
     def folder_contents(self, files_only=False):
         u'lists contents of a folder, optionally ignoring subdirectories'
@@ -134,7 +132,7 @@ class MegaBackend(duplicity.backend.Backend):
             cmd = [u'megals', u'-u', self._username, u'-p', self._password, self._folder]
 
         files = subprocess.check_output(cmd)
-        files = files.strip().split(u'\n')
+        files = util.fsdecode(files.strip()).split(u'\n')
 
         # remove the folder name, including the path separator
         files = [f[len(self._folder) + 1:] for f in files]
@@ -169,7 +167,16 @@ class MegaBackend(duplicity.backend.Backend):
             cmd = [u'megaput', u'-u', self._username, u'-p', self._password, u'--no-progress',
                    u'--path', self._folder + u'/' + remote_file, local_file]
 
-        self.subprocess_popen(cmd)
+        try:
+            self.subprocess_popen(cmd)
+        except Exception as e:
+            error_str = str(e)
+            if u"EOVERQUOTA" in error_str:
+                raise BackendException(u"MEGA account over quota, could not write file : '%s' . "
+                                       u"Upgrade your storage at https://mega.nz/pro or remove some data." %
+                                       (remote_file,))
+            else:
+                raise BackendException(u"Failed writing file '%s' to MEGA , reason : '%s'" % (remote_file, e))
 
     def delete(self, remote_file):
 

@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -39,7 +39,7 @@ import warnings
 from binascii import hexlify
 
 import duplicity.backend
-from duplicity import globals
+from duplicity import config
 from duplicity import util
 from duplicity.errors import BackendException
 
@@ -204,7 +204,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
             self.config.update({u'port': 22})
         # parse ssh options for alternative ssh private key, identity file
         m = re.search(r"^(?:.+\s+)?(?:-oIdentityFile=|-i\s+)(([\"'])([^\\2]+)\\2|[\S]+).*",
-                      globals.ssh_options)
+                      config.ssh_options)
         if (m is not None):
             keyfilename = m.group(3) if m.group(3) else m.group(1)
             self.config[u'identityfile'] = keyfilename
@@ -227,7 +227,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
             self.config[u'identityfile'] = None
 
         # get password, enable prompt if askpass is set
-        self.use_getpass = globals.ssh_askpass
+        self.use_getpass = config.ssh_askpass
         # set url values for beautiful login prompt
         parsed_url.username = self.config[u'user']
         parsed_url.hostname = self.config[u'hostname']
@@ -246,7 +246,7 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
                 self.config[u'user'],
                 self.config[u'hostname'],
                 self.config[u'port'], e))
-        self.client.get_transport().set_keepalive((int)(globals.timeout / 2))
+        self.client.get_transport().set_keepalive((int)(config.timeout / 2))
 
         self.scheme = duplicity.backend.strip_prefix(parsed_url.scheme,
                                                      u'paramiko')
@@ -295,12 +295,12 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
 
     def _put(self, source_path, remote_filename):
         # remote_filename is a byte object, not str or unicode
-        remote_filename = remote_filename.decode(u"utf-8")
+        remote_filename = util.fsdecode(remote_filename)
         if self.use_scp:
             f = open(source_path.name, u'rb')
             try:
                 chan = self.client.get_transport().open_session()
-                chan.settimeout(globals.timeout)
+                chan.settimeout(config.timeout)
                 # scp in sink mode uses the arg as base directory
                 chan.exec_command(u"scp -t '%s'" % self.remote_dir)
             except Exception as e:
@@ -328,11 +328,11 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
 
     def _get(self, remote_filename, local_path):
         # remote_filename is a byte object, not str or unicode
-        remote_filename = remote_filename.decode(u"utf-8")
+        remote_filename = util.fsdecode(remote_filename)
         if self.use_scp:
             try:
                 chan = self.client.get_transport().open_session()
-                chan.settimeout(globals.timeout)
+                chan.settimeout(config.timeout)
                 chan.exec_command(u"scp -f '%s/%s'" % (self.remote_dir,
                                                        remote_filename))
             except Exception as e:
@@ -385,6 +385,8 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
             return self.sftp.listdir()
 
     def _delete(self, filename):
+        # filename is a byte object, not str or unicode
+        filename = util.fsdecode(filename)
         # In scp mode unavoidable quoting issues will cause failures if
         # filenames containing single quotes are encountered.
         if self.use_scp:
@@ -398,13 +400,13 @@ Are you sure you want to continue connecting (yes/no)? """ % (hostname,
         command and returns stdout of command. throws an exception if exit
         code!=0 and not ignored"""
         try:
-            ch_in, ch_out, ch_err = self.client.exec_command(cmd, -1, globals.timeout)
+            ch_in, ch_out, ch_err = self.client.exec_command(cmd, -1, config.timeout)
             output = ch_out.read(-1)
             return output
         except Exception as e:
             if not ignoreexitcode:
                 raise BackendException(u"%sfailed: %s \n %s" % (
-                    errorprefix, cmd, uti))
+                    errorprefix, cmd, util.uexc(e)))
 
     def gethostconfig(self, file, host):
         file = os.path.expanduser(file)

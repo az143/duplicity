@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -29,29 +29,28 @@ associates stat information with filenames
 from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
-from builtins import filter
 from builtins import str
 from builtins import object
 
-import stat
 import errno
-import socket
-import time
-import re
 import gzip
+import os
+import re
 import shutil
-import sys
+import socket
+import stat
+import time
 
-from duplicity import tarfile
-from duplicity import file_naming
-from duplicity import globals
-from duplicity import gpg
-from duplicity import util
-from duplicity import librsync
-from duplicity import log  # @UnusedImport
-from duplicity import dup_time
 from duplicity import cached_ops
-from duplicity.lazy import *  # @UnusedWildImport
+from duplicity import config
+from duplicity import dup_time
+from duplicity import file_naming
+from duplicity import gpg
+from duplicity import librsync
+from duplicity import log
+from duplicity import tarfile
+from duplicity import util
+from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
 _copy_blocksize = 64 * 1024
 _tmp_path_counter = 1
@@ -75,7 +74,7 @@ class ROPath(object):
     have a name.  They are required to be indexed though.
 
     """
-    def __init__(self, index, stat=None):
+    def __init__(self, index, stat=None):  # pylint: disable=unused-argument
         u"""ROPath initializer"""
         self.opened, self.fileobj = None, None
         self.index = index
@@ -99,7 +98,7 @@ class ROPath(object):
         elif stat.S_ISSOCK(st_mode):
             raise PathException(util.fsdecode(self.get_relative_path()) +
                                 u"is a socket, unsupported by tar")
-            self.type = u"sock"
+            self.type = u"sock"  # pylint: disable=unreachable
         elif stat.S_ISCHR(st_mode):
             self.type = u"chr"
         elif stat.S_ISBLK(st_mode):
@@ -196,7 +195,7 @@ class ROPath(object):
     def init_from_tarinfo(self, tarinfo):
         u"""Set data from tarinfo object (part of tarfile module)"""
         # Set the typepp
-        type = tarinfo.type
+        type = tarinfo.type  # pylint: disable=redefined-builtin
         if type == tarfile.REGTYPE or type == tarfile.AREGTYPE:
             self.type = u"reg"
         elif type == tarfile.LNKTYPE:
@@ -222,19 +221,20 @@ class ROPath(object):
         self.mode = tarinfo.mode
         self.stat = StatResult()
 
-        u""" Set user and group id
+        u""" If do_not_restore_owner is False,
+        set user and group id
         use numeric id if name lookup fails
         OR
         --numeric-owner is set
         """
         try:
-            if globals.numeric_owner:
+            if config.numeric_owner:
                 raise KeyError
             self.stat.st_uid = cached_ops.getpwnam(tarinfo.uname)[2]
         except KeyError:
             self.stat.st_uid = tarinfo.uid
         try:
-            if globals.numeric_owner:
+            if config.numeric_owner:
                 raise KeyError
             self.stat.st_gid = cached_ops.getgrnam(tarinfo.gname)[2]
         except KeyError:
@@ -457,7 +457,8 @@ class ROPath(object):
             os.mkdir(other.name)
         elif self.issym():
             os.symlink(self.symtext, other.name)
-            os.lchown(other.name, self.stat.st_uid, self.stat.st_gid)
+            if not config.do_not_restore_ownership:
+                os.lchown(other.name, self.stat.st_uid, self.stat.st_gid)
             other.setdata()
             return  # no need to copy symlink attributes
         elif self.isfifo():
@@ -475,7 +476,7 @@ class ROPath(object):
     def copy_attribs(self, other):
         u"""Only copy attributes from self to other"""
         if isinstance(other, Path):
-            if self.stat is not None:
+            if self.stat and not config.do_not_restore_ownership:
                 util.maybe_ignore_errors(lambda: os.chown(other.name, self.stat.st_uid, self.stat.st_gid))
             util.maybe_ignore_errors(lambda: os.chmod(other.name, self.mode))
             util.maybe_ignore_errors(lambda: os.utime(other.name, (time.time(), self.stat.st_mtime)))
@@ -504,15 +505,15 @@ class Path(ROPath):
     regex_chars_to_quote = re.compile(u"[\\\\\\\"\\$`]")
 
     def rename_index(self, index):
-        if not globals.rename or not index:
+        if not config.rename or not index:
             return index  # early exit
         path = os.path.normcase(os.path.join(*index))
         tail = []
-        while path and path not in globals.rename:
+        while path and path not in config.rename:
             path, extra = os.path.split(path)
             tail.insert(0, extra)
         if path:
-            return globals.rename[path].split(os.sep) + tail
+            return config.rename[path].split(util.fsencode(os.sep)) + tail
         else:
             return index  # no rename found
 
@@ -543,7 +544,7 @@ class Path(ROPath):
         try:
             # We may be asked to look at the target of symlinks rather than
             # the link itself.
-            if globals.copy_links:
+            if config.copy_links:
                 self.stat = os.stat(self.name)
             else:
                 self.stat = os.lstat(self.name)
@@ -591,7 +592,7 @@ class Path(ROPath):
             result = open(self.name, mode)
         return result
 
-    def makedev(self, type, major, minor):
+    def makedev(self, type, major, minor):  # pylint: disable=redefined-builtin
         u"""Make a device file with specified type, major/minor nums"""
         cmdlist = [u'mknod', self.name, type, str(major), str(minor)]
         if os.spawnvp(os.P_WAIT, u'mknod', cmdlist) != 0:
@@ -604,7 +605,7 @@ class Path(ROPath):
         try:
             os.makedirs(self.name)
         except OSError:
-            if (not globals.force):
+            if (not config.force):
                 raise PathException(u"Error creating directory %s" % self.uc_name, 7)
         self.setdata()
 
@@ -786,7 +787,7 @@ class DupPath(Path):
         Return fileobj with appropriate encryption/compression
 
         If encryption is specified but no gpg_profile, use
-        globals.default_profile.
+        config.default_profile.
         """
         assert not self.opened and not self.fileobj
         assert not (self.pr.encrypted and self.pr.compressed)
@@ -797,7 +798,7 @@ class DupPath(Path):
             return gzip.GzipFile(self.name, mode)
         elif self.pr.encrypted:
             if not gpg_profile:
-                gpg_profile = globals.gpg_profile
+                gpg_profile = config.gpg_profile
             if mode == u"rb":
                 return gpg.GPGFile(False, self, gpg_profile)
             elif mode == u"wb":
@@ -808,14 +809,14 @@ class DupPath(Path):
 
 class PathDeleter(ITRBranch):
     u"""Delete a directory.  Called by Path.deltree"""
-    def start_process(self, index, path):
+    def start_process(self, index, path):  # pylint: disable=unused-argument
         self.path = path
 
     def end_process(self):
         self.path.delete()
 
-    def can_fast_process(self, index, path):
+    def can_fast_process(self, index, path):  # pylint: disable=unused-argument
         return not path.isdir()
 
-    def fast_process(self, index, path):
+    def fast_process(self, index, path):  # pylint: disable=unused-argument
         path.delete()
