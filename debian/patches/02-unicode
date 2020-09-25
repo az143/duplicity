@@ -3,16 +3,15 @@ Subject: fix unicode decode-does-encode-and-fail problems with iso8859 locales
 
 --- a/bin/duplicity
 +++ b/bin/duplicity
-@@ -39,6 +39,12 @@ import copy
- import fasteners
- import gzip
+@@ -32,6 +32,11 @@ standard_library.install_aliases()
+ 
+ import json
  import os
 +
 +# override locale to avoid bug #682837, until
 +# the logger finally deals with locales cleanly
 +os.environ['LC_ALL']="POSIX"
 +
-+
- import platform
- import re
- import resource
+ import sys
+ 
+ from duplicity.dup_main import main

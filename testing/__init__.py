@@ -91,13 +91,16 @@ class DuplicityTestCase(unittest.TestCase):
             self._update_env(key, self.savedEnviron[key])
         for key in self.savedConfig:
             setattr(config, key, self.savedConfig[key])
+        os.system(u"chmod -R a+rwx testfiles 2>/dev/null")
         assert not os.system(u"rm -rf testfiles")
         super(DuplicityTestCase, self).tearDown()
 
     def unpack_testfiles(self):
+        os.system(u"chmod -R a+rwx testfiles 2>/dev/null")
         assert not os.system(u"rm -rf testfiles")
         assert not os.system(u"tar xzf testfiles.tar.gz > /dev/null 2>&1")
         assert not os.system(u"mkdir testfiles/output testfiles/cache")
+
 
     def _update_env(self, key, value):
         if value is not None:

@@ -138,7 +138,7 @@ class GPGTest(UnitTestCase):
         decrypted_file.close()
         sig = decrypted_file.get_signature()
         assert sig == self.sign_key, sig
-
+    @unittest.skip("Flaky test because it relies on compressed size of random bytes")
     @unittest.skipIf(u"ppc64el" in platform.machine(), u"Skip on ppc64el machines")
     def test_GPGWriteFile(self):
         u"""Test GPGWriteFile"""
@@ -155,6 +155,7 @@ class GPGTest(UnitTestCase):
                          profile, size=size)
         # print os.stat("testfiles/output/gpgwrite.gpg").st_size
 
+    @unittest.skip("Flaky test because it relies on compressed size of random bytes")
     def test_GzipWriteFile(self):
         u"""Test GzipWriteFile"""
         size = 400 * 1000
