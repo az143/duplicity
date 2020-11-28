@@ -25,7 +25,6 @@ import duplicity
 
 class TestExc(unittest.TestCase):
 
-    @unittest.skip("Doesn't seem to work with python2.x")
     def test_uexc(self):
 
         e = Exception(u'test')

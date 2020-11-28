@@ -1,4 +1,4 @@
-.TH DUPLICITY 1 "July 27, 2020" "Version 0.8.15" "User Manuals" \"  -*- nroff -*-
+.TH DUPLICITY 1 "November 11, 2020" "Version 0.8.17" "User Manuals" \"  -*- nroff -*-
 .\" disable justification (adjust text to left margin only)
 .\" command line examples stay readable through that
 .ad l
@@ -1230,7 +1230,7 @@ file://[relative|/absolute]/local/path
 .BR "FISH" " (Files transferred over Shell protocol) over ssh"
 .PP
 .RS
-fish://user[:pwd]@other.host[:port]/[relative|/absolute]_path
+fish://user[:password]@other.host[:port]/[relative|/absolute]_path
 .RE
 .PP
 .B "FTP"
@@ -1362,7 +1362,7 @@ below.
 .RS
 scp://.. or
 .br
-sftp://user[:pwd]@other.host[:port]/[relative|/absolute]_path
+sftp://user[:password]@other.host[:port]/[relative|/absolute]_path
 .PP
 .BR "defaults" " are paramiko+scp:// and paramiko+sftp://"
 .br
@@ -2351,7 +2351,7 @@ error message.
 
 .SH OPERATION AND DATA FORMATS
 This section describes duplicity's basic operation and the format of
-its data files.  It should not be necessary to read this section to use
+its data files.  It should not necessary to read this section to use
 duplicity.
 
 The files used by duplicity to store backup data are tarfiles in GNU

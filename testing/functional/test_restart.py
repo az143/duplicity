@@ -137,7 +137,6 @@ class RestartTest(FunctionalTestCase):
         self.backup(u"full", u"testfiles/largefiles")
         self.verify(u"testfiles/largefiles")
 
-    @unittest.skip("Flaky test because it relies on knowing how many volumes the source files will be split into")
     @unittest.skipIf(u"ppc64el" in platform.machine(), u"Skip on ppc64el machines")
     def test_last_file_missing_at_end(self):
         u"""

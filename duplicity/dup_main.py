@@ -174,14 +174,14 @@ def get_passphrase(n, action, for_signing=False):
                     if use_cache and config.gpg_profile.passphrase:
                         pass1 = config.gpg_profile.passphrase
                     else:
-                        pass1 = getpass_safe(_(u"GnuPG passphrase for decryption:") + u" ")
+                        pass1 = getpass_safe(_(u"GnuPG passphrase:") + u" ")
 
             if n == 1:
                 pass2 = pass1
             elif for_signing:
                 pass2 = getpass_safe(_(u"Retype passphrase for signing key to confirm: "))
             else:
-                pass2 = getpass_safe(_(u"Retype passphrase for decryption to confirm: "))
+                pass2 = getpass_safe(_(u"Retype passphrase to confirm: "))
 
             if not pass1 == pass2:
                 log.Log(_(u"First and second passphrases do not match!  Please try again."),
@@ -748,6 +748,10 @@ def restore_get_patched_rop_iter(col_stats):
         u"""Get file object iterator from backup_set contain given index"""
         manifest = backup_set.get_manifest()
         volumes = manifest.get_containing_volumes(index)
+
+        if hasattr(backup_set.backend.backend, u'pre_process_download_batch'):
+            backup_set.backend.backend.pre_process_download_batch(backup_set.volume_name_dict.values())
+
         for vol_num in volumes:
             yield restore_get_enc_fileobj(backup_set.backend,
                                           backup_set.volume_name_dict[vol_num],
@@ -1601,8 +1605,6 @@ def do_backup(action):
         log.Notice(_(u"Last full backup is too old, forcing full backup"))
         action = u"full"
     log.PrintCollectionStatus(col_stats)
-
-    os.umask(0o77)
 
     # get the passphrase if we need to based on action/options
     config.gpg_profile.passphrase = get_passphrase(1, action)

@@ -406,7 +406,7 @@ class ROPath(object):
             else:
                 return 1
         elif self.issym():
-            if self.symtext == other.symtext or self.symtext + u"/" == other.symtext:
+            if self.symtext == other.symtext or self.symtext + util.fsencode(os.sep) == other.symtext:
                 return 1
             else:
                 log_diff(_(u"Symlink %%s points to %s, expected %s") %
@@ -577,6 +577,14 @@ class Path(ROPath):
     def isemptydir(self):
         u"""Return true if path is a directory and is empty"""
         return self.isdir() and not self.listdir()
+
+    def contains(self, child):
+        u"""Return true if path is a directory and contains child"""
+        if isinstance(child, u"".__class__):
+            child = util.fsencode(child)
+        # We don't use append(child).exists() here because that requires exec
+        # permissions as well as read. listdir() just needs read permissions.
+        return self.isdir() and child in self.listdir()
 
     def open(self, mode=u"rb"):
         u"""

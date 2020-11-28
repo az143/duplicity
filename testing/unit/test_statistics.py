@@ -62,7 +62,6 @@ class StatsObjTest(UnitTestCase):
         s1 = StatsDeltaProcess()
         assert s1.get_stat(u'SourceFiles') == 0
 
-    @unittest.skip("TZ setting seems to fail under sbuild, #880251")
     def test_get_stats_string(self):
         u"""Test conversion of stat object into string"""
         s = StatsObj()
