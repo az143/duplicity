@@ -49,10 +49,10 @@ scm_version_args = {
     }
 
 try:
-    from setuptools_scm import get_version
+    from setuptools_scm import get_version  # pylint: disable=import-error
     Version = get_version(**scm_version_args)
 except Exception as e:
-    Version = u"0.8.15"
+    Version = u"0.8.17"
     print(u"Unable to get SCM version: defaulting to %s" % (Version,))
 Reldate = time.strftime(u"%B %d, %Y", time.localtime())
 
@@ -96,13 +96,12 @@ def get_data_files():
             (u'share/doc/duplicity-%s' % Version,
                 [
                 u'AUTHORS',
-                u'CHANGELOG',
-                u'Changelog.GNU',
+                u'CHANGELOG.md',
                 u'COPYING',
-                u'README',
-                u'README-LOG',
-                u'README-REPO',
-                u'README-TESTING',
+                u'README.md',
+                u'README-LOG.md',
+                u'README-REPO.md',
+                u'README-TESTING.md',
                 ],
             ),
         ]
@@ -159,7 +158,7 @@ class SdistCommand(sdist):
         tardir = u"duplicity-%s" % (Version)
         tarfile = u"%s/duplicity-%s.tar.gz" % (self.dist_dir, Version)
 
-        assert not os.system(u"tar xf %s" % orig)
+        assert not os.system(u"tar -xf %s" % orig)
         assert not os.remove(orig)
 
         # make sure executables are
@@ -286,7 +285,7 @@ class BuildScriptsCommand(build_scripts):
                         os.chmod(file, newmode)
 
 
-with open(u"README") as fh:
+with open(u"README.md") as fh:
     long_description = fh.read()
 
 
@@ -360,6 +359,7 @@ setup(name=u"duplicity",
         u"Programming Language :: Python :: 3.6",
         u"Programming Language :: Python :: 3.7",
         u"Programming Language :: Python :: 3.8",
+        u"Programming Language :: Python :: 3.9",
         u"Topic :: System :: Archiving :: Backup"
         ],
     )
