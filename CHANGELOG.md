@@ -1,3 +1,49 @@
+## rel.0.8.18 (2021-01-09)
+
+### Other
+
+* Merge branch 'onedrive-token' into 'master' [Kenneth Loafman]
+
+* Onedrive: Support using an external client id / refresh token. [Michael Terry]
+
+* Update .gitlab-ci.yml to need code test to pass. [Kenneth Loafman]
+
+* Merge branch 'master' of git@gitlab.com:duplicity/duplicity.git. [Kenneth Loafman]
+
+* Fix issue #26 Backend b2 backblaze fails with nameprefix restrictions. [Kenneth Loafman]
+
+* Fix issue #29 Backend b2 backblaze fails with nameprefix restrictions. [Kenneth Loafman]
+
+* Fix unadorned strings. [Kenneth Loafman]
+
+* Merge branch 'Rufflewind-master-patch-11811' into 'master' [Kenneth Loafman]
+
+* Report errors if B2 backend does exist but otherwise fails to import. [Phil Ruffwind]
+
+* Add report.xml. [Kenneth Loafman]
+
+* Remove basepython in code and coverage tests. [Kenneth Loafman]
+
+* Fix pep8 warning. [Kenneth Loafman]
+
+* Added option --log-timestamp to prepend timestamp to log entry. [Kenneth Loafman]
+
+* Merge branch 'master' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
+
+* Merge branch 'master' into 'master' [Kenneth Loafman]
+
+* Improve. [Gwyn Ciesla]
+
+* Change version for LP. [Kenneth Loafman]
+
+* Change version for LP. [Kenneth Loafman]
+
+* Improve patch for Python 3.10. [Gwyn Ciesla]
+
+* Conditionalize for Python version. [Gwyn Ciesla]
+
+* Patch for Python 3.10. [Gwyn Ciesla]
+
 ## rel.0.8.17 (2020-11-11)
 
 ### Other
