@@ -358,6 +358,8 @@ testing/manual/run-coverage.sh
 testing/manual/stdin_test.sh
 testing/manual/test_config.py.tmpl
 testing/manual/bug1893481/testit.sh
+testing/manual/bug1893481/data/Fü
+testing/manual/bug1893481/data/véri
 testing/overrides/__init__.py
 testing/overrides/gettext.py
 testing/overrides/bin/hsi
