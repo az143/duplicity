@@ -44,6 +44,7 @@
 
 * Patch for Python 3.10. [Gwyn Ciesla]
 
+
 ## rel.0.8.17 (2020-11-11)
 
 ### Other
