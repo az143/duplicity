@@ -3,9 +3,9 @@ Subject: Disable some tests for being flaky
 
 --- a/testing/functional/test_restart.py
 +++ b/testing/functional/test_restart.py
-@@ -137,6 +137,7 @@ class RestartTest(FunctionalTestCase):
-         self.backup(u"full", u"testfiles/largefiles")
-         self.verify(u"testfiles/largefiles")
+@@ -138,6 +138,7 @@ class RestartTest(FunctionalTestCase):
+         self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
+         self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
  
 +    @unittest.skip("Flaky test because it relies on knowing how many volumes the source files will be split into")
      @unittest.skipIf(u"ppc64el" in platform.machine(), u"Skip on ppc64el machines")
@@ -13,7 +13,7 @@ Subject: Disable some tests for being flaky
          u"""
 --- a/testing/unit/test_gpg.py
 +++ b/testing/unit/test_gpg.py
-@@ -138,7 +138,7 @@ class GPGTest(UnitTestCase):
+@@ -139,7 +139,7 @@ class GPGTest(UnitTestCase):
          decrypted_file.close()
          sig = decrypted_file.get_signature()
          assert sig == self.sign_key, sig
@@ -22,9 +22,9 @@ Subject: Disable some tests for being flaky
      @unittest.skipIf(u"ppc64el" in platform.machine(), u"Skip on ppc64el machines")
      def test_GPGWriteFile(self):
          u"""Test GPGWriteFile"""
-@@ -155,6 +155,7 @@ class GPGTest(UnitTestCase):
+@@ -156,6 +156,7 @@ class GPGTest(UnitTestCase):
                           profile, size=size)
-         # print os.stat("testfiles/output/gpgwrite.gpg").st_size
+         # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size
  
 +    @unittest.skip("Flaky test because it relies on compressed size of random bytes")
      def test_GzipWriteFile(self):
@@ -32,7 +32,7 @@ Subject: Disable some tests for being flaky
          size = 400 * 1000
 --- a/testing/unit/test_selection.py
 +++ b/testing/unit/test_selection.py
-@@ -174,6 +174,7 @@ class MatchingTest(UnitTestCase):
+@@ -175,6 +175,7 @@ class MatchingTest(UnitTestCase):
          assert select.glob_get_sf(u"**", 0)(root) == 0
          assert select.glob_get_sf(u"/foo/*", 0)(root) is None
  
@@ -40,21 +40,9 @@ Subject: Disable some tests for being flaky
      def test_other_filesystems(self):
          u"""Test to see if --exclude-other-filesystems works correctly"""
          root = Path(u"/")
-@@ -872,8 +873,11 @@ testfiles/select**/2
-                         (u"--exclude", u"testfiles/select2/**")],
-                        self.expected_restored_tree)
- 
-+    @unittest.skip("Doesn't seem to work with python2.x")
-     def test_unicode_paths_non_globbing(self):
-         u"""Test functional test test_unicode_paths_non_globbing as a unittest"""
-+
-+
-         self.root = Path(u"testfiles/select-unicode")
-         self.ParseTest([(u"--exclude", u"testfiles/select-unicode/прыклад/пример/例/Παράδειγμα/उदाहरण.txt"),
-                         (u"--exclude", u"testfiles/select-unicode/прыклад/пример/例/Παράδειγμα/דוגמא.txt"),
 --- a/testing/unit/test_statistics.py
 +++ b/testing/unit/test_statistics.py
-@@ -62,6 +62,7 @@ class StatsObjTest(UnitTestCase):
+@@ -63,6 +63,7 @@ class StatsObjTest(UnitTestCase):
          s1 = StatsDeltaProcess()
          assert s1.get_stat(u'SourceFiles') == 0
  
@@ -62,29 +50,9 @@ Subject: Disable some tests for being flaky
      def test_get_stats_string(self):
          u"""Test conversion of stat object into string"""
          s = StatsObj()
---- a/testing/__init__.py
-+++ b/testing/__init__.py
-@@ -91,14 +91,17 @@ class DuplicityTestCase(unittest.TestCas
-             self._update_env(key, self.savedEnviron[key])
-         for key in self.savedConfig:
-             setattr(config, key, self.savedConfig[key])
-+        os.system(u"chmod -R a+rwx testfiles 2>/dev/null")
-         assert not os.system(u"rm -rf testfiles")
-         super(DuplicityTestCase, self).tearDown()
- 
-     def unpack_testfiles(self):
-+        os.system(u"chmod -R a+rwx testfiles 2>/dev/null")
-         assert not os.system(u"rm -rf testfiles")
-         assert not os.system(u"tar xzf testfiles.tar.gz > /dev/null 2>&1")
-         assert not os.system(u"mkdir testfiles/output testfiles/cache")
- 
-+
-     def _update_env(self, key, value):
-         if value is not None:
-             os.environ[key] = value
 --- a/testing/unit/test_globmatch.py
 +++ b/testing/unit/test_globmatch.py
-@@ -248,6 +248,7 @@ class TestDoubleAsterisk(UnitTestCase):
+@@ -249,6 +249,7 @@ class TestDoubleAsterisk(UnitTestCase):
  class TestSimpleUnicode(UnitTestCase):
      u"""Test simple unicode comparison"""
  
@@ -92,7 +60,7 @@ Subject: Disable some tests for being flaky
      def test_simple_unicode(self):
          u"""Test simple unicode comparison"""
          self.assertEqual(inc_sel_file(u"прыклад/пример/例/Παράδειγμα/उदाहरण.txt",
-@@ -266,8 +267,11 @@ class TestSquareBrackets(UnitTestCase):
+@@ -267,8 +268,11 @@ class TestSquareBrackets(UnitTestCase):
          self.assertEqual(inc_sel_file(u"/test/f[s,o,p]lder/foo.txt",
                                        u"/test/folder/foo.txt"), 1)
  

@@ -145,8 +145,11 @@ class BackupSet(object):
         u"""
         Add local and remote manifest filenames to backup set
         """
-        assert not self.remote_manifest_name, (self.remote_manifest_name,
-                                               remote_filename)
+        assert not self.remote_manifest_name, \
+            u"Cannot set filename of remote manifest to %s; already set to %s." % (
+                remote_filename,
+                self.remote_manifest_name,
+            )
         self.remote_manifest_name = remote_filename
 
         if self.action != u"replicate":
@@ -905,7 +908,7 @@ class CollectionsStatus(object):
                 time_set_pairs.append((set.time, set))
             else:
                 time_set_pairs.append((set.end_time, set))
-        time_set_pairs.sort()
+        time_set_pairs.sort(key=lambda x: x[0])
         return ([p[1] for p in time_set_pairs], incomplete_sets)
 
     def get_signature_chains(self, local, filelist=None):

@@ -25,16 +25,17 @@ from __future__ import print_function
 import os
 import re
 import shutil
+import subprocess
 import sys
 import time
 
 from distutils.command.build_scripts import build_scripts
 from distutils.command.install_data import install_data
 from setuptools import setup, Extension
+from setuptools.command.build_ext import build_ext
 from setuptools.command.install import install
 from setuptools.command.sdist import sdist
 from setuptools.command.test import test
-from subprocess import Popen, PIPE
 
 
 # check that we can function here
@@ -52,7 +53,7 @@ try:
     from setuptools_scm import get_version  # pylint: disable=import-error
     Version = get_version(**scm_version_args)
 except Exception as e:
-    Version = u"0.8.18"
+    Version = u"0.8.20"
     print(u"Unable to get SCM version: defaulting to %s" % (Version,))
 Reldate = time.strftime(u"%B %d, %Y", time.localtime())
 
@@ -244,45 +245,14 @@ class InstallDataCommand(install_data):
                     VersionedCopy(path, path)
 
 
-class BuildScriptsCommand(build_scripts):
-    u'''Build but don't touch my shebang!'''
+class BuildExtCommand(build_ext):
+    u'''Build extension modules.'''
 
     def run(self):
-        u"""
-        Copy, chmod each script listed in 'self.scripts'
-        essentially this is the stripped
-         distutils.command.build_scripts.copy_scripts()
-        routine
-        """
-        from stat import ST_MODE
-        from distutils.dep_util import newer
-        from distutils import log
-
-        self.mkpath(self.build_dir)
-        outfiles = []
-        for script in self.scripts:
-            outfile = os.path.join(self.build_dir, os.path.basename(script))
-            outfiles.append(outfile)
-
-            if not self.force and not newer(script, outfile):
-                log.debug(u"not copying %s (up-to-date)", script)
-                continue
-
-            log.info(u"copying and NOT adjusting %s -> %s", script,
-                     self.build_dir)
-            self.copy_file(script, outfile)
-
-        if os.name == u'posix':
-            for file in outfiles:
-                if self.dry_run:
-                    log.info(u"changing mode of %s", file)
-                else:
-                    oldmode = os.stat(file)[ST_MODE] & 0o7777
-                    newmode = (oldmode | 0o555) & 0o7777
-                    if newmode != oldmode:
-                        log.info(u"changing mode of %s from %o to %o",
-                                 file, oldmode, newmode)
-                        os.chmod(file, newmode)
+        # build the _librsync.so module
+        print(u"Building extension for librsync...")
+        self.inplace = True
+        build_ext.run(self)
 
 
 with open(u"README.md") as fh:
@@ -339,7 +309,7 @@ setup(name=u"duplicity",
         ],
     test_suite=u"testing",
     cmdclass={
-        u"build_scripts": BuildScriptsCommand,
+        u"build_ext": BuildExtCommand,
         u"install": InstallCommand,
         u"install_data": InstallDataCommand,
         u"sdist": SdistCommand,
@@ -365,7 +335,7 @@ setup(name=u"duplicity",
     )
 
 
-# TODO: is this the best way to clean up afterwards?
+# TODO: Find best way to clean up afterwards.
 if os.path.exists(u'po/LINGUAS'):
     linguas = open(u'po/LINGUAS').readlines()
     for line in linguas:

@@ -206,10 +206,10 @@ class MultiBackend(duplicity.backend.Backend):
                 for prefix in config[u'prefixes']:
                     log.Log(_(u"Multibackend: register affinity for prefix %s")
                             % prefix, log.INFO)
-                if prefix in self.__affinities:
-                    self.__affinities[prefix].append(store)
-                else:
-                    self.__affinities[prefix] = [store]
+                    if prefix in self.__affinities:
+                        self.__affinities[prefix].append(store)
+                    else:
+                        self.__affinities[prefix] = [store]
 
             # store_list = store.list()
             # log.Log(_("MultiBackend: at init, store %s has %s files")
@@ -342,9 +342,6 @@ class MultiBackend(duplicity.backend.Backend):
                 # In stripe mode, only one item will have the file
                 if self.__mode == u'stripe':
                     return
-            log.Log(_(u"MultiBackend: failed to delete %s from %s")
-                    % (filename, s.backend.parsed_url.url_string),
-                    log.INFO)
         if not passed:
             log.Log(_(u"MultiBackend: failed to delete %s. Tried all backing stores and none succeeded")
                     % (filename),

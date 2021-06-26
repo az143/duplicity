@@ -389,6 +389,9 @@ def parse_cmdline_options(arglist):
                       dest=u"", action=u"callback",
                       callback=lambda o, s, v, p: config.gpg_profile.hidden_recipients.append(v))
 
+    # Fake-root for iDrived backend
+    parser.add_option(u"--idr-fakeroot", dest=u"fakeroot", type=u"file", metavar=_(u"path"))
+
     # ignore (some) errors during operations; supposed to make it more
     # likely that you are able to restore data under problematic
     # circumstances. the default should absolutely always be False unless
@@ -650,12 +653,27 @@ def parse_cmdline_options(arglist):
 
     parser.add_option(u"-V", u"--version", action=u"callback", callback=print_ver)
 
+    # option for mediafire to purge files on delete instead of sending to trash
+    parser.add_option(u"--mf-purge", action=u"store_true")
+
+    def set_mpsize(o, s, v, p):  # pylint: disable=unused-argument
+        setattr(p.values, u"mp_segment_size", v * 1024 * 1024)
+        setattr(p.values, u"mp_set", True)
+    parser.add_option(u"--mp-segment-size", type=u"int", action=u"callback", metavar=_(u"number"),
+                      callback=set_mpsize)
     # volume size
     # TRANSL: Used in usage help to represent a desired number of
     # something. Example:
     # --num-retries <number>
+
+    def set_volsize(o, s, v, p):  # pylint: disable=unused-argument
+        setattr(p.values, u"volsize", v * 1024 * 1024)
+        # if mp_size was not explicity given, default it to volsize
+        if not getattr(p.values, u'mp_set', False):
+            setattr(p.values, u"mp_segment_size", int(config.mp_factor * p.values.volsize))
+
     parser.add_option(u"--volsize", type=u"int", action=u"callback", metavar=_(u"number"),
-                      callback=lambda o, s, v, p: setattr(p.values, u"volsize", v * 1024 * 1024))
+                      callback=set_volsize)
 
     # If set, collect only the file status, not the whole root.
     parser.add_option(u"--file-changed", action=u"callback", type=u"file",
@@ -972,6 +990,10 @@ def usage():
   ftp://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(some_dir)s
   ftps://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(some_dir)s
   gdocs://%(user)s[:%(password)s]@%(other_host)s/%(some_dir)s
+  for gdrive:// a <service-account-url> like the following is required
+        <serviceaccount-name>@<serviceaccount-name>.iam.gserviceaccount.com
+  gdrive://<service-account-url>/target-folder/?driveID=<SHARED DRIVE ID> (for GOOGLE Shared Drive)
+  gdrive://<service-account-url>/target-folder/?myDriveFolderID=<google-myDrive-folder-id> (for GOOGLE MyDrive)
   hsi://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(some_dir)s
   imap://%(user)s[:%(password)s]@%(other_host)s[:%(port)s]/%(some_dir)s
   mega://%(user)s[:%(password)s]@%(other_host)s/%(some_dir)s
@@ -1002,12 +1024,14 @@ def usage():
   full <%(source_dir)s> <%(target_url)s>
   incr <%(source_dir)s> <%(target_url)s>
   list-current-files <%(target_url)s>
-  restore <%(source_url)s> <%(target_dir)s>
-  remove-older-than <%(time)s> <%(target_url)s>
   remove-all-but-n-full <%(count)s> <%(target_url)s>
   remove-all-inc-of-but-n-full <%(count)s> <%(target_url)s>
+  remove-older-than <%(time)s> <%(target_url)s>
+  replicate <%(source_url)s> <%(target_url)s>
+  restore <%(source_url)s> <%(target_dir)s>
   verify <%(target_url)s> <%(source_dir)s>
-  replicate <%(source_url)s> <%(target_url)s>""" % trans
+
+""" % trans
 
     return msg
 

@@ -177,6 +177,10 @@ compression = True
 # volume size. default 200M
 volsize = 200 * 1024 * 1024
 
+# after this volume, we will switch to multipart upload
+mp_factor = 1.1
+mp_segment_size = mp_factor * volsize
+
 # Working directory for the tempfile module. Defaults to /tmp on most systems.
 temproot = None
 
@@ -361,6 +365,12 @@ file_changed = None
 
 # delay (in seconds) before next operation after failure
 backend_retry_delay = 30
+
+# option for mediafire to purge files on delete instead of sending to trash
+mf_purge = False
+
+# Fake root directory path for iDrived backend
+fakeroot = None
 
 # default filesystem encoding
 # In Python 2 it seems that sys.getfilesystemencoding() will normally return

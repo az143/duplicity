@@ -32,6 +32,7 @@ from builtins import object
 from builtins import str
 
 import errno
+import json
 import os
 import string
 import sys
@@ -115,7 +116,7 @@ def uexc(e):
     # non-ascii will cause a UnicodeDecodeError when implicitly decoding to
     # unicode.  So we decode manually, using the filesystem encoding.
     # 99.99% of the time, this will be a fine encoding to use.
-    if e.args:
+    if e and e.args:
         # Find arg that is a string
         for m in e.args:
             if isinstance(m, str):
@@ -124,6 +125,14 @@ def uexc(e):
             elif isinstance(m, bytes):
                 # Encoded, likely in filesystem encoding
                 return fsdecode(m)
+        # If the function did not return yet, we did not
+        # succeed in finding a string; return the whole message.
+        # This fails for Python 2, so only do this in Python 3.
+        if sys.version_info[0] > 2:
+            return str(e)
+        # For Python 2, fall back to returning an empty string.
+        else:
+            return u''
     else:
         return u''
 
@@ -211,7 +220,11 @@ def release_lockfile():
         log.Debug(_(u"Releasing lockfile %s") % config.lockpath)
         try:
             config.lockfile.release()
+            config.lockfile = None
+            os.remove(config.lockpath)
+            config.lockpath = u""
         except Exception:
+            log.Error(u"Could not release lockfile: %s", str(e))
             pass
 
 
@@ -265,3 +278,38 @@ def which(program):
                 return exe_file
 
     return None
+
+
+def start_debugger(remote=False):
+    if (not os.getenv(u'DEBUG_RUNNING', None) and (u'--pydevd' in sys.argv or os.getenv(u'PYDEVD', None))):
+        if remote:
+            # modify this for your configuration.
+            # client = base path in machine that Liclipse is on
+            # server = base path in machine that duplicity is on
+            client = u'/Users/ken/workspace/duplicity-testfiles'
+            server = u'/home/ken/workspace/duplicity-testfiles'
+
+            # relative paths under duplicity root
+            duppaths = [
+                u'',
+                u'bin',
+                u'duplicity',
+                u'duplicity/backends',
+                u'testing',
+                u'testing/functional',
+                u'testing/unit',
+            ]
+            pathlist = [(os.path.normpath(os.path.join(client, p)),
+                         os.path.normpath(os.path.join(server, p))) for p in duppaths]
+            os.environ[u'PATHS_FROM_ECLIPSE_TO_PYTHON'] = json.dumps(pathlist)
+
+        import pydevd  # pylint: disable=import-error
+        pydevd.settrace(u'dione.local', port=5678, stdoutToServer=True, stderrToServer=True)
+
+        # In a dev environment the path is screwed so fix it.
+        base = sys.path.pop(0)
+        base = base.split(os.path.sep)[:-1]
+        base = os.path.sep.join(base)
+        sys.path.insert(0, base)
+
+        os.environ[u'DEBUG_RUNNING'] = u'yes'

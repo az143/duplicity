@@ -1,3 +1,9 @@
+duplicity (0.8.20-1) unstable; urgency=medium
+
+  * new upstream release
+
+ -- Alexander Zangerl <az@debian.org>  Sun, 27 Jun 2021 09:25:30 +1000
+
 duplicity (0.8.18-1) unstable; urgency=medium
 
   * new upstream release
