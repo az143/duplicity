@@ -4,6 +4,7 @@
 AUTHORS
 CHANGELOG.md
 COPYING
+Makefile
 README-LOG.md
 README-REPO.md
 README-TESTING.md
@@ -37,6 +38,7 @@ docs/duplicity.backends.b2backend.rst
 docs/duplicity.backends.cfbackend.rst
 docs/duplicity.backends.dpbxbackend.rst
 docs/duplicity.backends.gdocsbackend.rst
+docs/duplicity.backends.gdrivebackend.rst
 docs/duplicity.backends.giobackend.rst
 docs/duplicity.backends.hsibackend.rst
 docs/duplicity.backends.hubicbackend.rst
@@ -186,12 +188,15 @@ duplicity/backends/_cf_pyrax.py
 duplicity/backends/adbackend.py
 duplicity/backends/azurebackend.py
 duplicity/backends/b2backend.py
+duplicity/backends/boxbackend.py
 duplicity/backends/cfbackend.py
 duplicity/backends/dpbxbackend.py
 duplicity/backends/gdocsbackend.py
+duplicity/backends/gdrivebackend.py
 duplicity/backends/giobackend.py
 duplicity/backends/hsibackend.py
 duplicity/backends/hubicbackend.py
+duplicity/backends/idrivedbackend.py
 duplicity/backends/imapbackend.py
 duplicity/backends/jottacloudbackend.py
 duplicity/backends/lftpbackend.py
@@ -199,6 +204,7 @@ duplicity/backends/localbackend.py
 duplicity/backends/mediafirebackend.py
 duplicity/backends/megabackend.py
 duplicity/backends/megav2backend.py
+duplicity/backends/megav3backend.py
 duplicity/backends/multibackend.py
 duplicity/backends/ncftpbackend.py
 duplicity/backends/onedrivebackend.py
@@ -348,6 +354,9 @@ testing/manual/backendtest.py
 testing/manual/bug1526557.sh
 testing/manual/bug1846678.sh
 testing/manual/bug1860200.sh
+testing/manual/bug1893481.tgz
+testing/manual/bug1919017.json
+testing/manual/bug1919017.sh
 testing/manual/issue25.json
 testing/manual/issue25.sh
 testing/manual/issue26.sh
@@ -357,11 +366,7 @@ testing/manual/roottest.py
 testing/manual/run-coverage.sh
 testing/manual/stdin_test.sh
 testing/manual/test_config.py.tmpl
-testing/manual/bug1893481/testit.sh
-testing/manual/bug1893481/data/Fü
-testing/manual/bug1893481/data/véri
 testing/overrides/__init__.py
-testing/overrides/gettext.py
 testing/overrides/bin/hsi
 testing/overrides/bin/lftp
 testing/overrides/bin/ncftpget

@@ -2,41 +2,48 @@
 
 fasteners
 future
-mock
+mock==3.0.5
 python-gettext
 requests
-setuptools  #>=45.2.0
-setuptools_scm  # >=3.4.3
+setuptools>=44.1.1
+setuptools_scm>=5.0.2
 urllib3
 
 
 ##### testing libraries #####
+
+# some libs no longer support py27
 
 coverage
 paramiko
 pexpect
 psutil
 pycodestyle
-pydevd
+pydevd                  ; python_version >= '3.6'
 pylint
 pytest
 pytest-cov
-pytest-runner
+pytest-runner           ; python_version >= '3.6'
 sphinx
 tox
 
 
 ##### backend libraries #####
 
-# azure-mgmt-storage
-# b2sdk
-# boto
-# boto3
-# dropbox
-# gdata
-# jottalib
-# mediafire
-# pydrive
-# pyrax
-# python-swiftclient
-# requests_oauthlib
+# some libs no longer support py27
+# some libs never supported py36+
+
+azure-storage-blob      ; python_version >= '3.6'
+b2sdk                   ; python_version >= '3.6'
+boto
+boto3
+boxsdk[jwt]             ; python_version >= '3.6'
+dropbox
+gdata                   ; python_version == '2.7'
+google_auth_oauthlib
+jottalib
+mediafire
+pydrive                 ; python_version >= '3.6'
+pyrax                   ; python_version >= '3.6'
+python-swiftclient
+requests_oauthlib

@@ -26,6 +26,7 @@ from future import standard_library
 standard_library.install_aliases()
 
 import io
+import platform
 import unittest
 
 from duplicity.selection import *  # pylint: disable=unused-wildcard-import,redefined-builtin
@@ -872,8 +873,9 @@ testfiles/select**/2
                         (u"--exclude", u"testfiles/select2/**")],
                        self.expected_restored_tree)
 
-    def test_unicode_paths_non_globbing(self):
-        u"""Test functional test test_unicode_paths_non_globbing as a unittest"""
+    @unittest.skipUnless(platform.platform().startswith(u"Linux"), u"Skip on non-Linux systems")
+    def _paths_non_globbing(self):
+        u"""Test functional test _paths_non_globbing as a unittest"""
         self.root = Path(u"testfiles/select-unicode")
         self.ParseTest([(u"--exclude", u"testfiles/select-unicode/прыклад/пример/例/Παράδειγμα/उदाहरण.txt"),
                         (u"--exclude", u"testfiles/select-unicode/прыклад/пример/例/Παράδειγμα/דוגמא.txt"),

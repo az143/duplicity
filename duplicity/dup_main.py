@@ -174,14 +174,14 @@ def get_passphrase(n, action, for_signing=False):
                     if use_cache and config.gpg_profile.passphrase:
                         pass1 = config.gpg_profile.passphrase
                     else:
-                        pass1 = getpass_safe(_(u"GnuPG passphrase:") + u" ")
+                        pass1 = getpass_safe(_(u"GnuPG passphrase for decryption:") + u" ")
 
             if n == 1:
                 pass2 = pass1
             elif for_signing:
                 pass2 = getpass_safe(_(u"Retype passphrase for signing key to confirm: "))
             else:
-                pass2 = getpass_safe(_(u"Retype passphrase to confirm: "))
+                pass2 = getpass_safe(_(u"Retype passphrase for decryption to confirm: "))
 
             if not pass1 == pass2:
                 log.Log(_(u"First and second passphrases do not match!  Please try again."),
@@ -712,6 +712,8 @@ def restore(col_stats):
     @return: void
     """
     if config.dry_run:
+        # Only prints list of required volumes when running dry
+        restore_get_patched_rop_iter(col_stats)
         return
     if not patchdir.Write_ROPaths(config.local_path,
                                   restore_get_patched_rop_iter(col_stats)):
@@ -760,14 +762,19 @@ def restore_get_patched_rop_iter(col_stats):
             log.Progress(_(u'Processed volume %d of %d') % (cur_vol[0], num_vols),
                          cur_vol[0], num_vols)
 
-    if hasattr(config.backend, u'pre_process_download'):
+    if hasattr(config.backend, u'pre_process_download') or config.dry_run:
         file_names = []
         for backup_set in backup_setlist:
             manifest = backup_set.get_manifest()
             volumes = manifest.get_containing_volumes(index)
             for vol_num in volumes:
                 file_names.append(backup_set.volume_name_dict[vol_num])
-        config.backend.pre_process_download(file_names)
+        if config.dry_run:
+            log.Notice(u"Required volumes to restore:\n\t" +
+                       u'\n\t'.join(file_name.decode() for file_name in file_names))
+            return None
+        else:
+            config.backend.pre_process_download(file_names)
 
     fileobj_iters = list(map(get_fileobj_iter, backup_setlist))
     tarfiles = list(map(patchdir.TarFile_FromFileobjs, fileobj_iters))
@@ -1557,7 +1564,12 @@ def do_backup(action):
                                                   action).set_values()
 
     # check archive synch with remote, fix if needed
-    if action not in [u"collection-status", u"replicate"]:
+    if action not in [u"collection-status",
+                      u"remove-all-but-n-full",
+                      u"remove-all-inc-of-but-n-full",
+                      u"remove-old",
+                      u"replicate",
+                      ]:
         sync_archive(col_stats)
 
     while True:

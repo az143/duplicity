@@ -362,6 +362,12 @@ file_changed = None
 # delay (in seconds) before next operation after failure
 backend_retry_delay = 30
 
+# option for mediafire to purge files on delete instead of sending to trash
+mf_purge = False
+
+# Fake root directory path for iDrived backend
+fakeroot = None
+
 # default filesystem encoding
 # In Python 2 it seems that sys.getfilesystemencoding() will normally return
 # 'utf-8' or some other sane encoding, but will sometimes fail and return

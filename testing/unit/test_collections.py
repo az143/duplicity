@@ -35,6 +35,7 @@ from duplicity import dup_collections
 from duplicity import dup_time
 from duplicity import gpg
 from duplicity import path
+from testing import _runtest_dir
 
 filename_list1 = [b"duplicity-full.2002-08-17T16:17:01-07:00.manifest.gpg",
                   b"duplicity-full.2002-08-17T16:17:01-07:00.vol1.difftar.gpg",
@@ -83,16 +84,16 @@ class CollectionTest(UnitTestCase):
 
         self.unpack_testfiles()
 
-        col_test_dir = path.Path(u"testfiles/collectionstest")
+        col_test_dir = path.Path(u"{0}/testfiles/collectionstest".format(_runtest_dir))
         archive_dir_path = col_test_dir.append(u"archive_dir")
         self.set_config(u'archive_dir_path', archive_dir_path)
-        self.archive_dir_backend = backend.get_backend(u"file://testfiles/collectionstest"
+        self.archive_dir_backend = backend.get_backend(u"file://{0}/testfiles/collectionstest".format(_runtest_dir) +
                                                        u"/archive_dir")
 
         self.real_backend = backend.get_backend(u"file://%s/%s" %
                                                 (col_test_dir.uc_name, u"remote_dir"))
-        self.output_dir = path.Path(u"testfiles/output")  # used as a temp directory
-        self.output_dir_backend = backend.get_backend(u"file://testfiles/output")
+        self.output_dir = path.Path(u"{0}/testfiles/output".format(_runtest_dir))  # used as a temp directory
+        self.output_dir_backend = backend.get_backend(u"file://{0}/testfiles/output".format(_runtest_dir))
 
     def set_gpg_profile(self):
         u"""Set gpg profile to standard "foobar" sym"""
@@ -102,7 +103,7 @@ class CollectionTest(UnitTestCase):
         u"""Test basic backup chain construction"""
         random.shuffle(filename_list1)
         cs = dup_collections.CollectionsStatus(None, config.archive_dir_path, u"full")
-        chains, orphaned, incomplete = cs.get_backup_chains(filename_list1)          
+        chains, orphaned, incomplete = cs.get_backup_chains(filename_list1)
         if len(chains) != 1 or len(orphaned) != 0:
             print(chains)
             print(orphaned)
@@ -169,7 +170,7 @@ class CollectionTest(UnitTestCase):
     def sigchain_fileobj_check_list(self, chain):
         u"""Make sure the list of file objects in chain has right contents
 
-        The contents of the testfiles/collectiontest/remote_dir have
+        The contents of the /tmp/testfiles/collectiontest/remote_dir have
         to be coordinated with this test.
 
         """
@@ -194,7 +195,7 @@ class CollectionTest(UnitTestCase):
 
     def get_filelist2_cs(self):
         u"""Return set CollectionsStatus object from filelist 2"""
-        # Set up testfiles/output with files from filename_list2
+        # Set up /tmp/testfiles/output with files from filename_list2
         for filename in filename_list2:
             p = self.output_dir.append(filename)
             p.touch()
@@ -215,7 +216,7 @@ class CollectionTest(UnitTestCase):
                       b"duplicity-full.2002-08-15T01:01:01-07:00.vol1.difftar.gpg",
                       b"duplicity-inc.2000-08-17T16:17:01-07:00.to.2000-08-18T00:04:30-07:00.manifest.gpg",
                       b"duplicity-inc.2000-08-17T16:17:01-07:00.to.2000-08-18T00:04:30-07:00.vol1.difftar.gpg"]
-        local_received_list, remote_received_list = cs.get_extraneous()          
+        local_received_list, remote_received_list = cs.get_extraneous()
         errors = []
         for filename in remote_received_list:
             if filename not in right_list:

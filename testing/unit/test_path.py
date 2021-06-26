@@ -27,6 +27,7 @@ import os
 import unittest
 
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
+from testing import _runtest_dir
 from . import UnitTestCase
 
 
@@ -38,17 +39,17 @@ class PathTest(UnitTestCase):
 
     def test_deltree(self):
         u"""Test deleting a tree"""
-        assert not os.system(u"cp -pR testfiles/deltree testfiles/output")
-        p = Path(u"testfiles/output")
+        assert not os.system(u"cp -pR {0}/testfiles/deltree {0}/testfiles/output".format(_runtest_dir).format(_runtest_dir))
+        p = Path(u"{0}/testfiles/output".format(_runtest_dir))
         assert p.isdir()
         p.deltree()
         assert not p.type, p.type
 
 #      def test_compare(self):
 #         """Test directory comparisons"""
-#         assert not os.system("cp -pR testfiles/dir1 testfiles/output")
-#         assert Path("testfiles/dir1").compare_recursive(Path("testfiles/output"), 1)
-#         assert not Path("testfiles/dir1").compare_recursive(Path("testfiles/dir2"), 1)
+#         assert not os.system("cp -pR /tmp/testfiles/dir1 /tmp/testfiles/output")
+#         assert Path("/tmp/testfiles/dir1").compare_recursive(Path("/tmp/testfiles/output"), 1)
+#         assert not Path("/tmp/testfiles/dir1").compare_recursive(Path("/tmp/testfiles/dir2"), 1)
 
     def test_quote(self):
         u"""Test path quoting"""
@@ -81,7 +82,7 @@ class PathTest(UnitTestCase):
 
     def test_compare_verbose(self):
         u"""Run compare_verbose on a few files"""
-        vft = Path(u"testfiles/various_file_types")
+        vft = Path(u"{0}/testfiles/various_file_types".format(_runtest_dir))
         assert vft.compare_verbose(vft)
         reg_file = vft.append(u"regular_file")
         assert not vft.compare_verbose(reg_file)
