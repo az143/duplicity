@@ -1,3 +1,99 @@
+## rel.0.8.20 (2021-06-26)
+
+### New
+
+* Better looping.  Increase to 100 loops. [Kenneth Loafman]
+
+* Repeating test for LP bug 487720. [Kenneth Loafman]
+
+    Restore fails with "Invalid data - SHA1 hash mismatch"
+
+### Changes
+
+* Log difftar filename where kill happened. [Kenneth Loafman]
+
+* Allow customization. [Kenneth Loafman]
+
+* Add support for --s3-multipart-chunk-size, default 25MB. [Kenneth Loafman]
+
+    Fixes issue #61
+
+* Fix formatting in A NOTE ON GDRIVE BACKEND.  Minor. [Kenneth Loafman]
+
+### Fix
+
+* Fix test file count after deleting lockfile. [Kenneth Loafman]
+
+* Support -o{Global,User}KnownHostsFile in --ssh-options. [Kenneth Loafman]
+
+    Fixes issue #60
+
+* Add pydrive2 to requirements.txt. [Kenneth Loafman]
+
+    Fixes #62.  pydrivebackend was updated to pydrive 2 over a year ago, but
+    the requirements.txt file was not updated to reflect this.
+
+* Fix error message on gdrivebackend. [Kenneth Loafman]
+
+* Fix issue #57 SSH backends - IndexError: list index out of range. [Kenneth Loafman]
+
+### Other
+
+* Merge branch 'master' into 'master' [Kenneth Loafman]
+
+    Add support for new b2sdk V2 API
+
+    See merge request duplicity/duplicity!60
+
+* Add support for new b2sdk V2 API. [Adam Jacobs]
+
+* Merge branch 'master' into 'master' [Kenneth Loafman]
+
+    chg:dev:Fix Support DynamicLargeObjects inside swift backend
+
+    See merge request duplicity/duplicity!59
+
+* Merge branch 'issue#68' into 'master' [Kenneth Loafman]
+
+    have duplicity retry validate_block so object storage can report correct size
+
+    See merge request duplicity/duplicity!58
+
+* Have duplicity retry validate\_block so object storage can report correct size. [Doug Thompson]
+
+* Merge branch 'master' into 'master' [Kenneth Loafman]
+
+    Replace b2sdk private API references in b2backend with public API
+
+    See merge request duplicity/duplicity!57
+
+* Replace b2sdk private API references in b2backend with public API. [Adam Jacobs]
+
+* Merge branch 'master' into 'master' [Kenneth Loafman]
+
+    Update b2 backend to use *public* b2sdk API.
+
+    See merge request duplicity/duplicity!55
+
+* Update b2 backend to use *public* b2sdk API. [Adam Jacobs]
+
+* Merge branch 'bullfrogalj/duplicity-master' [Kenneth Loafman]
+
+* B2sdk 1.8.0 refactored minimum\_part\_size to recommended\_part\_size (the value used stays the same) [Adam Jacobs]
+
+    It's a breaking change that makes duplicity fail with the new SDK.
+
+    This fix makes duplicity compatible with both pre- and post- 1.8.0 SDKs.
+
+* Merge branch 'PR-backend-gdrive-mydrive' into 'master' [Kenneth Loafman]
+
+    backend gdrive, added Google MyDrive support
+
+    See merge request duplicity/duplicity!52
+
+* Added Google MyDrive support updated man pages and --help text. [Anthony Uphof]
+
+
 ## rel.0.8.19 (2021-04-29)
 
 ### New

@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: duplicity
-Version: 0.8.19
+Version: 0.8.20
 Summary: Encrypted backup using rsync algorithm
 Home-page: http://duplicity.nongnu.org/index.html
 Author: Ben Escoto <ben@emrose.org>

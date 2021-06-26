@@ -357,6 +357,8 @@ testing/manual/bug1860200.sh
 testing/manual/bug1893481.tgz
 testing/manual/bug1919017.json
 testing/manual/bug1919017.sh
+testing/manual/bug487720.sh
+testing/manual/bug487720.sh~
 testing/manual/issue25.json
 testing/manual/issue25.sh
 testing/manual/issue26.sh
