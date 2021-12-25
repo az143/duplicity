@@ -1,13 +1,24 @@
-.PHONY: clean docs
+help:
+	@echo	"MAKE TARGETS"
+	@echo 	"help --    this text"
+	@echo	"clean --   remove generated files"
+	@echo 	"docs --    build Sphinx docs"
+	@echo	"ext --     build C extensions"
 
 clean:
-	for i in '.tox' 'build' 'work' 'megatestresults' '.eggs' '*.egg-info' '__pycache__'; do \
-		find . -type d -name "$$i" | xargs -t -r rm -rf ; \
-	done
-
-	for i in '*.pyc' '*.pyo' '*~' '*.o' '*.so' '*.dll' '*.pyd' '*.gcov' '*.gcda' '*.gcno' '*.orig' '*.tmp' 'testdb*' 'testextension.sqlext' ; do \
-		find . -type f -name "$$i" | xargs -t -r rm -f ; \
+	for i in '.tox' '_build' 'build' 'apsw' 'work' 'megatestresults' '.eggs' '*.egg-info' \
+		'__pycache__' '*.pyc' '*.pyo' '*~' '*.o' '*.so' '*.pyd' '*.gcov' '*.gcda' \
+		'*.gcno' '*.orig' '*.tmp' 'testdb*' 'testextension.sqlext' \
+		'duplicity*.rst' 'testing*.rst'; do \
+		find . -name "$$i" | xargs -t -r rm -rf ; \
 	done
 
 docs:
-	sphinx-apidoc -o docs/ -e -f .
+	sphinx-apidoc -o docs/ --separate --private . \
+		apsw duplicity/backends/pyrax_identity/* setup.* testing/overrides testing/manual
+	$(MAKE) -C docs html
+
+ext:
+	./setup.py build_ext
+
+.PHONY: clean docs ext help

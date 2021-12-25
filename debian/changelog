@@ -1,3 +1,10 @@
+duplicity (0.8.21-1) unstable; urgency=medium
+
+  * new upstream release (closes: #996577)
+    debhelper compat updated, ditto standards version
+
+ -- Alexander Zangerl <az@debian.org>  Sat, 25 Dec 2021 16:04:16 +1000
+
 duplicity (0.8.20-1) unstable; urgency=medium
 
   * new upstream release

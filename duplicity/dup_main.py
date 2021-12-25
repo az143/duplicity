@@ -58,6 +58,10 @@ from duplicity import path
 from duplicity import progress
 from duplicity import tempdir
 from duplicity import util
+import duplicity.errors
+from duplicity.errors import BadVolumeException
+
+import duplicity.config as config
 
 from datetime import datetime
 
@@ -141,16 +145,18 @@ def get_passphrase(n, action, for_signing=False):
 
     # for a full backup, we don't need a password if
     # there is no sign_key and there are recipients
-    elif (action == u"full" and
-          (config.gpg_profile.recipients or config.gpg_profile.hidden_recipients) and not
-          config.gpg_profile.sign_key):
+    elif (action == u"full"
+          and (config.gpg_profile.recipients or config.gpg_profile.hidden_recipients)
+          and (not config.gpg_profile.sign_key
+               or (not config.restart and not for_signing))):
         return u""
 
     # for an inc backup, we don't need a password if
     # there is no sign_key and there are recipients
-    elif (action == u"inc" and
-          (config.gpg_profile.recipients or config.gpg_profile.hidden_recipients) and not
-          config.gpg_profile.sign_key):
+    elif (action == u"inc"
+          and (config.gpg_profile.recipients or config.gpg_profile.hidden_recipients)
+          and (not config.gpg_profile.sign_key
+               or (not config.restart and not for_signing))):
         return u""
 
     # Finally, ask the user for the passphrase
@@ -761,19 +767,19 @@ def restore_get_patched_rop_iter(col_stats):
         u"""Get file object iterator from backup_set contain given index"""
         manifest = backup_set.get_manifest()
         volumes = manifest.get_containing_volumes(index)
-
-        if hasattr(backup_set.backend.backend, u'pre_process_download_batch'):
-            backup_set.backend.backend.pre_process_download_batch(backup_set.volume_name_dict.values())
-
         for vol_num in volumes:
-            yield restore_get_enc_fileobj(backup_set.backend,
-                                          backup_set.volume_name_dict[vol_num],
-                                          manifest.volume_info_dict[vol_num])
+            try:
+                yield restore_get_enc_fileobj(backup_set.backend,
+                                              backup_set.volume_name_dict[vol_num],
+                                              manifest.volume_info_dict[vol_num])
+            except BadVolumeException as e:
+                yield e
+
             cur_vol[0] += 1
             log.Progress(_(u'Processed volume %d of %d') % (cur_vol[0], num_vols),
                          cur_vol[0], num_vols)
 
-    if hasattr(config.backend, u'pre_process_download') or config.dry_run:
+    if hasattr(config.backend, u'pre_process_download_batch') or config.dry_run:
         file_names = []
         for backup_set in backup_setlist:
             manifest = backup_set.get_manifest()
@@ -785,7 +791,7 @@ def restore_get_patched_rop_iter(col_stats):
                        u'\n\t'.join(file_name.decode() for file_name in file_names))
             return None
         else:
-            config.backend.pre_process_download(file_names)
+            config.backend.pre_process_download_batch(file_names)
 
     fileobj_iters = list(map(get_fileobj_iter, backup_setlist))
     tarfiles = list(map(patchdir.TarFile_FromFileobjs, fileobj_iters))
@@ -800,6 +806,8 @@ def restore_get_enc_fileobj(backend, filename, volume_info):
     assuming some hash is available.  Also, if config.sign_key is
     set, a fatal error will be raised if file not signed by sign_key.
 
+    with --ignore-errors set continue on hash mismatch
+
     """
     parseresults = file_naming.parse(filename)
     tdp = dup_temp.new_tempduppath(parseresults)
@@ -808,14 +816,21 @@ def restore_get_enc_fileobj(backend, filename, volume_info):
     u""" verify hash of the remote file """
     verified, hash_pair, calculated_hash = restore_check_hash(volume_info, tdp)
     if not verified:
-        log.FatalError(u"%s\n %s\n %s\n %s\n" %
-                       (_(u"Invalid data - %s hash mismatch for file:") %
-                        hash_pair[0],
-                        util.fsdecode(filename),
-                        _(u"Calculated hash: %s") % calculated_hash,
-                        _(u"Manifest hash: %s") % hash_pair[1]),
-                       log.ErrorCode.mismatched_hash)
-
+        error_msg = u"%s\n %s\n %s\n %s\n" % (
+            _(u"Invalid data - %s hash mismatch for file:") %
+            hash_pair[0],
+            util.fsdecode(filename),
+            _(u"Calculated hash: %s") % calculated_hash,
+            _(u"Manifest hash: %s") % hash_pair[1]
+        )
+        if config.ignore_errors:
+            exc = duplicity.errors.BadVolumeException(u"Hash mismatch for: %s" % util.fsdecode(filename))
+            log.Log(error_msg, log.ERROR, code=log.ErrorCode.mismatched_hash)
+            log.Warn(_(u"IGNORED_ERROR: Warning: ignoring error as requested: %s: %s")
+                     % (exc.__class__.__name__, util.uexc(exc)))
+            raise exc
+        else:
+            log.FatalError(error_msg, code=log.ErrorCode.mismatched_hash)
     fileobj = tdp.filtered_open_with_delete(u"rb")
     if parseresults.encrypted and config.gpg_profile.sign_key:
         restore_add_sig_check(fileobj)
@@ -1355,8 +1370,8 @@ def sync_archive(col_stats):
                 config.gpg_profile.passphrase = get_passphrase(1, u"sync")
             for fn in local_spurious:
                 remove_local(fn)
-            if hasattr(config.backend, u'pre_process_download'):
-                config.backend.pre_process_download(local_missing)
+            if hasattr(config.backend, u'pre_process_download_batch'):
+                config.backend.pre_process_download_batch(local_missing)
             for fn in local_missing:
                 copy_to_local(fn)
             col_stats.set_values()
@@ -1389,8 +1404,8 @@ def check_last_manifest(col_stats):
 def check_resources(action):
     u"""
     Check for sufficient resources:
-      - temp space for volume build
-      - enough max open files
+    - temp space for volume build
+    - enough max open files
     Put out fatal error if not sufficient to run
 
     @type action: string

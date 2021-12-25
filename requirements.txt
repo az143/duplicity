@@ -18,8 +18,15 @@ pylint
 pytest
 pytest-cov
 pytest-runner           ; python_version >= '3.6'
-sphinx
 tox
+
+
+##### documrntation libraries #####
+
+
+myst-parser             ; python_version >= '3.6'
+sphinx                  ; python_version >= '3.6'
+sphinx-rtd-theme        ; python_version >= '3.6'
 
 
 ##### backend libraries #####
@@ -46,5 +53,6 @@ pydrive                 ; python_version >= '3.6'
 pydrive2                ; python_version >= '3.6'
 pyrax                   ; python_version >= '3.6'
 python-swiftclient
+python-keystoneclient
 requests
 requests-oauthlib

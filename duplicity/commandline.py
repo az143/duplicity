@@ -492,6 +492,9 @@ def parse_cmdline_options(arglist):
     # Verbatim par2 options
     parser.add_option(u"--par2-options", action=u"extend", metavar=_(u"options"))
 
+    # Number of par2 volumes
+    parser.add_option(u"--par2-volumes", type=u"int", metavar=_(u"number"))
+
     # Used to display the progress for the full and incremental backup operations
     parser.add_option(u"--progress", action=u"store_true")
 
@@ -1150,10 +1153,10 @@ def check_consistency(action):
                          config.remove_time is not None])
     elif action == u"restore" or action == u"verify":
         if full_backup:
-            command_line_error(u"--full option cannot be used when "
+            command_line_error(u"full option cannot be used when "
                                u"restoring or verifying")
         elif config.incremental:
-            command_line_error(u"--incremental option cannot be used when "
+            command_line_error(u"incremental option cannot be used when "
                                u"restoring or verifying")
         if select_opts and action == u"restore":
             log.Warn(_(u"Command line warning: %s") % _(u"Selection options --exclude/--include\n"
@@ -1162,7 +1165,7 @@ def check_consistency(action):
     else:
         assert action == u"inc" or action == u"full"
         if verify:
-            command_line_error(u"--verify option cannot be used "
+            command_line_error(u"verify option cannot be used "
                                u"when backing up")
         if config.restore_dir:
             command_line_error(u"restore option incompatible with %s backup"

@@ -223,8 +223,8 @@ def release_lockfile():
             config.lockfile = None
             os.remove(config.lockpath)
             config.lockpath = u""
-        except Exception:
-            log.Error(u"Could not release lockfile: %s", str(e))
+        except Exception as e:
+            log.Error(u"Could not release lockfile: %s" % str(e))
             pass
 
 

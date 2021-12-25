@@ -1,3 +1,165 @@
+## rel.0.8.21 (2021-11-09)
+
+### New
+
+* Add update of API docs to deploy step. [Kenneth Loafman]
+
+### Changes
+
+* Fix build of pages. [Kenneth Loafman]
+
+* Switch over to sphinx-rtd-theme. [Kenneth Loafman]
+
+* Fix command line warning messages. [Kenneth Loafman]
+
+* Nuke generated .rst files. [Kenneth Loafman]
+
+* Nuke before\_script.  [ci skip] [Kenneth Loafman]
+
+* Move html to public dir. [Kenneth Loafman]
+
+* Back to alabaster theme.  Port changes from sqlite branch. [Kenneth Loafman]
+
+* Remove Dockerfiles for .10 versions. [Kenneth Loafman]
+
+* Fix some rst errors in docstrings.  Add doctest module. [Kenneth Loafman]
+
+* Fixes to make API docs work right. [Kenneth Loafman]
+
+### Fix
+
+* Fix #93 - dupliicity wants private encryption key. [Kenneth Loafman]
+
+* PAR2 backend failes to create par2 file with spaces in name. [Kenneth Loafman]
+
+* Fix bug 930151 - Restore symlink changes target attributes (2) [Kenneth Loafman]
+
+* Fix LP bug 930151 - Restore a symlink changes target attributes. [Kenneth Loafman]
+
+* Fix #89 part 2 - handle small input files where par2 fails. [Kenneth Loafman]
+
+* Fix theme name, sphinx\_rtd\_theme. [Kenneth Loafman]
+
+* Fix #90 - rclone backend fails with spaces in pathnames. [Kenneth Loafman]
+
+* Fix #89 - Add PAR2 number volumes option. [Kenneth Loafman]
+
+* Fix #88 - Add PAR2 creation failure error message. [Kenneth Loafman]
+
+* Fix bug #87, Restore fails and stops on corrupted backup volume. [Kenneth Loafman]
+
+* Fix bug #86, PAR2 backend fails on restore, with patch supplied. [Kenneth Loafman]
+
+* Fix PEP8 style errors. [Kenneth Loafman]
+
+* Fix issue #81 - Assertion fail when par2 prefix forgotten. [Kenneth Loafman]
+
+* Fix issue #79 - Multibackend degradation. [Kenneth Loafman]
+
+* Add verbose exception on progress file failure. [Kenneth Loafman]
+
+### Other
+
+* Merge branch 'master' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
+
+* Merge branch 'issue73' into 'master' [Kenneth Loafman]
+
+    resolve os option key naming mismatch
+
+    See merge request duplicity/duplicity!74
+
+* Resolve os option key naming mismatch. [Johannes Winter]
+
+* Merge branch 'master' into 'master' [Kenneth Loafman]
+
+    Set up gdrive client credentials scope correctly to allow refreshing token
+
+    See merge request duplicity/duplicity!72
+
+* Set up gdrive client credentials scope correctly. [Christopher Haglund]
+
+* Merge branch 'master' of git@gitlab.com:duplicity/duplicity.git. [Kenneth Loafman]
+
+* Merge branch 'y0va-master-patch-75623' into 'master' [Kenneth Loafman]
+
+    don't query for filesize.
+
+    See merge request duplicity/duplicity!71
+
+* Don't query for filesize. [Johannes Winter]
+
+* Merge branch 'issue85' into 'master' [Kenneth Loafman]
+
+    upgrade docker test environment
+
+    See merge request duplicity/duplicity!70
+
+* Upgrade docker test environment. [Johannes Winter]
+
+* Merge branch 'master' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
+
+* Merge branch 'master' of gitlab.com:duplicity/duplicity. [Kenneth Loafman]
+
+* Merge branch 'mr4' into 'master' [Kenneth Loafman]
+
+    Fix TypeError.
+
+    See merge request duplicity/duplicity!69
+
+* Fix TypeError. [Clemens Fuchslocher]
+
+* Merge branch 'mr3' into 'master' [Kenneth Loafman]
+
+* SSHPExpectBackend: Implement \_delete\_list method. [Clemens Fuchslocher]
+
+* Merge branch 'mr2' into 'master' [Kenneth Loafman]
+
+* MultiBackend: Don't log username and password. [Clemens Fuchslocher]
+
+* Merge branch 'mr1' into 'master' [Kenneth Loafman]
+
+    Fix NameError.
+
+    See merge request duplicity/duplicity!66
+
+* Fix NameError. [Clemens Fuchslocher]
+
+* Merge branch 'onedrive-token-take2' into 'master' [Kenneth Loafman]
+
+    onedrive: Support using an external client id / refresh token
+
+    See merge request duplicity/duplicity!65
+
+* Onedrive: Support using an external client id / refresh token. [Michael Terry]
+
+* Merge branch 'fix-tmdir' into 'master' [Kenneth Loafman]
+
+    fix functional tests when _runtest_dir is not /tmp
+
+    See merge request duplicity/duplicity!64
+
+* Fix functional tests when \_runtestdir is not /tmp. [Guillaume Girol]
+
+* Merge branch 'date' into 'master' [Kenneth Loafman]
+
+    Allow to override manpage date with SOURCE_DATE_EPOCH
+
+    See merge request duplicity/duplicity!63
+
+* Allow to override manpage date with SOURCE\_DATE\_EPOCH. [Bernhard M. Wiedemann]
+
+    in order to make builds reproducible.
+    See https://reproducible-builds.org/ for why this is good
+    and https://reproducible-builds.org/specs/source-date-epoch/
+    for the definition of this variable.
+
+    Also use UTC/gmtime to be independent of timezone.
+
+* Merge branch 'origin/merge-requests/61' [Kenneth Loafman]
+
+* Improved management of volumes unsealing for PCA backend For PCA backend, unseal all volumes at once when restoring them instead of unsealing once at a time. Use pre\_process\_download method already available in dup\_main. Need to implement it on BackendWrapper and Multibackend as well. [Erwan B]
+
+
 ## rel.0.8.20 (2021-06-26)
 
 ### New
@@ -38,6 +200,10 @@
 * Fix issue #57 SSH backends - IndexError: list index out of range. [Kenneth Loafman]
 
 ### Other
+
+* Remove backup file. [kenneth@loafman.com]
+
+* Don't skip CI. [Kenneth Loafman]
 
 * Merge branch 'master' into 'master' [Kenneth Loafman]
 
