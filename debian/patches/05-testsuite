@@ -8,7 +8,7 @@ Subject: Disable some tests for being flaky
          self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
  
 +    @unittest.skip("Flaky test because it relies on knowing how many volumes the source files will be split into")
-     @unittest.skipIf(u"ppc64el" in platform.machine(), u"Skip on ppc64el machines")
+     @unittest.skipIf(platform.machine() in [u"ppc64el", u"ppc64le"], u"Skip on ppc64el and ppc64le machines")
      def test_last_file_missing_at_end(self):
          u"""
 --- a/testing/unit/test_gpg.py
@@ -19,7 +19,7 @@ Subject: Disable some tests for being flaky
          assert sig == self.sign_key, sig
 -
 +    @unittest.skip("Flaky test because it relies on compressed size of random bytes")
-     @unittest.skipIf(u"ppc64el" in platform.machine(), u"Skip on ppc64el machines")
+     @unittest.skipIf(platform.machine() in [u"ppc64el", u"ppc64le"], u"Skip on ppc64el of ppc64el machines")
      def test_GPGWriteFile(self):
          u"""Test GPGWriteFile"""
 @@ -156,6 +156,7 @@ class GPGTest(UnitTestCase):

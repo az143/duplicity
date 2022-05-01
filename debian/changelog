@@ -1,3 +1,12 @@
+duplicity (0.8.22-1) unstable; urgency=medium
+
+  * new upstream release
+  * requirements.txt is now shipped as part of the documentation,
+    which should simplify dealing with optional modules and
+    their dependencies (closes: #1007215)
+
+ -- Alexander Zangerl <az@debian.org>  Sun, 01 May 2022 17:23:46 +1000
+
 duplicity (0.8.21-1) unstable; urgency=medium
 
   * new upstream release (closes: #996577, #677215, #605878, #862005)

@@ -1,3 +1,11 @@
+duplicity (0.8.22-1) unstable; urgency=medium
+
+  upstream's requirements.txt is now included in /usr/share/doc/duplicity,
+  and should help with figuring out any dependencies for optional duplicity
+  modules.
+
+ -- Alexander Zangerl <az@debian.org>  Sun, 01 May 2022 17:23:30 +1000
+
 duplicity (0.8.04-1) unstable; urgency=high
 
   duplicity is now built with and for python 3. if you are using
