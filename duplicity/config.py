@@ -226,6 +226,9 @@ s3_use_ia = False
 # Whether to use S3 Glacier Storage
 s3_use_glacier = False
 
+# Whether to use S3 Glacier IR Storage
+s3_use_glacier_ir = False
+
 # Whether to use S3 Glacier Deep Archive Storage
 s3_use_deep_archive = False
 
@@ -363,8 +366,14 @@ par2_volumes = 1
 # Whether to enable gio backend
 use_gio = False
 
+# If set, log the chnages is the set instead of the normal collection status
+show_changes_in_set = None
+
 # If set, collect only the file status, not the whole root.
 file_changed = None
+
+# If set, skip collecting the files_changed list in statistics, nullifies --file-changed
+no_files_changed = False
 
 # delay (in seconds) before next operation after failure
 backend_retry_delay = 30

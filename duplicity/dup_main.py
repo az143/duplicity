@@ -252,7 +252,8 @@ def restart_position_iterator(tarblock_iter):
                 if not last_block and not tarblock_iter.previous_block:
                     break
                 # Only check block number if last_block is also a number
-                if last_block and tarblock_iter.previous_block > last_block:
+                if (last_block and tarblock_iter.previous_block
+                        and tarblock_iter.previous_block > last_block):
                     break
             if tarblock_iter.previous_index > last_index:
                 log.Warn(_(u"File %s complete in backup set.\n"
@@ -383,7 +384,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
         mf = config.restart.last_backup.get_local_manifest()
         config.restart.checkManifest(mf)
         config.restart.setLastSaved(mf)
-        if not (config.s3_use_deep_archive or config.s3_use_glacier):
+        if not (config.s3_use_deep_archive or config.s3_use_glacier or config.s3_use_glacier_ir):
             validate_encryption_settings(config.restart.last_backup, mf)
         else:
             log.Warn(_(u"Skipping encryption validation due to glacier/deep storage"))
@@ -423,13 +424,21 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
         tarblock_iter.remember_next_index()  # keep track of start index
 
         # Create volume
+        try:
+            log.Debug(u"BACKEND: " + str(config.backend))
+        except:
+            pass
+        log.Debug(u"***CREATING VOLUME***")
+
         vol_num += 1
         dest_filename = file_naming.get(backup_type, vol_num,
                                         encrypted=config.encryption,
                                         gzipped=config.compression)
         tdp = dup_temp.new_tempduppath(file_naming.parse(dest_filename))
+        log.Debug(u"FILENAME: " + str(tdp.name))
 
         # write volume
+        log.Debug(u"***WRITING VOLUME***")
         if config.encryption:
             at_end = gpg.GPGWriteFile(tarblock_iter, tdp.name, config.gpg_profile,
                                       config.volsize)
@@ -1058,8 +1067,8 @@ def replicate():
 
     src_chainlist = src_stats.get_signature_chains(local=False, filelist=src_list)[0]
     tgt_chainlist = tgt_stats.get_signature_chains(local=False, filelist=tgt_list)[0]
-    sorted(src_chainlist, key=lambda chain: chain.start_time)
-    sorted(tgt_chainlist, key=lambda chain: chain.start_time)
+    src_chainlist = sorted(src_chainlist, key=lambda chain: chain.start_time)
+    tgt_chainlist = sorted(tgt_chainlist, key=lambda chain: chain.start_time)
     if not src_chainlist:
         log.Notice(_(u"No old backup sets found."))
         return
@@ -1096,8 +1105,8 @@ def replicate():
 
     src_chainlist = src_stats.get_backup_chains(filename_list=src_list)[0]
     tgt_chainlist = tgt_stats.get_backup_chains(filename_list=tgt_list)[0]
-    sorted(src_chainlist, key=lambda chain: chain.start_time)
-    sorted(tgt_chainlist, key=lambda chain: chain.start_time)
+    src_chainlist = sorted(src_chainlist, key=lambda chain: chain.start_time)
+    tgt_chainlist = sorted(tgt_chainlist, key=lambda chain: chain.start_time)
     for src_chain in src_chainlist:
         try:
             tgt_chain = list([chain for chain in tgt_chainlist if chain.start_time == src_chain.start_time])[0]
@@ -1654,7 +1663,9 @@ def do_backup(action):
     elif action == u"list-current":
         list_current(col_stats)
     elif action == u"collection-status":
-        if not config.file_changed:
+        if config.show_changes_in_set is not None:
+            log.PrintCollectionChangesInSet(col_stats, config.show_changes_in_set, True)
+        elif not config.file_changed:
             log.PrintCollectionStatus(col_stats, True)
         else:
             log.PrintCollectionFileChangedStatus(col_stats, config.file_changed, True)

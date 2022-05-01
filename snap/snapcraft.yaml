@@ -10,7 +10,7 @@ description: |
 
 grade: stable
 confinement: classic
-base: core18
+base: core20
 
 apps:
     duplicity:
@@ -19,7 +19,6 @@ apps:
 parts:
     duplicity:
         plugin: python
-        python-version: python3
         build-packages:
             - build-essential
             - ieee-data
@@ -28,42 +27,42 @@ parts:
             - python3-dev
         stage-packages:
             - gnupg
-            - lftp                  # lftpbackend.py
+            - lftp
             - libatm1
-            - librsync1
-            - ncftp                 # ncftpbackend.py
-            - openssh-client        # ssh_pexpect_backend.py
-            - python3-gi            # giobackend.py
-            - rsync                 # rsyncbackend.py
-            - rclone                # rclonebackend.py
+            - librsync2
+            - ncftp
+            - openssh-client
+            - python3-gi
+            - rsync
+            - rclone
         python-packages:
-            - azure-storage-blob
-            - b2sdk                 # b2backend.py
-            - boto
-            - boto3
-            - boxsdk[jwt]
-            - dropbox               # dpbxbackend.py
-            - fasteners
-            - future                # everywhere
-            - gdata-python3         # gdocsbackend.py
-            - google-api-python-client  # gdrivebackend.py
-            - google-auth-oauthlib      # gdrivebackend.py
-            - httplib2              # pydrivebackend.py
-            - jottalib              # jottalib backend
-            - keyring               # gdrivebackend.py
-            - mediafire             # mediafirebackend.py
-            - megatools             # megabackend.py
-            - paramiko              # ssh_paramiko_backend.py
-            - pexpect               # ssh_pexpect_backend.py
-            - psutil                # botobackend.py
-            - pydrive               # pydrivebackend.py
-            - pyrax                 # hubicbackend
-            - python-swiftclient    # swiftbackend.py
-            - requests              # adbackend.py
-            - requests-oauthlib     # onedrivebackend
-            - setuptools            # setup.py
-            - setuptools-scm        # scm version
-            - sx                    # sxbackend.py
-            - tahoe-lafs            # tahoebackend.py
-            - urllib3
+            - azure-storage-blob            ; python_version == '3.8'
+            - b2sdk                         ; python_version == '3.8'
+            - boto                          ; python_version == '3.8'
+            - boto3                         ; python_version == '3.8'
+            - boxsdk[jwt]                   ; python_version == '3.8'
+            - dropbox                       ; python_version == '3.8'
+            - fasteners                     ; python_version == '3.8'
+            - future                        ; python_version == '3.8'
+            - gdata-python3                 ; python_version == '3.8'
+            - google-api-python-client      ; python_version == '3.8'
+            - google-auth-oauthlib          ; python_version == '3.8'
+            - httplib2                      ; python_version == '3.8'
+            - jottalib                      ; python_version == '3.8'
+            - keyring                       ; python_version == '3.8'
+            - mediafire                     ; python_version == '3.8'
+            - megatools                     ; python_version == '3.8'
+            - paramiko                      ; python_version == '3.8'
+            - pexpect                       ; python_version == '3.8'
+            - psutil                        ; python_version == '3.8'
+            - pydrive                       ; python_version == '3.8'
+            - pyrax                         ; python_version == '3.8'
+            - python-swiftclient            ; python_version == '3.8'
+            - requests                      ; python_version == '3.8'
+            - requests-oauthlib             ; python_version == '3.8'
+            - setuptools                    ; python_version == '3.8'
+            - setuptools-scm                ; python_version == '3.8'
+            - sx                            ; python_version == '3.8'
+            - tahoe-lafs                    ; python_version == '3.8'
+            - urllib3                       ; python_version == '3.8'
         source: .

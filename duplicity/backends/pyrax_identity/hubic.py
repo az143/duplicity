@@ -41,8 +41,8 @@ class BearerTokenAuth(requests.auth.AuthBase):
 
 
 class HubicIdentity(BaseIdentity):
-    def __init__(self):
-        super(HubicIdentity, self).__init__(self)
+    def __init__(self, **kwargs):
+        super(HubicIdentity, self).__init__(self, **kwargs)
 
     def _get_auth_endpoint(self):
         return u""

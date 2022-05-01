@@ -21,6 +21,11 @@
 
 set -e
 
+if [ "`uname`" != "Linux" ]; then
+    echo "makesnap does not run on this OS"
+    exit 2
+fi
+
 if [ "$#" -gt 1 ]; then
     echo "usage: makesnap <comma-sep-list-of-architectures>"
     echo "      - default is amd64 only"
@@ -55,7 +60,7 @@ if [ ${BUILD} == "amd64" ]; then
     # build snap locally w/o multipass
     snapcraft snap --destructive-mode
 else
-    # # build snap via remote build on LP
+    # build snap via remote build on LP
     snapcraft remote-build --build-on=${BUILD} --launchpad-accept-public-upload
 fi
 
@@ -68,9 +73,13 @@ for f in duplicity_*.snap; do
 done
 
 # mv into working source tree
-mv duplicity_*.txt ../..
-mv duplicity_*.snap* ../..
-cd ../..
+if [ -e duplicity_*.snap ]; then
+    mv duplicity_*.snap ../..
+fi
+if [ -e duplicity_*.txt ]; then
+    mv duplicity_*.txt ../..
+fi
 
 # clean up
+cd ../..
 rm -rf build

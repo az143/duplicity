@@ -1,3 +1,4 @@
+*.swp
 *.egg
 *.log
 *.pyc
@@ -14,6 +15,7 @@
 .pytest_cache
 .settings
 .tox
+.vscode
 __pycache__
 build
 config.py
@@ -25,6 +27,7 @@ duplicity.egg-info
 duplicity.spec
 filters.txt
 htmlcov
+mprofile_*.dat
 po/duplicity.pot-e
 random_seed
 report.xml
@@ -34,3 +37,4 @@ testing/gnupg/S.*
 testing/gnupg/private-keys-v1.d
 testing/manual/test_config.py
 .pc
+wheels
