@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -75,28 +75,27 @@ commands = [u"cleanup",
 
 
 def old_fn_deprecation(opt):
-    log.Log(_(u"Warning: Option %s is pending deprecation "
-              u"and will be removed in version 0.9.0.\n"
+    log.Log(_(u"Warning: Option %s is pending deprecation and will be removed in version 2.0.\n"
               u"Use of default filenames is strongly suggested.") % opt,
-            log.ERROR, force_print=True)
+            log.WARNING, force_print=True)
 
 
 def old_globbing_filelist_deprecation(opt):
-    log.Log(_(u"Warning: Option %s is pending deprecation and will be removed in a future release.\n"
+    log.Log(_(u"Warning: Option %s is pending deprecation and will be removed in version 2.0.\n"
               u"--include-filelist and --exclude-filelist now accept globbing characters and should "
               u"be used instead.") % opt,
-            log.ERROR, force_print=True)
+            log.WARNING, force_print=True)
 
 
 def stdin_deprecation(opt):
     # See https://bugs.launchpad.net/duplicity/+bug/1423367
     # In almost all Linux distros stdin is a file represented by /dev/stdin,
     # so --exclude-file=/dev/stdin will work as a substitute.
-    log.Log(_(u"Warning: Option %s is pending deprecation and will be removed in a future release.\n"
+    log.Log(_(u"Warning: Option %s is pending deprecation and will be removed in version 2.0.\n"
               u"On many GNU/Linux systems, stdin is represented by /dev/stdin and\n"
               u"--include-filelist=/dev/stdin or --exclude-filelist=/dev/stdin could\n"
               u"be used as a substitute.") % opt,
-            log.ERROR, force_print=True)
+            log.WARNING, force_print=True)
 
 
 # log options handled in log.py.  Add noop to make optparse happy
@@ -241,7 +240,7 @@ def parse_cmdline_options(arglist):
                            log.ErrorCode.cant_open_filelist)
 
     def print_ver(o, s, v, p):  # pylint: disable=unused-argument
-        print(u"duplicity %s" % (config.version))
+        print(u"duplicity %s" % config.version)
         sys.exit(0)
 
     def add_rename(o, s, v, p):  # pylint: disable=unused-argument
@@ -296,11 +295,11 @@ def parse_cmdline_options(arglist):
                       dest=u"", action=u"callback",
                       callback=lambda o, s, v, p: (config.gpg_profile.recipients.append(v), set_sign_key(v)))
 
-    # TRANSL: Used in usage help to represent a "glob" style pattern for
+    # TRANSL: Used in usage help to represent a pattern for
     # matching one or more files, as described in the documentation.
     # Example:
-    # --exclude <shell_pattern>
-    parser.add_option(u"--exclude", action=u"callback", metavar=_(u"shell_pattern"),
+    # --exclude <pattern>
+    parser.add_option(u"--exclude", action=u"callback", metavar=_(u"pattern"),
                       dest=u"", type=u"string", callback=add_selection)
 
     parser.add_option(u"--exclude-device-files", action=u"callback",
@@ -340,7 +339,7 @@ def parse_cmdline_options(arglist):
     parser.add_option(u"--fail-on-volume", type=u"int",
                       help=optparse.SUPPRESS_HELP)
 
-    # used to provide a prefix on top of the defaul tar file name
+    # used to provide a prefix on top of the default tar file name
     parser.add_option(u"--file-prefix", type=u"string", dest=u"file_prefix", action=u"store")
 
     # used to provide a suffix for manifest files only
@@ -351,6 +350,31 @@ def parse_cmdline_options(arglist):
 
     # used to provide a suffix for sigature files only
     parser.add_option(u"--file-prefix-signature", type=u"string", dest=u"file_prefix_signature", action=u"store")
+
+    # File selection mode switch, changes the interpretation of any subsequent
+    # --exclude* or --include* options to shell globbing.
+    parser.add_option(u"--filter-globbing", action=u"callback",
+                      callback=lambda o, s, v, p: select_opts.append((s, None)))
+
+    # File selection mode switch, changes the interpretation of any subsequent
+    # --exclude* or --include* options to case-insensitive matching.
+    parser.add_option(u"--filter-ignorecase", action=u"callback",
+                      callback=lambda o, s, v, p: select_opts.append((s, None)))
+
+    # File selection mode switch, changes the interpretation of any subsequent
+    # --exclude* or --include* options to literal strings.
+    parser.add_option(u"--filter-literal", action=u"callback",
+                      callback=lambda o, s, v, p: select_opts.append((s, None)))
+
+    # File selection mode switch, changes the interpretation of any subsequent
+    # --exclude* or --include* options to regular expressions.
+    parser.add_option(u"--filter-regexp", action=u"callback",
+                      callback=lambda o, s, v, p: select_opts.append((s, None)))
+
+    # File selection mode switch, changes the interpretation of any subsequent
+    # --exclude* or --include* options to case-sensitive matching.
+    parser.add_option(u"--filter-strictcase", action=u"callback",
+                      callback=lambda o, s, v, p: select_opts.append((s, None)))
 
     # used in testing only - skips upload for a given volume
     parser.add_option(u"--skip-volume", type=u"int",
@@ -363,6 +387,10 @@ def parse_cmdline_options(arglist):
     parser.add_option(u"--file-to-restore", u"-r", action=u"callback", type=u"file",
                       metavar=_(u"path"), dest=u"restore_dir",
                       callback=lambda o, s, v, p: setattr(p.values, u"restore_dir", util.fsencode(v.strip(u'/'))))
+
+    # Defines the backup source as a sub-set of the source folder
+    parser.add_option(u"--files-from", type=u"file", metavar=_(u"filename"),
+                      dest=u"", action=u"callback", callback=add_filelist)
 
     # Used to confirm certain destructive operations like deleting old files.
     parser.add_option(u"--force", action=u"store_true")
@@ -413,7 +441,7 @@ def parse_cmdline_options(arglist):
     # TRANSL: Used in usage help to represent an imap mailbox
     parser.add_option(u"--imap-mailbox", metavar=_(u"imap_mailbox"))
 
-    parser.add_option(u"--include", action=u"callback", metavar=_(u"shell_pattern"),
+    parser.add_option(u"--include", action=u"callback", metavar=_(u"pattern"),
                       dest=u"", type=u"string", callback=add_selection)
     parser.add_option(u"--include-filelist", type=u"file", metavar=_(u"filename"),
                       dest=u"", action=u"callback", callback=add_filelist)
@@ -634,6 +662,9 @@ def parse_cmdline_options(arglist):
     parser.add_option(u"--ssl-cacert-path", metavar=_(u"path to a folder with certificate authority files"))
     parser.add_option(u"--ssl-no-check-certificate", action=u"store_true")
 
+    # header options for Webdav
+    parser.add_option(u"--webdav-headers", metavar=_(u"extra headers for Webdav, like 'Cookie,name=value'"))
+
     # Working directory for the tempfile module. Defaults to /tmp on most systems.
     parser.add_option(u"--tempdir", dest=u"temproot", type=u"file", metavar=_(u"path"))
 
@@ -786,12 +817,11 @@ def parse_cmdline_options(arglist):
         num_expect = 2
 
     if cmd == u'replicate':
-        log.Warn(u'''
-WARNING: Replicate is only minimally functional at this time
-         See https://gitlab.com/duplicity/duplicity/-/issues/98
-         for further details.  Please consider using rsync,
-         rclone, or other copy utilities to make a replication.
-''')
+        log.Warn(u'WARNING: Replicate is only minimally functional at this time\n'
+                 u'See https://gitlab.com/duplicity/duplicity/-/issues/98\n'
+                 u'for further details.  Please consider using rsync,\n'
+                 u'rclone, or other copy utilities to make a replication.\n'
+                 u'Replicate will be removed in version 2.0.\n')
 
     if len(args) != num_expect:
         command_line_error(u"Expected %d args, got %d" % (num_expect, len(args)))
@@ -913,6 +943,12 @@ def usage():
         # --archive-dir <path>
         u'path': _(u"path"),
 
+        # TRANSL: Used in usage help to represent a pattern for
+        # matching one or more files, as described in the documentation.
+        # Example:
+        # --exclude <pattern>
+        u'pattern': _(u"pattern"),
+
         # TRANSL: Used in usage help to represent a TCP port number. Example:
         # ftp://user[:password]@other.host[:port]/some_dir
         u'port': _(u"port"),
@@ -929,12 +965,6 @@ def usage():
         # TRANSL: Used in usage help. Example:
         # --timeout <seconds>
         u'seconds': _(u"seconds"),
-
-        # TRANSL: Used in usage help to represent a "glob" style pattern for
-        # matching one or more files, as described in the documentation.
-        # Example:
-        # --exclude <shell_pattern>
-        u'shell_pattern': _(u"shell_pattern"),
 
         # TRANSL: Used in usage help to represent the name of a single file
         # directory or a Unix-style path to a directory. Example:
@@ -1106,9 +1136,9 @@ page for more information.""")
         command_line_error(u"Two URLs specified.  "
                            u"One argument should be a path.")
     if arg1_is_backend:
-        return (arg2, arg1)
+        return arg2, arg1
     elif arg2_is_backend:
-        return (arg1, arg2)
+        return arg1, arg2
     else:
         raise AssertionError(u'should not be reached')
 
@@ -1125,9 +1155,9 @@ def set_backend(arg1, arg2):
     config.backend = backend.get_backend(bend)
 
     if path == arg2:
-        return (None, arg2)  # False?
+        return None, arg2  # False?
     else:
-        return (1, arg1)  # True?
+        return 1, arg1  # True?
 
 
 def process_local_dir(action, local_pathname):
@@ -1221,7 +1251,7 @@ def ProcessCommandLine(cmdline_list):
 
     # parse_cmdline_options already verified that we got exactly 1 or 2
     # non-options arguments
-    assert len(args) >= 1 and len(args) <= 2, u"arg count should have been checked already"
+    assert 1 <= len(args) <= 2, u"arg count should have been checked already"
 
     if len(args) == 1:
         if list_current:

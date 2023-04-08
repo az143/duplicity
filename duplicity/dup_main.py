@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # duplicity -- Encrypted bandwidth efficient backup
 #
@@ -21,7 +21,11 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
-# See http://www.nongnu.org/duplicity for more information.
+# For more information see
+#  http://duplicity.us
+#  or
+#  http://duplicity.gitlab.io
+# .
 # Please send mail to me or the mailing list if you find bugs or have
 # any suggestions.
 
@@ -818,28 +822,33 @@ def restore_get_enc_fileobj(backend, filename, volume_info):
     with --ignore-errors set continue on hash mismatch
 
     """
-    parseresults = file_naming.parse(filename)
-    tdp = dup_temp.new_tempduppath(parseresults)
-    backend.get(filename, tdp)
+    for n in range(1, config.num_retries + 1):
+        u""" get the remote file """
+        parseresults = file_naming.parse(filename)
+        tdp = dup_temp.new_tempduppath(parseresults)
+        backend.get(filename, tdp)
 
-    u""" verify hash of the remote file """
-    verified, hash_pair, calculated_hash = restore_check_hash(volume_info, tdp)
-    if not verified:
-        error_msg = u"%s\n %s\n %s\n %s\n" % (
-            _(u"Invalid data - %s hash mismatch for file:") %
-            hash_pair[0],
-            util.fsdecode(filename),
-            _(u"Calculated hash: %s") % calculated_hash,
-            _(u"Manifest hash: %s") % hash_pair[1]
-        )
+        u""" verify hash of the remote file """
+        verified, hash_pair, calculated_hash = restore_check_hash(volume_info, tdp)
+        if verified:
+            break
+        else:
+            error_msg = u"%s\n %s\n %s\n %s\n" % (
+                _(u"Invalid data - %s hash mismatch for file:") %
+                hash_pair[0],
+                util.fsdecode(filename),
+                _(u"Calculated hash: %s") % calculated_hash,
+                _(u"Manifest hash: %s") % hash_pair[1]
+            )
+            log.Error(error_msg, code=log.ErrorCode.mismatched_hash)
+    else:
         if config.ignore_errors:
             exc = duplicity.errors.BadVolumeException(u"Hash mismatch for: %s" % util.fsdecode(filename))
-            log.Log(error_msg, log.ERROR, code=log.ErrorCode.mismatched_hash)
             log.Warn(_(u"IGNORED_ERROR: Warning: ignoring error as requested: %s: %s")
                      % (exc.__class__.__name__, util.uexc(exc)))
-            raise exc
         else:
             log.FatalError(error_msg, code=log.ErrorCode.mismatched_hash)
+
     fileobj = tdp.filtered_open_with_delete(u"rb")
     if parseresults.encrypted and config.gpg_profile.sign_key:
         restore_add_sig_check(fileobj)
@@ -913,10 +922,8 @@ def verify(col_stats):
     # Unfortunately, ngettext doesn't handle multiple number variables, so we
     # split up the string.
     log.Notice(_(u"Verify complete: %s, %s.") %
-               (ngettext(u"%d file compared",
-                         u"%d files compared", total_count) % total_count,
-                ngettext(u"%d difference found",
-                         u"%d differences found", diff_count) % diff_count))
+               (_(u"%d file(s) compared") % total_count,
+                _(u"%d difference(s) found") % diff_count))
     if diff_count >= 1:
         exit_val = 1
 
@@ -939,9 +946,7 @@ def cleanup(col_stats):
 
     filestr = u"\n".join(map(util.fsdecode, extraneous))
     if config.force:
-        log.Notice(ngettext(u"Deleting this file from backend:",
-                            u"Deleting these files from backend:",
-                            len(extraneous)) + u"\n" + filestr)
+        log.Notice(_(u"Deleting these file(s) from backend:") + u"\n" + filestr)
         if not config.dry_run:
             col_stats.backend.delete(ext_remote)
             for fn in ext_local:
@@ -950,9 +955,7 @@ def cleanup(col_stats):
                 except Exception:
                     pass
     else:
-        log.Notice(ngettext(u"Found the following file to delete:",
-                            u"Found the following files to delete:",
-                            len(extraneous)) + u"\n" + filestr + u"\n" +
+        log.Notice(_(u"Found the following file(s) to delete:") + u"\n" + filestr + u"\n" +
                    _(u"Run duplicity again with the --force option to actually delete."))
 
 
@@ -1018,9 +1021,7 @@ def remove_old(col_stats):
         log.Notice(_(u"No old backup sets found, nothing deleted."))
         return
     if config.force:
-        log.Notice(ngettext(u"Deleting backup chain at time:",
-                            u"Deleting backup chains at times:",
-                            len(chainlist)) +
+        log.Notice(_(u"Deleting backup chain(s) at time:") +
                    u"\n" + chain_times_str(chainlist))
         # Add signature files too, since they won't be needed anymore
         chainlist += col_stats.get_signature_chains_older_than(config.remove_time)
@@ -1043,9 +1044,7 @@ def remove_old(col_stats):
                 chain.delete(keep_full=config.remove_all_inc_of_but_n_full_mode)
         col_stats.set_values(sig_chain_warning=None)
     else:
-        log.Notice(ngettext(u"Found old backup chain at the following time:",
-                            u"Found old backup chains at the following times:",
-                            len(chainlist)) +
+        log.Notice(_(u"Found old backup chain(s) at the following time:") +
                    u"\n" + chain_times_str(chainlist) + u"\n" +
                    _(u"Rerun command with --force option to actually delete."))
 
@@ -1298,7 +1297,7 @@ def sync_archive(col_stats):
             def __next__(self):
                 try:
                     res = Block(self.fileobj.read(self.get_read_size()))
-                except Exception:
+                except Exception as e:
                     if hasattr(self.fileobj, u'name'):
                         name = self.fileobj.name
                         # name may be a path
@@ -1306,8 +1305,7 @@ def sync_archive(col_stats):
                             name = name.name
                     else:
                         name = None
-                    log.FatalError(_(u"Failed to read %s: %s") %
-                                   (util.fsdecode(name), sys.exc_info()),
+                    log.FatalError(_(u"Failed to read %s: %s") % (util.fsdecode(fn), util.uexc(e)),
                                    log.ErrorCode.generic)
                 if not res.data:
                     self.fileobj.close()

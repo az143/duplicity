@@ -14,7 +14,7 @@
 ##       'fix' is for bug fixes
 ##       'new' is for new features, big improvement
 ##
-##   AUDIENCE is optional and one of 'dev', 'usr', 'pkg', 'test', 'doc'
+##   AUDIENCE is one of 'dev', 'usr', 'pkg', 'test', 'doc'
 ##
 ##       Is WHO is concerned by the change.
 ##
@@ -62,14 +62,13 @@ ignore_regexps = [
     r'@cosmetic', r'!cosmetic',
     r'@refactor', r'!refactor',
     r'@wip', r'!wip',
-    r'^([cC]hg|[fF]ix|[nN]ew)\s*:\s*[p|P]kg:',
-    r'^([cC]hg|[fF]ix|[nN]ew)\s*:\s*[d|D]ev:',
     r'^(.{3,3}\s*:)?\s*[fF]irst commit.?\s*$',
     r'^Launchpad automatic translations update..*$',
     r'^.*LP translations.*$',
+    r'^.*New Crowdin updates',
     r'^.*Change version for LP.*$',
     r'^.*Update changelog..*$',
-    r'^(\* )?Prep\s*for\s*\d+\.\d+\.\d+.*$',
+    r'^.*Prep for .*$',
     r'^$',  ## ignore commits with empty messages
 ]
 
@@ -88,13 +87,13 @@ ignore_regexps = [
 ##
 section_regexps = [
     ('New', [
-        r'^[nN]ew\s*:\s*((dev|use?r|pkg|test|doc)\s*:\s*)?([^\n]*)$',
+        r'^new\s*:\s*((dev|usr|pkg|test|doc)\s*:\s*)?([^\n]*)$',
      ]),
     ('Changes', [
-        r'^[cC]hg\s*:\s*((dev|use?r|pkg|test|doc)\s*:\s*)?([^\n]*)$',
+        r'^chg\s*:\s*((dev|usr|pkg|test|doc)\s*:\s*)?([^\n]*)$',
      ]),
     ('Fix', [
-        r'^[fF]ix\s*:\s*((dev|use?r|pkg|test|doc)\s*:\s*)?([^\n]*)$',
+        r'^fix\s*:\s*((dev|usr|pkg|test|doc)\s*:\s*)?([^\n]*)$',
      ]),
     ('Other', None ## Match all lines
      ),
@@ -138,7 +137,8 @@ section_regexps = [
 body_process = (strip |
     ReSub(r'^\* ([A-Za-z])', r'\1') |
     ReSub(r'((^|\n)[A-Z]\w+(-\w+)*: .*(\n\s+.*)*)+$', r'') |
-    ReSub(r'\[.* ci\]', r'') |
+    ReSub(r'\[.*\s+skip\]', r'') |
+    ReSub(r'\[skip\s+.*\]', r'') |
     Indent(chars="  ") |
     Wrap(regexp=r"\n\n"))
 
@@ -153,7 +153,7 @@ subject_process = (strip |
     ReSub(r'^[#*-]\s+([A-Za-z])', r'\1') |
     ReSub(r'~', r'\~') |
     ReSub(r'_', r'\_') |
-    ReSub(r'^([cC]hg|[fF]ix|[nN]ew)\s*:\s*((dev|use?r|pkg|test|doc)\s*:\s*)?([^\n@]*)(@[a-z]+\s+)*$', r'\4') |
+    ReSub(r'^(chg|fix|new)\s*:\s*((dev|usr|pkg|test|doc)\s*:\s*)?([^\n@]*)(@[a-z]+\s+)*$', r'\4') |
     SetIfEmpty("No commit message.") |
     Indent(chars="  ") |
     Wrap(regexp=r"\n\n") |
@@ -213,7 +213,7 @@ output_engine = mustache("markdown")
 ##
 ## This option tells git-log whether to include merge commits in the log.
 ## The default is to include them.
-include_merge = True
+include_merge = False
 
 
 ## ``log_encoding`` is a string identifier
@@ -222,7 +222,7 @@ include_merge = True
 ## The default is to be clever about it: it checks ``git config`` for
 ## ``i18n.logOutputEncoding``, and if not found will default to git's own
 ## default: ``utf-8``.
-#log_encoding = 'utf-8'
+log_encoding = 'utf-8'
 
 
 ## ``publish`` is a callable
@@ -260,7 +260,7 @@ include_merge = True
 #     r'/(?P<rev>[0-9]+\.[0-9]+(\.[0-9]+)?)\s+\([0-9]+-[0-9]{2}-[0-9]{2}\)\n--+\n/',
 #     idx=lambda m: m.start(1)
 # )
-#publish = stdout
+publish = stdout
 
 
 ## ``revs`` is a list of callable or a list of string

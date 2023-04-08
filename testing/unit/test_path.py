@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -39,7 +39,7 @@ class PathTest(UnitTestCase):
 
     def test_deltree(self):
         u"""Test deleting a tree"""
-        assert not os.system(u"cp -pR {0}/testfiles/deltree {0}/testfiles/output".format(_runtest_dir).format(_runtest_dir))
+        assert not os.system(u"cp -pR {0}/testfiles/deltree {0}/testfiles/output".format(_runtest_dir).format(_runtest_dir))  # noqa
         p = Path(u"{0}/testfiles/output".format(_runtest_dir))
         assert p.isdir()
         p.deltree()

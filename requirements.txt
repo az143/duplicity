@@ -3,43 +3,26 @@
 fasteners
 future
 python-gettext
-setuptools>=44.1.1
-setuptools-scm>=5.0.2
 
 
-##### testing libraries #####
+##### requests libraries #####
 
-
-coverage
-mock>=3.0.5
-pycodestyle
-pydevd                  ; python_version >= '3.6'
-pylint
-pytest
-pytest-cov
-pytest-runner           ; python_version >= '3.6'
-tox
-
-
-##### documrntation libraries #####
-
-
-myst-parser             ; python_version >= '3.6'
-sphinx                  ; python_version >= '3.6'
-sphinx-rtd-theme        ; python_version >= '3.6'
+chardet < 3.10
+urllib3 < 1.26
+requests
 
 
 ##### backend libraries #####
 
-
-azure-storage-blob      ; python_version >= '3.6'
-b2sdk                   ; python_version >= '3.6'
+azure-core
+azure-storage-blob
+b2sdk                   ; python_version >= '3.7'
 boto
 boto3
-boxsdk[jwt]             ; python_version >= '3.6'
+boxsdk[jwt]
 dropbox
 gdata                   ; python_version == '2.7'
-gdata-python3           ; python_version >= '3.6'
+gdata-python3           ; python_version >= '3.5'
 google-api-python-client
 google-auth-oauthlib
 jottalib
@@ -49,10 +32,33 @@ megatools               ; python_version >= '3.6'
 paramiko
 pexpect
 psutil
-pydrive                 ; python_version >= '3.6'
-pydrive2                ; python_version >= '3.6'
-pyrax                   ; python_version >= '3.6'
+pydrive2
+pyrax
 python-swiftclient
 python-keystoneclient
-requests
 requests-oauthlib
+
+
+##### testing libraries #####
+
+
+2to3
+coverage
+mock >= 3.0.5
+pycodestyle
+pylint
+pytest
+pytest-cov
+pytest-runner
+setuptools >= 44.1.1
+setuptools-scm >= 5.0.2
+tox
+
+
+##### documentation libraries #####
+
+gitchangelog            ; python_version >= '3.6'
+myst-parser             ; python_version >= '3.6'
+pystache                ; python_version >= '3.6'
+sphinx                  ; python_version >= '3.6'
+sphinx-rtd-theme        ; python_version >= '3.6'

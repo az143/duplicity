@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2013 Matthieu Huin <mhu@enovance.com>
 # Copyright 2017 Xavier Lucas <xavier.lucas@corp.ovh.com>
@@ -176,7 +176,7 @@ Exception: %s""" % str(e))
             if listing:
                 rv[1].extend(listing)
         if ffilter is not None:
-            return filter(ffilter, rv[1])
+            return list(filter(ffilter, rv[1]))
         return rv[1]
 
     def _list(self):

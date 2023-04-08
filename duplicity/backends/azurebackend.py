@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2013 Matthieu Huin <mhu@enovance.com>
 # Copyright 2015 Scott McKenzie <noizyland@gmail.com>
@@ -99,7 +99,7 @@ Exception: %s""" % str(e))
 
     def _put(self, source_path, remote_filename):
         remote_filename = fsdecode(remote_filename)
-        kwargs = {}
+        kwargs = {u"overwrite": True}
 
         if config.azure_max_connections:
             kwargs[u'max_concurrency'] = config.azure_max_connections

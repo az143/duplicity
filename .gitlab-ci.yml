@@ -1,8 +1,9 @@
-# Copyright 2019 Nils Tekampe <nils@tekampe.org>,
-# Kenneth Loafman <kenneth@loafman.com> and
-# Aaron Whitehouse <code@whitehouse.kiwi.nz>
-#
 # This file is part of duplicity.
+#
+# Copyright 2022 Nils Tekampe <nils@tekampe.org>,
+# Kenneth Loafman <kenneth@loafman.com>,
+# Aaron Whitehouse <code@whitehouse.kiwi.nz>,
+# Edgar Soldin <https://soldin.de>
 #
 # Duplicity is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -22,20 +23,26 @@
 #     - template: Dependency-Scanning.gitlab-ci.yml
 
 .test-template: &test-template
-    stage: tests
-    except:
-        variables:
-            - $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i
-            - $SKIP_TESTS
+    stage: test
+    rules:
+        - if: $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i || $SKIP_TESTS
+          when: never
+        - if: $CI_MERGE_REQUEST_APPROVED
+          when: always
+        - changes:
+            - .gitlab-ci.yml
+            - bin/duplicity
+            - bin/rdiffdir
+            - duplicity/**/*
+            - testing/**/*
+          when: always
+        - when: never
 
 variables:
     # cache local items
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
     # Set to non-interactive so no tzdata prompt
     DEBIAN_FRONTEND: "noninteractive"
-    # for upload to pypi.org
-    TWINE_USERNAME: $TWINE_USERNAME
-    TWINE_PASSWORD: $TWINE_PASSWORD
 
 stages:
     - qual
@@ -43,116 +50,144 @@ stages:
     - deploy
 
 default:
-    image: ubuntu:18.04
     before_script:
         # Set locale to prevent UTF-8 errors
         - export LANG=C.UTF-8
         - export LC_ALL=C.UTF-8
         - apt-get update
-        - apt-get install -y 2to3 build-essential git intltool lftp librsync-dev
-          libffi-dev libssl-dev openssl par2 rdiff tzdata python3-pip
-        - python3 -m pip install --upgrade pip
-        - python3 -m pip install --requirement requirements.txt
+        - apt-get install -y build-essential git intltool lftp librsync-dev
+                             libffi-dev libssl-dev openssl par2 rdiff tzdata
     interruptible: true
 
-code_ub18-04:
+code:
     <<: *test-template
+    image: python:3.11
     stage: qual
     script:
-        - apt-get install -y python3.8 python3.8-dev
+        - python3 -m pip install -r requirements.txt
         - tox -e code
-    artifacts:
-        reports:
-            junit: report.xml
 
-py27_ub18-04:
+py27:
     <<: *test-template
+    image: python:2.7
     stage: test
     script:
-        - apt-get install -y python2.7 python2.7-dev
+        - python -m pip install -r requirements.txt
         - tox -e py27
-    artifacts:
-        reports:
-            junit: report.xml
     allow_failure: true
 
-py35_ub16-04:
+py35:
     <<: *test-template
+    image: python:3.5
     stage: test
-    image: ubuntu:16.04
-    before_script:
-        # Set locale to prevent UTF-8 errors
-        - export LANG=C.UTF-8
-        - export LC_ALL=C.UTF-8
-        - apt-get update
-        - apt-get install -y build-essential git intltool lftp librsync-dev
-          libffi-dev libssl-dev openssl par2 rdiff tzdata
-          python3-pip python3.5 python3.5-dev
-        - python3 -m pip install --upgrade pip==20.3.4
-        - python3 -m pip install --requirement requirements.txt
     script:
-        - apt-get install -y python3.5 python3.5-dev
+        - python3 -m pip install -r requirements.txt
         - tox -e py35
-    artifacts:
-        reports:
-            junit: report.xml
     allow_failure: true
 
-py36_ub18-04:
+py36:
     <<: *test-template
+    image: python:3.6
     stage: test
     script:
-        - apt-get install -y python3.6 python3.6-dev
+        - python3 -m pip install -r requirements.txt
         - tox -e py36
-    artifacts:
-        reports:
-            junit: report.xml
+    allow_failure: true
 
-py37_ub18-04:
+py37:
     <<: *test-template
+    image: python:3.7
     stage: test
     script:
-        - apt-get install -y python3.7 python3.7-dev
+        - python3 -m pip install -r requirements.txt
         - tox -e py37
-    artifacts:
-        reports:
-            junit: report.xml
 
-py38_ub18-04:
+py38:
     <<: *test-template
+    image: python:3.8
     stage: test
     script:
-        - apt-get install -y python3.8 python3.8-dev
+        - python3 -m pip install -r requirements.txt
         - tox -e py38
-    artifacts:
-        reports:
-            junit: report.xml
 
-py39_ub20-04:
+py39:
     <<: *test-template
+    image: python:3.9
     stage: test
+    script:
+        - python3 -m pip install -r requirements.txt
+        - tox -e py39
+
+py310:
+    <<: *test-template
+    image: python:3.10
+    stage: test
+    script:
+        - python3 -m pip install -r requirements.txt
+        - tox -e py310
+
+py311:
+    <<: *test-template
+    image: python:3.11
+    stage: test
+    script:
+        - python3 -m pip install -r requirements.txt
+        - tox -e py311
+
+build_pip:
+    stage: deploy
+    when: manual
     image: ubuntu:20.04
     before_script:
+        - apt-get update
+        - apt-get install -y git python3-pip git intltool
+        - python3 -m pip install --upgrade pip
+        - python3 -m pip install -r requirements.txt
+        - python3 -m pip install twine
+    script:
+        - ./setup.py sdist --dist-dir=.
+    artifacts:
+        paths:
+            - duplicity-*.tar.gz
+        expire_in: 30 days
+
+build_snap:
+    stage: deploy
+    when: manual
+    image: ubuntudesktop/gnome-3-38-2004
+    before_script:
         # Set locale to prevent UTF-8 errors
         - export LANG=C.UTF-8
         - export LC_ALL=C.UTF-8
+        - export SNAP_ARCH=amd64
+        - export SNAPCRAFT_BUILD_INFO=1
         - apt-get update
-        - apt-get install -y build-essential git intltool lftp librsync-dev
-          libffi-dev libssl-dev openssl par2 rdiff tzdata python3-pip
+        - apt-get install -y git python3-pip git intltool squashfs-tools
         - python3 -m pip install --upgrade pip
-        - python3 -m pip install --requirement requirements.txt
+        - python3 -m pip install -r requirements.txt
     script:
-        - apt-get install -y python3.9 python3.9-dev
-        - tox -e py39
+        - tools/makesnap
+        - tools/installsnap
+        - tools/testsnap
     artifacts:
-        reports:
-            junit: report.xml
+        paths:
+            - build/duplicity-*/duplicity_*.snap
+            - build/duplicity-*/duplicity_*.txt
+        expire_in: 30 days
 
 pages:
     stage: deploy
     when: manual
     image: ubuntu:20.04
+    before_script:
+        # Set locale to prevent UTF-8 errors
+        - export LANG=C.UTF-8
+        - export LC_ALL=C.UTF-8
     script:
+        - apt-get update
+        - apt-get install -y git python3-pip git intltool
+        - python3 -m pip install --upgrade pip
+        - python3 -m pip install -r requirements.txt
         - VERSION=`./setup.py --version`
         - echo "make docs of ${VERSION}"
         - make docs
@@ -160,3 +195,28 @@ pages:
     artifacts:
         paths:
             - public
+
+# run a pipeline trigger for the website to build
+# - on new tag (always)
+# - on new pushes (when online published files were changed)
+# - when run manually
+# needs WEBSITE_TRIGGER_TOKEN variable in CI settings (mask/protected as needed)
+website:
+    stage: deploy
+    rules:
+        - if: $CI_COMMIT_TAG
+          when: always
+        - changes:
+            - "CHANGELOG.md"
+            - "README.md"
+            - "bin/*.1"
+          if: $CI_PIPELINE_SOURCE == "push"
+          when: always
+        - when: manual
+    allow_failure: true
+    variables:
+        GIT_STRATEGY: none
+        GIT_CHECKOUT: "false"
+    image: curlimages/curl:latest
+    script: |
+        curl --fail-with-body -X POST -F token=${WEBSITE_TRIGGER_TOKEN} -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline

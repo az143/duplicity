@@ -1,5 +1,4 @@
-from __future__ import print_function
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -103,7 +102,7 @@ class DDTest(UnitTestCase):
                                  u"{0}/testfiles/output/difftar".format(_runtest_dir))
 
         size = os.stat(u"{0}/testfiles/output/difftar".format(_runtest_dir)).st_size
-    
+
     def test_empty_diff2(self):
         u"""Test producing diff against directories of special files"""
         self.empty_diff_schema(u"{0}/testfiles/special_cases/neg_mtime".format(_runtest_dir))
@@ -318,6 +317,7 @@ def tarinfo_eq(ti1, ti2):
         print(u"Owner names:", ti1.uname, ti2.uname, ti1.gname, ti2.gname)
         return 0
     return 1
+
 
 if __name__ == u"__main__":
     unittest.main()

@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2015 Yigal Asnis
 #
@@ -37,7 +37,7 @@ class PyDriveBackend(duplicity.backend.Backend):
             from apiclient.discovery import build
         except ImportError as e:
             raise BackendException(u"""\
-PyDrive backend requires PyDrive and Google API client installation.
+PyDrive backend requires PyDrive2 and Google API client installation.
 Please read the manpage for setup details.
 Exception: %s""" % str(e))
 
@@ -57,13 +57,8 @@ Exception: %s""" % str(e))
             from pydrive2.drive import GoogleDrive
             from pydrive2.files import ApiRequestError, FileNotUploadedError
         except ImportError as e:
-            try:
-                from pydrive.auth import GoogleAuth
-                from pydrive.drive import GoogleDrive
-                from pydrive.files import ApiRequestError, FileNotUploadedError
-            except ImportError as e:
-                raise BackendException(u"""\
-PyDrive backend requires PyDrive installation.  Please read the manpage for setup details.
+            raise BackendException(u"""\
+PyDrive backend requires PyDrive2 installation.  Please read the manpage for setup details.
 Exception: %s""" % str(e))
 
         # let user get by with old client while he can
@@ -83,8 +78,9 @@ Exception: %s""" % str(e))
                                                             account_key,
                                                             scopes=u'https://www.googleapis.com/auth/drive')
             else:
-                signer = crypt.Signer.from_string(account_key)
-                credentials = ServiceAccountCredentials(parsed_url.username + u'@' + parsed_url.hostname, signer,
+                signer = crypt.Signer.from_string(account_key)  # pylint: disable=used-before-assignment
+                credentials = ServiceAccountCredentials(parsed_url.username +  # pylint: disable=used-before-assignment
+                                                        u'@' + parsed_url.hostname, signer,
                                                         scopes=u'https://www.googleapis.com/auth/drive')
             credentials.authorize(httplib2.Http())
             gauth = GoogleAuth(http_timeout=60)
@@ -149,10 +145,7 @@ Exception: %s""" % str(e))
         self.id_cache = {}
 
     def file_by_name(self, filename):
-        try:
-            from pydrive2.files import ApiRequestError  # pylint: disable=import-error
-        except ImportError:
-            from pydrive.files import ApiRequestError  # pylint: disable=import-error
+        from pydrive2.files import ApiRequestError  # pylint: disable=import-error
 
         filename = util.fsdecode(filename)  # PyDrive deals with unicode filenames
 
@@ -262,10 +255,8 @@ Exception: %s""" % str(e))
         return {u'size': size}
 
     def _error_code(self, operation, error):  # pylint: disable=unused-argument
-        try:
-            from pydrive2.files import ApiRequestError, FileNotUploadedError  # pylint: disable=import-error
-        except ImportError:
-            from pydrive.files import ApiRequestError, FileNotUploadedError  # pylint: disable=import-error
+        from pydrive2.files import ApiRequestError, FileNotUploadedError  # pylint: disable=import-error
+
         if isinstance(error, FileNotUploadedError):
             return log.ErrorCode.backend_not_found
         elif isinstance(error, ApiRequestError):

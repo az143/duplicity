@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -89,7 +89,9 @@ class S3Boto3Backend(duplicity.backend.Backend):
         from botocore.exceptions import ClientError  # pylint: disable=import-error
 
         self.bucket = None
-        self.s3 = boto3.resource(u's3', region_name=config.s3_region_name, endpoint_url=config.s3_endpoint_url)
+        self.s3 = boto3.resource(u's3', region_name=config.s3_region_name,
+                                 use_ssl=(not config.s3_unencrypted_connection),
+                                 endpoint_url=config.s3_endpoint_url)
 
         try:
             self.s3.meta.client.head_bucket(Bucket=self.bucket_name)
@@ -141,7 +143,8 @@ class S3Boto3Backend(duplicity.backend.Backend):
                 extra_args[u'GrantFullControl'] = config.s3_kms_grant
 
         transfer_config = TransferConfig(multipart_chunksize=config.s3_multipart_chunk_size,
-                                         multipart_threshold=config.s3_multipart_chunk_size)
+                                         multipart_threshold=config.s3_multipart_chunk_size,
+                                         max_concurrency=config.s3_multipart_max_procs)
 
         # Should the tracker be scoped to the put or the backend?
         # The put seems right to me, but the results look a little more correct
@@ -223,4 +226,5 @@ class UploadProgressTracker(object):
 
 
 duplicity.backend.register_backend(u"boto3+s3", S3Boto3Backend)
-# duplicity.backend.uses_netloc.extend([u'boto3+s3'])
+# make boto3 the default s3 backend
+duplicity.backend.register_backend(u"s3", S3Boto3Backend)

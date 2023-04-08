@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -105,7 +105,7 @@ class ImapBackend(duplicity.backend.Backend):
         self.remote_dir = re.sub(r'^/', r'', parsed_url.path, 1)
 
         #  Login
-        if (not(config.imap_full_address)):
+        if (not config.imap_full_address):
             self.conn.login(self.username, self.password)
             self.conn.select(config.imap_mailbox)
             log.Info(u"IMAP connected")

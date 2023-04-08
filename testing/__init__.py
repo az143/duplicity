@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2012 Canonical Ltd
 #
@@ -35,7 +35,7 @@ from duplicity import config
 from duplicity import log
 from duplicity import util
 
-util.start_debugger()
+# util.start_debugger()
 
 if sys.version_info.major >= 3:
     gettext.install(u'duplicity', names=[u'ngettext'])
@@ -48,11 +48,16 @@ _overrides_dir = os.path.join(_testing_dir, u'overrides')
 _bin_dir = os.path.join(_testing_dir, u'overrides', u'bin')
 
 if platform.system().startswith(u'Darwin'):
-    # Use temp space from getconf, never /tmp
-    _runtest_dir = subprocess.check_output([u'getconf', u'DARWIN_USER_TEMP_DIR'])
-    _runtest_dir = util.fsdecode(_runtest_dir).rstrip().rstrip(u'/')
+    # Use temp space TMPDIR or from getconf, never /tmp
+    _runtest_dir = (os.environ.get(u"TMPDIR", None) or
+                    subprocess.check_output([u'getconf', u'DARWIN_USER_TEMP_DIR']))
+    _runtest_dir = os.fsdecode(_runtest_dir).rstrip().rstrip(u'/')
 else:
+    # be a little more flexible
     _runtest_dir = os.getenv(u'TMPDIR', False) or os.getenv(u'TEMP', False) or u'/tmp'
+
+if not os.path.exists(_runtest_dir):
+    os.makedirs(_runtest_dir)
 
 # Adjust python path for duplicity and override modules
 sys.path = [_overrides_dir, _top_dir, _bin_dir] + sys.path
@@ -84,6 +89,7 @@ if sys.version_info.major == 2:
             p2 = f.read().replace(u"python3", u"python")
         with open(os.path.join(_bin_dir, file), u"w") as f:
             p2 = f.write(p2)
+
 
 class DuplicityTestCase(unittest.TestCase):
 

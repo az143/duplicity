@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -256,7 +256,7 @@ class TemporaryDirectory(object):
         try:
             if fname in self.__pending:
                 log.Debug(_(u"Forgetting temporary file %s") % util.fsdecode(fname))
-                del(self.__pending[fname])
+                del self.__pending[fname]
             else:
                 log.Warn(_(u"Attempt to forget unknown tempfile %s - this is probably a bug.") % util.fsdecode(fname))
                 pass

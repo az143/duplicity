@@ -1,8 +1,8 @@
-*.swp
 *.egg
 *.log
 *.pyc
 *.so
+*.swp
 .DS_Store
 ._.DS_Store
 .cache
@@ -19,6 +19,7 @@
 __pycache__
 build
 config.py
+dist
 docs/_build
 docs/duplicity.*
 docs/testing.*
@@ -36,5 +37,7 @@ testing/gnupg/.gpg-v21-migrated
 testing/gnupg/S.*
 testing/gnupg/private-keys-v1.d
 testing/manual/test_config.py
+testing/manual/test_config.py.tmpl
 .pc
 wheels
+venv

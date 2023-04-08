@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -97,15 +97,6 @@ class StatsObj(object):
     def increment_stat(self, attr):
         u"""Add 1 to value of attribute"""
         self.__dict__[attr] += 1
-
-    def get_total_dest_size_change(self):
-        u"""Return total destination size change
-
-        This represents the total increase in the size of the
-        duplicity destination directory, or None if not available.
-
-        """
-        return 0  # this needs to be re-done for duplicity
 
     def get_stats_line(self, index, use_repr=1):
         u"""Return one line abbreviated version of full stats string"""

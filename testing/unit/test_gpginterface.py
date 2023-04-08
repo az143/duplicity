@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 u"""py-unit tests for GnuPG
 
@@ -254,6 +254,7 @@ def fh_cmp(f1, f2, bufsize=8192):
             return 1
 
 ########################################################################
+
 
 if __name__ == u"__main__":
     unittest.main()

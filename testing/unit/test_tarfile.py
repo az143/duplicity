@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2013 Michael Terry <mike@mterry.name>
 #
@@ -32,6 +32,7 @@ class TarfileTest(UnitTestCase):
     def test_cached_ops(self):
         self.assertTrue(tarfile.grp is cached_ops)
         self.assertTrue(tarfile.pwd is cached_ops)
+
 
 if __name__ == u"__main__":
     unittest.main()

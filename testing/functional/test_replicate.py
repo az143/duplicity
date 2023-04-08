@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -23,6 +23,8 @@ from __future__ import print_function
 from builtins import range
 from future import standard_library
 standard_library.install_aliases()
+
+import pytest
 
 from duplicity import path
 from testing import _runtest_dir
@@ -66,6 +68,7 @@ class ReplicateTest(FunctionalTestCase):
         path1, path2 = path.Path(filename1), path.Path(filename2)
         assert path1.compare_recursive(path2, verbose=1)
 
+    @pytest.mark.slow
     def test_replicate(self):
         u"""Test replication"""
         self.runtest([u"{0}/testfiles/dir1".format(_runtest_dir), u"{0}/testfiles/dir2".format(_runtest_dir)])
@@ -75,6 +78,7 @@ class ReplicateTest(FunctionalTestCase):
         self.runtest([u"{0}/testfiles/dir1".format(_runtest_dir), u"{0}/testfiles/dir2".format(_runtest_dir)],
                      replicate_options=[u"--no-encryption"])
 
+    @pytest.mark.slow
     def test_replicate_asym(self):
         u"""Test replication with reencryption"""
         asym_options = [u"--encrypt-key", self.encrypt_key1]

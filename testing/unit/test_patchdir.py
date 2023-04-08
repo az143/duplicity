@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -284,7 +284,7 @@ class TestInnerFuncs(UnitTestCase):
 
     # TODO: fix test_patch_seq2ropath for macOS, maybe others.
     #       Fails under tox, pytest, and pydevd
-    #----------
+    # ----------
     #     def testseq(seq, perms, buf):
     #         result = patchdir.patch_seq2ropath(seq)
     # >       assert result.getperms() == perms, (result.getperms(), perms)

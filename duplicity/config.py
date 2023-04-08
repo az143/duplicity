@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -190,8 +190,8 @@ timeout = 30
 # FTP data connection type
 ftp_connection = u'passive'
 
-# Protocol for webdav
-webdav_proto = u'http'
+# Header options for Webdav
+webdav_headers = u""
 
 # Asynchronous put/get concurrency limit
 # (default of 0 disables asynchronicity).
@@ -241,13 +241,13 @@ s3_use_multiprocessing = False
 # Chunk size used for S3 multipart uploads.The number of parallel uploads to
 # S3 be given by chunk size / volume size. Use this to maximize the use of
 # your bandwidth. Defaults to 25MB
-s3_multipart_chunk_size = 25 * 1024 * 1024
+s3_multipart_chunk_size = 20 * 1024 * 1024
 
 # Minimum chunk size accepted by S3
 s3_multipart_minimum_chunk_size = 5 * 1024 * 1024
 
 # Maximum number of processes to use while doing a multipart upload to S3
-s3_multipart_max_procs = None
+s3_multipart_max_procs = 4
 
 # Maximum time to wait for a part to finish when doig a multipart upload to S3
 s3_multipart_max_timeout = None

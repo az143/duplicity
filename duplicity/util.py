@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -24,6 +24,7 @@ Miscellaneous utilities.
 """
 
 from __future__ import print_function
+
 from future import standard_library
 standard_library.install_aliases()
 from builtins import isinstance
@@ -31,6 +32,7 @@ from builtins import map
 from builtins import object
 from builtins import str
 
+import csv
 import errno
 import json
 import os
@@ -38,6 +40,11 @@ import string
 import sys
 import traceback
 import atexit
+
+if sys.version_info.major == 2:
+    from cStringIO import StringIO  # pylint: disable=import-error
+else:
+    from io import StringIO  # pylint: disable=import-error
 
 from duplicity import tarfile
 import duplicity.config as config
@@ -97,13 +104,13 @@ def exception_traceback(limit=50):
 
 
 def escape(string):
-    u"Convert a (bytes) filename to a format suitable for logging (quoted utf8)"
+    u"""Convert a (bytes) filename to a format suitable for logging (quoted utf8)"""
     string = fsdecode(string).encode(u'unicode-escape', u'replace')
     return u"'%s'" % string.decode(u'utf8', u'replace').replace(u"'", u'\\x27')
 
 
 def uindex(index):
-    u"Convert an index (a tuple of path parts) to unicode for printing"
+    u"""Convert an index (a tuple of path parts) to unicode for printing"""
     if index:
         return os.path.join(*list(map(fsdecode, index)))
     else:
@@ -280,31 +287,23 @@ def which(program):
     return None
 
 
-def start_debugger(remote=False):
-    if (not os.getenv(u'DEBUG_RUNNING', None) and (u'--pydevd' in sys.argv or os.getenv(u'PYDEVD', None))):
-        if remote:
-            # modify this for your configuration.
-            # client = base path in machine that Liclipse is on
-            # server = base path in machine that duplicity is on
-            client = u'/Users/ken/workspace/duplicity-testfiles'
-            server = u'/home/ken/workspace/duplicity-testfiles'
+def start_debugger():
+    if not os.getenv(u'DEBUG_RUNNING', None) and (u'--pydevd' in sys.argv or os.getenv(u'PYDEVD', None)):
+        try:
+            import pydevd_pycharm as pydevd  # pylint: disable=import-error
+        except ImportError:
+            try:
+                import pydevd  # pylint: disable=import-error
+            except ImportError:
+                log.FatalError(u"Module pydevd_pycharm or pydevd must be available for debugging.\n"
+                               u"Remove '--pydevd' from command line and PYDEVD from environment\n"
+                               u"to avoid activating the debugger.")
 
-            # relative paths under duplicity root
-            duppaths = [
-                u'',
-                u'bin',
-                u'duplicity',
-                u'duplicity/backends',
-                u'testing',
-                u'testing/functional',
-                u'testing/unit',
-            ]
-            pathlist = [(os.path.normpath(os.path.join(client, p)),
-                         os.path.normpath(os.path.join(server, p))) for p in duppaths]
-            os.environ[u'PATHS_FROM_ECLIPSE_TO_PYTHON'] = json.dumps(pathlist)
-
-        import pydevd  # pylint: disable=import-error
-        pydevd.settrace(u'dione.local', port=5678, stdoutToServer=True, stderrToServer=True)
+        try:
+            # NOTE: this needs to be customized for your system
+            pydevd.settrace(u'dione.local', port=6789, stdoutToServer=True, stderrToServer=True)
+        except ConnectionRefusedError as e:
+            log.FatalError(u"Connection refused for debug.  Check your setup.")
 
         # In a dev environment the path is screwed so fix it.
         base = sys.path.pop(0)
@@ -313,3 +312,41 @@ def start_debugger(remote=False):
         sys.path.insert(0, base)
 
         os.environ[u'DEBUG_RUNNING'] = u'yes'
+
+
+def merge_dicts(*dict_args):
+    u"""
+    Given any number of dictionaries, shallow copy and merge into a new dict,
+    precedence goes to key-value pairs in latter dictionaries.
+    """
+    result = {}
+    for dictionary in dict_args:
+        result.update(dictionary)
+    return result
+
+
+def csv_args_to_dict(arg):
+    u"""
+    Given the string arg in single line csv format, split into pairs (key, val)
+    and produce a dictionary from those key:val pairs.
+    """
+    mydict = {}
+    with StringIO(arg) as infile:
+        rows = csv.reader(infile)
+        for row in rows:
+            for i in range(0, len(row), 2):
+                mydict[row[i]] = row[i + 1]
+    return mydict
+
+
+# TODO: just use util.fsdecode().casefold() directly when python27 is gone
+def casefold_compat(s):
+    u"""
+    Compatability function for casefolding which provides an acceptable for
+    older pythons. Can likely be removed once python2 support is no longer o
+    any interest.
+    """
+    if sys.version_info.major >= 3 and sys.version_info.minor >= 3:
+        return s.casefold()
+    else:
+        return s.lower()

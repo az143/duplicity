@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -208,7 +208,7 @@ class Iter(object):
             return return_val
 
         def make_iterator(fork_num):
-            while(1):
+            while True:
                 try:
                     ret = get_next(fork_num)
                 except StopIteration:
@@ -234,7 +234,7 @@ class IterMultiplex2(object):
     def yielda(self):
         u"""Return first iterator"""
         buf, iter = self.buffer, self.iter  # pylint: disable=redefined-builtin
-        while(1):
+        while True:
             if self.a_leading_by >= 0:
                 # a is in front, add new element
                 try:
@@ -251,7 +251,7 @@ class IterMultiplex2(object):
     def yieldb(self):
         u"""Return second iterator"""
         buf, iter = self.buffer, self.iter  # pylint: disable=redefined-builtin
-        while(1):
+        while True:
             if self.a_leading_by <= 0:
                 # b is in front, add new element
                 try:

@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # This file is part of duplicity.
 #
@@ -22,6 +22,7 @@ standard_library.install_aliases()
 
 import unittest
 import duplicity
+
 
 class TestExc(unittest.TestCase):
 

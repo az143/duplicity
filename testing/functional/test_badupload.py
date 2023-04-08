@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -24,6 +24,7 @@ from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
 
+import pytest
 import unittest
 
 from testing import _runtest_dir
@@ -34,6 +35,7 @@ class BadUploadTest(FunctionalTestCase):
     u"""
     Test missing volume upload using duplicity binary
     """
+    @pytest.mark.slow
     def test_missing_file(self):
         u"""
         Test basic lost file
@@ -45,6 +47,7 @@ class BadUploadTest(FunctionalTestCase):
             self.assertEqual(e.exit_status, 44, str(e))
         else:
             self.fail(u'Expected CmdError not thrown')
+
 
 if __name__ == u"__main__":
     unittest.main()

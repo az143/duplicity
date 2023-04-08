@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto <ben@emerose.org>
 # Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
@@ -31,7 +30,10 @@ from . import UnitTestCase
 from duplicity.globmatch import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from testing import _runtest_dir
-from mock import patch
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 
 def sel_file(glob_str, include, file_path):
@@ -92,7 +94,7 @@ class TestGlobToRegex(UnitTestCase):
         if sys.version_info[:2] == (3, 6):
             self.assertEqual(glob_to_regex(u"/usr/*/bin/"),
                              u"\\/usr\\/[^/]*\\/bin\\/")
-        elif  sys.version_info[:2] >= (3, 7):
+        elif sys.version_info[:2] >= (3, 7):
             self.assertEqual(glob_to_regex(u"/usr/*/bin/"),
                              u"/usr/[^/]*/bin/")
         else:
@@ -108,9 +110,9 @@ class TestSelectValuesFromGlobs(UnitTestCase):
     def test_glob_scans_parent_directories(self):
         u"""Test glob scans parent"""
         self.assertEqual(
-            inc_sel_dir(u"{0}/testfiles/parent/sub".format(_runtest_dir), u"{0}/testfiles/parent".format(_runtest_dir)), 2)
+            inc_sel_dir(u"{0}/testfiles/parent/sub".format(_runtest_dir), u"{0}/testfiles/parent".format(_runtest_dir)), 2)  # noqa
         self.assertEqual(
-            inc_sel_dir(u"{0}/testfiles/select2/3/3sub2".format(_runtest_dir), u"{0}/testfiles/select2/3".format(_runtest_dir)), 2)
+            inc_sel_dir(u"{0}/testfiles/select2/3/3sub2".format(_runtest_dir), u"{0}/testfiles/select2/3".format(_runtest_dir)), 2)  # noqa
 
     def test_double_asterisk_include(self):
         u"""Test a few globbing patterns, including **"""
