@@ -22,7 +22,7 @@
 import sys
 import gettext
 
-__version__ = u'0.8.22'
+__version__ = u'1.2.2'
 
 if sys.version_info.major >= 3:
     gettext.install(u'duplicity', names=[u'ngettext'])
