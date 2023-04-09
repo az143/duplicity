@@ -1,9 +1,6 @@
 #!/usr/bin/make -f
-# -*- Mode:Makefile; indent-tabs-mode:t; tab-width:4; encoding:utf-8 -*-
-
-# Old versions of dpkg-parsechangelog don't support -SVersion
-UPSTREAM_VERSION=$(shell dpkg-parsechangelog | grep ^Version: | cut -d' ' -f2 | cut -d- -f1)
-
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+include /usr/share/dpkg/default.mk
 PYVERS = $(shell py3versions -rv)
 
 %:
@@ -24,14 +21,16 @@ override_dh_auto_build:
 	python$$py setup.py build; \
 	done
 
-override_dh_auto_install:
-	dh_auto_install
+execute_after_dh_auto_install:
 # docs in just one place, /usr/share/doc/duplicity.
-	rm -r debian/duplicity/usr/share/doc/duplicity-*
+	rm -r --verbose debian/duplicity/usr/share/doc/duplicity-*
+	(cd debian/duplicity/usr					\
+	 && mkdir -p share/doc/duplicity				\
+	 && mv --verbose						\
+		lib/python*/dist-packages/duplicity/backends/README	\
+		share/doc/duplicity/README.backends)
 
-override_dh_clean:
-	dh_auto_clean
-	dh_clean
-# the test suite leaves a mess behind 
+execute_after_dh_clean:
+# the test suite leaves a mess behind
 	rm -f testing/gnupg/random_seed duplicity/_librsync*.so
-	rm -rf .cache .eggs testing/testfiles build
+	rm -rf .cache .eggs testing/testfiles build report.xml

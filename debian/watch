@@ -1,2 +1,4 @@
-version=3
-http://download.savannah.gnu.org/releases/duplicity/duplicity-([0-9.]+[a-zA-Z]*)\.tar\.gz
+version=4
+
+https://gitlab.com/@PACKAGE@/@PACKAGE@/tags \
+ .*/@PACKAGE@-rel\.@ANY_VERSION@@ARCHIVE_EXT@

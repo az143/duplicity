@@ -2,9 +2,24 @@ Source: duplicity
 Section: utils
 Priority: optional
 Maintainer: Alexander Zangerl <az@debian.org>
-Build-Depends: debhelper (>= 12.0.0), librsync-dev (>=0.9.6), python3-all-dev, dh-python, python3-setuptools, rdiff, gnupg | gnupg1, par2, python3-lockfile, python3-mock, python3-pexpect, python3-fasteners, python3-requests, python3-urllib3, python3-coverage, python3-pycodestyle, pylint, python3-pytest, python3-pytest-runner, python3-pytest-cov, tox, python3-future, rename, rsync, python3-psutil, python3-setuptools-scm
-Standards-Version: 4.3.0.3
-Homepage: http://duplicity.nongnu.org/
+Build-Depends: debhelper-compat (= 13),
+ python3-all-dev, dh-python, python3-setuptools,
+ gnupg | gnupg1,
+ rdiff,
+ par2,
+ tox,
+ rename,
+ rsync,librsync-dev (>=0.9.6),
+ python3-lockfile, python3-mock, python3-pexpect,
+ python3-fasteners, python3-requests, python3-urllib3,
+ python3-coverage, python3-pycodestyle, pylint,
+ python3-pytest, python3-pytest-runner,
+ python3-pytest-cov, python3-future,  python3-psutil,
+ python3-setuptools-scm
+Standards-Version: 4.6.2
+Homepage: https://duplicity.gitlab.io/
+Vcs-Git: https://salsa.debian.org/debian/duplicity.git
+Vcs-Browser: https://salsa.debian.org/debian/duplicity
 X-Python3-Version: >= 3.7
 
 Package: duplicity

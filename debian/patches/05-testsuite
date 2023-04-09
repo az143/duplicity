@@ -3,7 +3,7 @@ Subject: Disable some tests for being flaky
 
 --- a/testing/functional/test_restart.py
 +++ b/testing/functional/test_restart.py
-@@ -138,6 +138,7 @@ class RestartTest(FunctionalTestCase):
+@@ -140,6 +140,7 @@ class RestartTest(FunctionalTestCase):
          self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
          self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
  
@@ -32,9 +32,9 @@ Subject: Disable some tests for being flaky
          size = 400 * 1000
 --- a/testing/unit/test_selection.py
 +++ b/testing/unit/test_selection.py
-@@ -175,6 +175,7 @@ class MatchingTest(UnitTestCase):
-         assert select.glob_get_sf(u"**", 0)(root) == 0
-         assert select.glob_get_sf(u"/foo/*", 0)(root) is None
+@@ -193,6 +193,7 @@ class MatchingTest(UnitTestCase):
+         assert select.general_get_sf(u"**", 0)(root) == 0
+         assert select.general_get_sf(u"/foo/*", 0)(root) is None
  
 +    @unittest.skip("unreliable ass-U-me wrt / and /usr on one fs")
      def test_other_filesystems(self):
@@ -52,7 +52,16 @@ Subject: Disable some tests for being flaky
          s = StatsObj()
 --- a/testing/unit/test_globmatch.py
 +++ b/testing/unit/test_globmatch.py
-@@ -249,6 +249,7 @@ class TestDoubleAsterisk(UnitTestCase):
+@@ -24,6 +24,8 @@ from __future__ import print_function
+ from future import standard_library
+ standard_library.install_aliases()
+ 
++import unittest
++
+ import sys
+ 
+ from . import UnitTestCase
+@@ -251,6 +253,7 @@ class TestDoubleAsterisk(UnitTestCase):
  class TestSimpleUnicode(UnitTestCase):
      u"""Test simple unicode comparison"""
  
@@ -60,7 +69,7 @@ Subject: Disable some tests for being flaky
      def test_simple_unicode(self):
          u"""Test simple unicode comparison"""
          self.assertEqual(inc_sel_file(u"прыклад/пример/例/Παράδειγμα/उदाहरण.txt",
-@@ -267,8 +268,11 @@ class TestSquareBrackets(UnitTestCase):
+@@ -269,8 +272,11 @@ class TestSquareBrackets(UnitTestCase):
          self.assertEqual(inc_sel_file(u"/test/f[s,o,p]lder/foo.txt",
                                        u"/test/folder/foo.txt"), 1)
  
@@ -74,7 +83,7 @@ Subject: Disable some tests for being flaky
          self.assertEqual(inc_sel_file(u"прыклад/п[a,b,c]имер/例/Παράδειγμα/उदाहरण.txt",
 --- a/testing/unit/test_util.py
 +++ b/testing/unit/test_util.py
-@@ -25,6 +25,7 @@ import duplicity
+@@ -26,6 +26,7 @@ import duplicity
  
  class TestExc(unittest.TestCase):
  

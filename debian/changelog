@@ -1,3 +1,11 @@
+duplicity (1.2.2-1) unstable; urgency=medium
+
+  * new upstream release (closes: #817042, #565398, #801210, #880111)
+  * various bits of build infrastructure cleanup,
+    with thanks to Barak A. Pearlmutter for the work! (closes: #1032965)
+
+ -- Alexander Zangerl <az@debian.org>  Sun, 09 Apr 2023 16:26:53 +1000
+
 duplicity (0.8.22-1) unstable; urgency=medium
 
   * new upstream release

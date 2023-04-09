@@ -3,7 +3,7 @@
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
- # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+ # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
  #
  # duplicity -- Encrypted bandwidth efficient backup
 --- a/testing/find_unadorned_strings.py
@@ -11,7 +11,7 @@
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
- # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+ # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
  #
  # Copyright 2018 Aaron Whitehouse <aaron@whitehouse.kiwi.nz>
 --- a/testing/fix_unadorned_strings.py
@@ -19,7 +19,7 @@
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
- # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+ # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
  #
  # Copyright 2018 Aaron Whitehouse <aaron@whitehouse.kiwi.nz>
 --- a/bin/rdiffdir
@@ -27,7 +27,7 @@
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
- # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+ # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
  #
  # rdiffdir -- Extend rdiff functionality to directories
 --- a/testing/overrides/bin/lftp
@@ -75,7 +75,7 @@
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
- # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf8 -*-
+ # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
  #
  # Copyright 2002 Ben Escoto <ben@emerose.org>
 --- a/testing/overrides/bin/ncftpget
