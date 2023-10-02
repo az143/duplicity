@@ -1,3 +1,9 @@
+duplicity (1.2.2-2) unstable; urgency=medium
+
+  * minor build adjustments (closes: #1052878)
+
+ -- Alexander Zangerl <az@debian.org>  Mon, 02 Oct 2023 10:39:40 +0200
+
 duplicity (1.2.2-1) unstable; urgency=medium
 
   * new upstream release (closes: #817042, #565398, #801210, #880111)
