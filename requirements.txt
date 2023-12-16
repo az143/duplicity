@@ -1,34 +1,36 @@
+
+##### installed first to avoid conflicts #####
+
+chardet<3.10
+cryptography==3.4.8
+requests
+urllib3<1.26
+
 ##### basic requirements #####
 
 fasteners
-future
 python-gettext
-
-
-##### requests libraries #####
-
-chardet < 3.10
-urllib3 < 1.26
-requests
-
+setuptools>=44.1.1
+setuptools-scm>=5.0.2
 
 ##### backend libraries #####
 
-azure-core
+atom
 azure-storage-blob
-b2sdk                   ; python_version >= '3.7'
-boto
+b2sdk
 boto3
+botocore
 boxsdk[jwt]
 dropbox
-gdata                   ; python_version == '2.7'
-gdata-python3           ; python_version >= '3.5'
+gdata-python3
 google-api-python-client
 google-auth-oauthlib
+httplib2
 jottalib
 keyring
+lxml
 mediafire
-megatools               ; python_version >= '3.6'
+megatools
 paramiko
 pexpect
 psutil
@@ -38,27 +40,22 @@ python-swiftclient
 python-keystoneclient
 requests-oauthlib
 
-
 ##### testing libraries #####
 
-
-2to3
+black==23.7.0
 coverage
-mock >= 3.0.5
+mock>=3.0.5
 pycodestyle
 pylint
 pytest
 pytest-cov
 pytest-runner
-setuptools >= 44.1.1
-setuptools-scm >= 5.0.2
-tox
-
+tox<4.0
 
 ##### documentation libraries #####
 
-gitchangelog            ; python_version >= '3.6'
-myst-parser             ; python_version >= '3.6'
-pystache                ; python_version >= '3.6'
-sphinx                  ; python_version >= '3.6'
-sphinx-rtd-theme        ; python_version >= '3.6'
+gitchangelog
+myst-parser
+pystache
+sphinx
+sphinx-rtd-theme

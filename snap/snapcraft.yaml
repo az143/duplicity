@@ -1,5 +1,5 @@
 name: duplicity
-version: 1.2.2
+version: $version
 license: GPL-2.0
 summary: Efficient, encrypted backup to local or remote hosts
 description: |
@@ -25,14 +25,6 @@ apps:
             PYTHONPATH: "$SNAP/lib/python3.8/site-packages:\
                          $HOME/.local/lib/python3.8/site-packages:\
                          /lib/python3.8/site-packages"
-    rdiffdir:
-        command: bin/rdiffdir.sh
-        environment:
-            # see above
-            PATH: "$SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH:/snap/core20/current/usr/bin"
-            PYTHONPATH: "$SNAP/lib/python3.8/site-packages:\
-                         $HOME/.local/lib/python3.8/site-packages:\
-                         /lib/python3.8/site-packages"
     # printing env in snap for debug purposes, help's pinning snap startup issues (missing libs, _rsync ...)
     debug:
         command: bin/debug.sh
@@ -48,6 +40,8 @@ apps:
 parts:
     duplicity:
         plugin: python
+        requirements:
+            - requirements.txt
         override-pull: |
             snapcraftctl pull
         override-build: |
@@ -56,8 +50,14 @@ parts:
             # show env vars for debugging
             #env
             # upgrade pip to latest
-            pip install --upgrade pip
+            apt install curl -y
+            curl -s https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+            python3 get-pip.py
             snapcraftctl build
+            # Some python modules cause snap build to import argparse from pypi.
+            # argparse in pypi supports <= 3.4 so we need the distribution version.
+            # Let pip remove that version since the new one is in the distribution.
+            python3 -m pip uninstall -y argparse
             # python module tahoe-lafs dies trying to compile really old pycddl 
             # on other archs than amd64, as python plugin does not support 
             # conditions we only include it in amd64 snaps manually here
@@ -70,7 +70,6 @@ parts:
         override-prime: |
             snapcraftctl prime
             cp -v "$SNAPCRAFT_PROJECT_DIR"/snap/local/launcher.sh "$SNAPCRAFT_PRIME"/bin/duplicity.sh
-            cp -v "$SNAPCRAFT_PROJECT_DIR"/snap/local/launcher.sh "$SNAPCRAFT_PRIME"/bin/rdiffdir.sh
             cp -v "$SNAPCRAFT_PROJECT_DIR"/snap/local/debug.sh "$SNAPCRAFT_PRIME"/bin/
         build-environment:
             - PYTHONPATH: "$SNAPCRAFT_PART_INSTALL/usr/lib/python3.8/dist-packages:\
@@ -83,71 +82,34 @@ parts:
             - librsync-dev
             - python3-dev
             # dependencies needed to build missing pip wheels on non amd64 archs
+            - cargo
             - libffi-dev
             - libxslt1-dev
             - libxml2-dev
             - libssl-dev
-            - cargo
+            - python3-cryptography
+            - python3-openssl
+            - pkg-config
         stage-packages:
             - gnupg
             - lftp
             - libatm1
+            - libpython3-stdlib
+            - libpython3.8-minimal
+            - libpython3.8-stdlib
             - librsync2
             - ncftp
             - openssh-client
-            - python3-gi
-            - rsync
-            - rclone
-            - libpython3-stdlib
-            - libpython3.8-stdlib
-            - libpython3.8-minimal
-            - python3-minimal
-            - python3.8-minimal
             - python3-dev
-            - python3-pip
-            - python3-setuptools
             - python3-distutils
-            - python3-wheel
-            - python3-pkg-resources
+            - python3-gi
+            - python3-minimal
             - python3-venv
-            # some libraries needed on not amd64 archs
+            - python3.8-minimal
+            - rclone
+            - rsync
+            # some libraries needed on non amd64 archs
             - libicu66
             - libxml2
             - libxslt1.1
-        python-packages:
-            # libs needed to avoid some version dependencies.
-            # use latest version available while still py38.
-            - grpcio-tools
-            - pbr
-            - requests
-            # normally included libs
-            - azure-core
-            - azure-storage-blob
-            - b2sdk
-            - boto
-            - boto3
-            - boxsdk[jwt]
-            - dropbox
-            - fasteners
-            - future
-            - gdata-python3
-            - google-api-python-client
-            - google-auth-oauthlib
-            - httplib2
-            - jottalib
-            - keyring
-            - mediafire
-            - megatools
-            - paramiko
-            - pexpect
-            - psutil
-            - pydrive2
-            - pyrax
-            - python-swiftclient
-            - requests-oauthlib
-            - setuptools
-            - setuptools-scm
-            - sx
-            - urllib3
-            - wheel
         source: .

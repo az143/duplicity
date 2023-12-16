@@ -1,0 +1,155 @@
+# This file is part of duplicity.
+#
+# Copyright 2022 Nils Tekampe <nils@tekampe.org>,
+# Kenneth Loafman <kenneth@loafman.com>,
+# Aaron Whitehouse <code@whitehouse.kiwi.nz>,
+# Edgar Soldin <https://soldin.de>
+#
+# Duplicity is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
+#
+# Duplicity is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with duplicity; if not, write to the Free Software Foundation,
+# Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+.test-template: &test-template
+    stage: test
+    rules:
+        - if: $CI_COMMIT_MESSAGE =~ /\[skip[ _-]tests?\]/i || $SKIP_TESTS
+          when: never
+        - changes:
+            - .gitlab-ci.yml
+            - .pylintrc
+            - .pyproject.toml
+            - requirements.txt
+            - setup.cfg
+            - tox.ini
+            - bin/duplicity
+            - duplicity/**/*
+            - testing/**/*
+          when: always
+        - when: never
+    before_script:
+        # Set locale to prevent UTF-8 errors
+        - export LANG=C.UTF-8
+        - export LC_ALL=C.UTF-8
+        - apt-get update
+        - apt-get install -y build-essential git intltool lftp librsync-dev
+                             libffi-dev libssl-dev openssl par2 rdiff tzdata
+
+variables:
+    # Cache local items
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+    # Set to non-interactive so no tzdata prompt
+    DEBIAN_FRONTEND: "noninteractive"
+    # Signal we are running on GitLab CI
+    NON_NATIVE: "true"
+
+stages:
+    - qual
+    - test
+    - deploy
+
+default:
+    interruptible: true
+
+code:
+    <<: *test-template
+    image: python:3.11
+    stage: qual
+    script:
+        - python3 -m pip install -r requirements.txt
+        - tox -e code
+    allow_failure: true
+
+py38:
+    <<: *test-template
+    image: python:3.8
+    stage: test
+    script:
+        - python3 -m pip install -r requirements.txt
+        - tox -e py38
+
+py39:
+    <<: *test-template
+    image: python:3.9
+    stage: test
+    script:
+        - python3 -m pip install -r requirements.txt
+        - tox -e py39
+
+py310:
+    <<: *test-template
+    image: python:3.10
+    stage: test
+    script:
+        - python3 -m pip install -r requirements.txt
+        - tox -e py310
+
+py311:
+    <<: *test-template
+    image: python:3.11
+    stage: test
+    script:
+        - python3 -m pip install -r requirements.txt
+        - tox -e py311
+
+pages:
+    stage: deploy
+    when: manual
+    image: ubuntu:20.04
+    before_script:
+        # Set locale to prevent UTF-8 errors
+        - export LANG=C.UTF-8
+        - export LC_ALL=C.UTF-8
+    script:
+        - apt-get update
+        - apt-get install -y git python3-pip git intltool
+        - python3 -m pip install --upgrade pip
+        - python3 -m pip install -r requirements.txt
+        - VERSION=`./setup.py --version`
+        - echo "make docs of ${VERSION}"
+        - make docs
+        - mv docs/_build/html public
+    artifacts:
+        paths:
+            - public
+
+# run a pipeline trigger for the website to build
+# - on new tag (always)
+# - on new pushes (when online published files were changed)
+# - when run manually
+# needs WEBSITE_TRIGGER_TOKEN variable in CI settings (mask/protected as needed)
+website:
+    stage: deploy
+    image: curlimages/curl:latest
+    rules:
+        - if: $CI_COMMIT_BRANCH != "main"
+          when: manual
+        - if: $CI_COMMIT_TAG
+          when: always
+        - changes:
+            - "CHANGELOG.md"
+            - "README.md"
+            - "bin/*.1"
+          if: $CI_PIPELINE_SOURCE == "push"
+          when: always
+        - when: manual
+    allow_failure: true
+    variables:
+        GIT_STRATEGY: none
+        GIT_CHECKOUT: "false"
+    script: |
+        if [[ $WEBSITE_TRIGGER_TOKEN != "" ]]; then
+            curl --fail-with-body \
+                 -X POST \
+                 -F token=${WEBSITE_TRIGGER_TOKEN} \
+                 -F ref=master https://gitlab.com/api/v4/projects/29130748/trigger/pipeline
+        fi
