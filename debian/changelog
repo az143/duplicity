@@ -1,3 +1,9 @@
+duplicity (2.1.4-2) unstable; urgency=medium
+
+  * upstream release tarball has a version issue (closes: #1059076)
+
+ -- Alexander Zangerl <az@debian.org>  Thu, 21 Dec 2023 07:47:58 +1000
+
 duplicity (2.1.4-1) unstable; urgency=medium
 
   * new upstream release, adjusted dependencies (closes: #1058069)
