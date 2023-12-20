@@ -6,30 +6,6 @@
  # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
  #
  # duplicity -- Encrypted bandwidth efficient backup
---- a/testing/find_unadorned_strings.py
-+++ b/testing/find_unadorned_strings.py
-@@ -1,4 +1,4 @@
--#!/usr/bin/env python3
-+#!/usr/bin/python3
- # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
- #
- # Copyright 2018 Aaron Whitehouse <aaron@whitehouse.kiwi.nz>
---- a/testing/fix_unadorned_strings.py
-+++ b/testing/fix_unadorned_strings.py
-@@ -1,4 +1,4 @@
--#!/usr/bin/env python3
-+#!/usr/bin/python3
- # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
- #
- # Copyright 2018 Aaron Whitehouse <aaron@whitehouse.kiwi.nz>
---- a/bin/rdiffdir
-+++ b/bin/rdiffdir
-@@ -1,4 +1,4 @@
--#!/usr/bin/env python3
-+#!/usr/bin/python3
- # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
- #
- # rdiffdir -- Extend rdiff functionality to directories
 --- a/testing/overrides/bin/lftp
 +++ b/testing/overrides/bin/lftp
 @@ -1,4 +1,4 @@
@@ -37,7 +13,7 @@
 +#!/usr/bin/python3
  
  from __future__ import print_function
- from future import standard_library
+ 
 --- a/testing/overrides/bin/ncftpls
 +++ b/testing/overrides/bin/ncftpls
 @@ -1,4 +1,4 @@
@@ -45,7 +21,7 @@
 +#!/usr/bin/python3
  
  from __future__ import print_function
- from future import standard_library
+ 
 --- a/testing/overrides/bin/ncftpput
 +++ b/testing/overrides/bin/ncftpput
 @@ -1,4 +1,4 @@
@@ -53,7 +29,7 @@
 +#!/usr/bin/python3
  
  from __future__ import print_function
- from future import standard_library
+ 
 --- a/testing/overrides/bin/tahoe
 +++ b/testing/overrides/bin/tahoe
 @@ -1,4 +1,4 @@
@@ -61,7 +37,7 @@
 +#!/usr/bin/python3
  
  from __future__ import print_function
- from future import standard_library
+ 
 --- a/testing/overrides/bin/hsi
 +++ b/testing/overrides/bin/hsi
 @@ -1,4 +1,4 @@
@@ -69,7 +45,7 @@
 +#!/usr/bin/python3
  
  from __future__ import print_function
- from future import standard_library
+ 
 --- a/setup.py
 +++ b/setup.py
 @@ -1,4 +1,4 @@
@@ -85,4 +61,4 @@
 +#!/usr/bin/python3
  
  from __future__ import print_function
- from future import standard_library
+ 

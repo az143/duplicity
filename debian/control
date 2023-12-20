@@ -10,11 +10,11 @@ Build-Depends: debhelper-compat (= 13),
  tox,
  rename,
  rsync,librsync-dev (>=0.9.6),
- python3-lockfile, python3-mock, python3-pexpect,
- python3-fasteners, python3-requests, python3-urllib3,
- python3-coverage, python3-pycodestyle, pylint,
+ python3-mock, python3-pexpect,
+ python3-fasteners, 
+ pylint,
  python3-pytest, python3-pytest-runner,
- python3-pytest-cov, python3-future,  python3-psutil,
+ python3-pytest-cov, python3-setuptools,
  python3-setuptools-scm
 Standards-Version: 4.6.2
 Homepage: https://duplicity.gitlab.io/
@@ -24,7 +24,7 @@ X-Python3-Version: >= 3.7
 
 Package: duplicity
 Architecture: any
-Depends: ${shlibs:Depends}, ${python3:Depends}, ${misc:Depends}, python3-lockfile, python3-fasteners, gnupg | gnupg1
+Depends: ${shlibs:Depends}, ${python3:Depends}, ${misc:Depends}, python3-fasteners, gnupg | gnupg1
 Recommends: rsync, python3-paramiko, python3-pexpect, python3-urllib3, python3-oauthlib
 Suggests: python3-boto, ncftp, lftp, tahoe-lafs, python3-swiftclient, python3-pip, par2
 Description: encrypted bandwidth-efficient backup

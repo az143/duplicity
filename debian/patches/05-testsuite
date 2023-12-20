@@ -3,91 +3,68 @@ Subject: Disable some tests for being flaky
 
 --- a/testing/functional/test_restart.py
 +++ b/testing/functional/test_restart.py
-@@ -140,6 +140,7 @@ class RestartTest(FunctionalTestCase):
-         self.backup(u"full", u"{0}/testfiles/largefiles".format(_runtest_dir))
-         self.verify(u"{0}/testfiles/largefiles".format(_runtest_dir))
+@@ -132,6 +132,7 @@ class RestartTest(FunctionalTestCase):
+         self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
+         self.verify(f"{_runtest_dir}/testfiles/largefiles")
  
 +    @unittest.skip("Flaky test because it relies on knowing how many volumes the source files will be split into")
-     @unittest.skipIf(platform.machine() in [u"ppc64el", u"ppc64le"], u"Skip on ppc64el and ppc64le machines")
-     def test_last_file_missing_at_end(self):
-         u"""
+     @unittest.skipIf(
+         platform.machine() in ["ppc64el", "ppc64le"],
+         "Skip on ppc64el and ppc64le machines",
 --- a/testing/unit/test_gpg.py
 +++ b/testing/unit/test_gpg.py
-@@ -139,7 +139,7 @@ class GPGTest(UnitTestCase):
-         decrypted_file.close()
+@@ -139,6 +139,7 @@ class GPGTest(UnitTestCase):
          sig = decrypted_file.get_signature()
          assert sig == self.sign_key, sig
--
+ 
 +    @unittest.skip("Flaky test because it relies on compressed size of random bytes")
-     @unittest.skipIf(platform.machine() in [u"ppc64el", u"ppc64le"], u"Skip on ppc64el of ppc64el machines")
-     def test_GPGWriteFile(self):
-         u"""Test GPGWriteFile"""
-@@ -156,6 +156,7 @@ class GPGTest(UnitTestCase):
-                          profile, size=size)
+     @unittest.skipIf(
+         platform.machine() in ["ppc64el", "ppc64le"],
+         "Skip on ppc64el of ppc64el machines",
+@@ -163,6 +164,7 @@ class GPGTest(UnitTestCase):
+         gpg.GPGWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gpgwrite.gpg", profile, size=size)
          # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size
  
 +    @unittest.skip("Flaky test because it relies on compressed size of random bytes")
      def test_GzipWriteFile(self):
-         u"""Test GzipWriteFile"""
+         """Test GzipWriteFile"""
          size = 400 * 1000
 --- a/testing/unit/test_selection.py
 +++ b/testing/unit/test_selection.py
-@@ -193,6 +193,7 @@ class MatchingTest(UnitTestCase):
-         assert select.general_get_sf(u"**", 0)(root) == 0
-         assert select.general_get_sf(u"/foo/*", 0)(root) is None
+@@ -196,6 +196,7 @@ class MatchingTest(UnitTestCase):
+         assert select.general_get_sf("**", 0)(root) == 0
+         assert select.general_get_sf("/foo/*", 0)(root) is None
  
 +    @unittest.skip("unreliable ass-U-me wrt / and /usr on one fs")
      def test_other_filesystems(self):
-         u"""Test to see if --exclude-other-filesystems works correctly"""
-         root = Path(u"/")
+         """Test to see if --exclude-other-filesystems works correctly"""
+         root = Path("/")
 --- a/testing/unit/test_statistics.py
 +++ b/testing/unit/test_statistics.py
-@@ -63,6 +63,7 @@ class StatsObjTest(UnitTestCase):
+@@ -61,6 +61,7 @@ class StatsObjTest(UnitTestCase):
          s1 = StatsDeltaProcess()
-         assert s1.get_stat(u'SourceFiles') == 0
+         assert s1.get_stat("SourceFiles") == 0
  
 +    @unittest.skip("TZ setting seems to fail under sbuild, #880251")
      def test_get_stats_string(self):
-         u"""Test conversion of stat object into string"""
+         """Test conversion of stat object into string"""
          s = StatsObj()
 --- a/testing/unit/test_globmatch.py
 +++ b/testing/unit/test_globmatch.py
-@@ -24,6 +24,8 @@ from __future__ import print_function
- from future import standard_library
- standard_library.install_aliases()
+@@ -21,6 +21,8 @@
+ # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ 
  
 +import unittest
 +
  import sys
  
- from . import UnitTestCase
-@@ -251,6 +253,7 @@ class TestDoubleAsterisk(UnitTestCase):
+ from duplicity.globmatch import *  # pylint: disable=unused-wildcard-import,redefined-builtin
+@@ -271,6 +273,7 @@ class TestDoubleAsterisk(UnitTestCase):
  class TestSimpleUnicode(UnitTestCase):
-     u"""Test simple unicode comparison"""
+     """Test simple unicode comparison"""
  
 +    @unittest.skip("Doesn't seem to work with python2.x")
      def test_simple_unicode(self):
-         u"""Test simple unicode comparison"""
-         self.assertEqual(inc_sel_file(u"прыклад/пример/例/Παράδειγμα/उदाहरण.txt",
-@@ -269,8 +272,11 @@ class TestSquareBrackets(UnitTestCase):
-         self.assertEqual(inc_sel_file(u"/test/f[s,o,p]lder/foo.txt",
-                                       u"/test/folder/foo.txt"), 1)
- 
-+    @unittest.skip("Doesn't seem to work with python2.x")
-     def test_square_bracket_options_unicode(self):
-         u"""Test file including options in []s"""
-+
-+
-         self.assertEqual(inc_sel_file(u"прыклад/пр[и,j,l]мер/例/Παράδειγμα/उदाहरण.txt",
-                                       u"прыклад/пример/例/Παράδειγμα/उदाहरण.txt"), 1)
-         self.assertEqual(inc_sel_file(u"прыклад/п[a,b,c]имер/例/Παράδειγμα/उदाहरण.txt",
---- a/testing/unit/test_util.py
-+++ b/testing/unit/test_util.py
-@@ -26,6 +26,7 @@ import duplicity
- 
- class TestExc(unittest.TestCase):
- 
-+    @unittest.skip("Doesn't seem to work with python2.x")
-     def test_uexc(self):
- 
-         e = Exception(u'test')
+         """Test simple unicode comparison"""
+         self.assertEqual(
