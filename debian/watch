@@ -1,4 +1,5 @@
 version=4
 
-https://gitlab.com/@PACKAGE@/@PACKAGE@/tags \
- .*/@PACKAGE@-rel\.@ANY_VERSION@@ARCHIVE_EXT@
+opts="searchmode=plain" \
+ https://gitlab.com/@PACKAGE@/@PACKAGE@/tags?sort=updated_desc \
+ /@PACKAGE@/@PACKAGE@/-/archive/[^/]+/@PACKAGE@-rel\.@ANY_VERSION@@ARCHIVE_EXT@

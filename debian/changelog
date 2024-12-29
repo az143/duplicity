@@ -1,3 +1,9 @@
+duplicity (2.1.4-4) unstable; urgency=medium
+
+  * updated watch file (closes: #1079706)
+
+ -- Alexander Zangerl <az@debian.org>  Tue, 24 Sep 2024 19:20:12 +1000
+
 duplicity (2.1.4-3) unstable; urgency=medium
 
   * switch from python3-boto (which is pending removal) to python3-boto3
