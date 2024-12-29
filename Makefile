@@ -15,7 +15,6 @@ genned_files=\
 	'*.o' \
 	'*.orig' \
 	'*.py[cdo]' \
-	'*.so' \
 	'*.tmp' \
 	'*~' \
 	'.eggs' \
@@ -27,11 +26,13 @@ genned_files=\
 	'build' \
 	'dist' \
 	'duplicity*.rst' \
+	'librsync*.so' \
 	'megatestresults' \
 	'report.xml' \
 	'testdb*' \
 	'testextension.sqlext' \
 	'testing*.rst' \
+	'wheelhouse' \
 	'work'
 
 clean:
@@ -48,15 +49,12 @@ ifndef READTHEDOCS
 endif
 
 ext:
-	python3.8 ./setup.py build_ext
-	python3.9 ./setup.py build_ext
-	python3.10 ./setup.py build_ext
-	python3.11 ./setup.py build_ext
+	python3 ./setup.py build_ext
 
 pot:
 	po/update-pot
 
 sdist:
-	./setup.py sdist --dist-dir=.
+	python3 ./setup.py -q sdist
 
 .PHONY: clean docs ext help pot sdist

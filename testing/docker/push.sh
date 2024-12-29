@@ -25,6 +25,6 @@
 
 cd `dirname "$0"`
 
-docker tag firstprime/duplicity_test:latest registry.gitlab.com/duplicity/duplicity/firstprime/duplicity_test:latest
-docker login registry.gitlab.com
-docker push registry.gitlab.com/duplicity/duplicity/firstprime/duplicity_test:latest
+docker image push firstprime/ssh_server:latest
+docker image push firstprime/ftp_server:latest
+docker image push firstprime/duplicity_test:latest

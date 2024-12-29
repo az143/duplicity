@@ -22,16 +22,12 @@
 
 
 import sys
+from unittest.mock import patch
 
 from duplicity.globmatch import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 from testing import _runtest_dir
 from . import UnitTestCase
-
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
 
 
 def sel_file(glob_str, include, file_path):
@@ -204,7 +200,7 @@ class TestTrailingSlash(UnitTestCase):
 
     def test_slash_matches_everything(self):
         """Test / matches everything"""
-        self.assertEqual(inc_sel_dir("/", f"/tmp/{_runtest_dir}/testfiles/select/1/2"), 1)
+        self.assertEqual(inc_sel_dir("/", f"{_runtest_dir}/testfiles/select/1/2"), 1)
         self.assertEqual(inc_sel_dir("/", "/test/random/path"), 1)
         self.assertEqual(exc_sel_dir("/", "/test/random/path"), 0)
         self.assertEqual(inc_sel_dir("/", "/"), 1)

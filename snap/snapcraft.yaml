@@ -1,5 +1,5 @@
 name: duplicity
-version: $version
+version: 3.0.3.2
 license: GPL-2.0
 summary: Efficient, encrypted backup to local or remote hosts
 description: |
@@ -64,7 +64,8 @@ parts:
             if [ "$SNAPCRAFT_BUILD_FOR" != "amd64" ]; then
                 echo "Skipping tahoe-lafs integration on arch '$SNAPCRAFT_BUILD_FOR'!='amd64'"
             else
-                pip install tahoe-lafs
+                python3 -m pip install zfec==1.5.7.4
+                python3 -m pip install tahoe-lafs
             fi
             rm -rfv "$SNAPCRAFT_PART_INSTALL/usr/lib/python3.9"
         override-prime: |

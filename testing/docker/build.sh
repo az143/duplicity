@@ -27,10 +27,10 @@ set -e
 
 cd `dirname "$0"`
 
-cp ../../requirements.txt .
-cp ../../tox.ini .
+cp ../../requirements.* .
 
 docker buildx build --compress --tag=firstprime/duplicity_test --file=duplicity_test/Dockerfile ./
+docker buildx build --compress --tag=firstprime/ftp_server --file=ftp_server/Dockerfile ./
+docker buildx build --compress --tag=firstprime/ssh_server --file=ssh_server/Dockerfile ./
 
-rm requirements.txt
-rm tox.ini
+rm requirements.*

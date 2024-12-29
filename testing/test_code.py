@@ -21,23 +21,20 @@
 
 import glob
 import os
+import pycodestyle
 import sys
 from subprocess import (
     Popen,
     PIPE,
     STDOUT,
 )
+import unittest
 
 import pytest
 
-if os.getenv("RUN_CODE_TESTS", None) == "1":
-    # Make conditional so that we do not have to import in environments that
-    # do not run the tests (e.g. the build servers)
-    import pycodestyle
-
 from . import _top_dir, DuplicityTestCase
 
-files_to_test = [os.path.join(_top_dir, "bin/duplicity")]
+files_to_test = []
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "duplicity/**/*.py"), recursive=True))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/functional/*.py")))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/unit/*.py")))
@@ -46,11 +43,11 @@ files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/*.py")))
 # don't test argparse311.py.  not really ours.
 files_to_test.remove(os.path.join(_top_dir, "duplicity/argparse311.py"))
 
+# TODO: remove when pylint AST builder is fixed.
+files_to_test.remove(os.path.join(_top_dir, "duplicity/backends/giobackend.py"))
 
-@pytest.mark.skipif(
-    not os.getenv("RUN_CODE_TESTS", None) == "1",
-    reason="Must set environment var RUN_CODE_TESTS=1",
-)
+
+@unittest.skipIf(os.environ.get("USER", "") == "buildd", "Skip test on Launchpad")
 class CodeTest(DuplicityTestCase):
     def run_checker(self, cmd, returncodes=None):
         if returncodes is None:
@@ -79,9 +76,9 @@ class CodeTest(DuplicityTestCase):
 
     def test_pep8(self):
         """Test that we conform to PEP-8 using pycodestyle."""
-        # Note that the settings, ignores etc for pycodestyle are set in tox.ini, not here
+        # Note that the settings, ignores etc for pycodestyle are set in pyproject.toml, not here
         print()
-        style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, "tox.ini"))
+        style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, "setup.cfg"))
         result = style.check_files(files_to_test)
         self.assertEqual(
             result.total_errors,
@@ -95,7 +92,7 @@ class CodeTest(DuplicityTestCase):
         self.run_checker(
             [
                 "pylint",
-                f"--rcfile={os.path.join(_top_dir, '.pylintrc')}",
+                f"--rcfile={os.path.join(_top_dir, 'pyproject.toml')}",
             ]
             + files_to_test
         )

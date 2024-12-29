@@ -23,11 +23,10 @@
 FROM ubuntu:20.04
 
 # Set locale to prevent UTF-8 errors
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
-ENV PYENV_ROOT "/root/.pyenv"
-ENV PATH "$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
-ENV TOXWORKDIR="/root/.tox"
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+ENV PYENV_ROOT="/root/.pyenv"
+ENV PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PATH"
 
 # Set to non-interactive so no tzdata prompt
 ARG DEBIAN_FRONTEND=noninteractive
@@ -80,43 +79,53 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install pyenv
-RUN git clone -b "v2.3.6" --single-branch https://github.com/pyenv/pyenv.git /root/.pyenv \
+RUN git clone -b "v2.4.12" --single-branch https://github.com/pyenv/pyenv.git /root/.pyenv \
     && eval "$(pyenv init --path)" \
     && eval "$(pyenv init -)"
 # Install all the Pythons we test
-RUN pyenv install 3.8.13
-RUN pyenv install 3.9.13
-RUN pyenv install 3.10.8
-RUN pyenv install 3.11.0
+RUN pyenv install 3.8.19
+RUN pyenv install 3.9.19
+RUN pyenv install 3.10.14
+RUN pyenv install 3.11.10
+RUN pyenv install 3.12.6
+RUN pyenv install 3.13.0
 
-# Tell tox how to find python.  Update pip minimals.
-RUN python3 -m pip install --upgrade pip setuptools setuptools-scm \
-    && python3 -m pip install tox tox-pyenv \
-    && pyenv local 3.8.13 3.9.13 3.10.8 3.11.0
-
-# set up tiny dummy project to make tox happy
-WORKDIR /root
-COPY hello-world-master.zip .
-RUN unzip -o hello-world-master.zip
-COPY requirements.txt hello-world-master
-COPY tox.ini hello-world-master
-
-# set to dummy workdir
-WORKDIR /root/hello-world-master
-
-# run tox so environss are created as part of image.
-RUN tox --notest -e py38 -- --setup-only
-RUN tox --notest -e py39 -- --setup-only
-RUN tox --notest -e py310 -- --setup-only
-RUN tox --notest -e py311 -- --setup-only
+COPY requirements.* /tmp
+RUN echo Installing /tmp/requirements for 3.8 \
+    && pyenv global 3.8.19 \
+    && pip install --upgrade pip setuptools \
+    && pip install -r /tmp/requirements.dev \
+    && pip install -r /tmp/requirements.txt
+RUN echo Installing /tmp/requirements for 3.9 \
+    && pyenv global 3.9.19 \
+    && pip install --upgrade pip setuptools \
+    && pip install -r /tmp/requirements.dev \
+    && pip install -r /tmp/requirements.txt
+RUN echo Installing /tmp/requirements for 3.10 \
+    && pyenv global 3.10.14 \
+    && pip install --upgrade pip setuptools \
+    && pip install -r /tmp/requirements.dev \
+    && pip install -r /tmp/requirements.txt
+RUN echo Installing /tmp/requirements for 3.11 \
+    && pyenv global 3.11.10 \
+    && pip install --upgrade pip setuptools \
+    && pip install -r /tmp/requirements.dev \
+    && pip install -r /tmp/requirements.txt
+RUN echo Installing /tmp/requirements for 3.12 \
+    && pyenv global 3.12.6 \
+    && pip install --upgrade pip setuptools \
+    && pip install -r /tmp/requirements.dev \
+    && pip install -r /tmp/requirements.txt
+RUN echo Installing /tmp/requirements for 3.13.0 \
+    && pyenv global 3.13.0 \
+    && pip install --upgrade pip setuptools \
+    && pip install -r /tmp/requirements.dev \
+    && pip install -r /tmp/requirements.txt
 
 # cleanup the noise left over
 RUN rm -rf /root/.cache/pip \
-    rm -rf /root/.tox/dist/hello_world*.zip \
-    rm -rf /root/.tox/distshare/hello_world*.zip \
-    rm -rf /root/hello-world-master* \
-    rm -rf /root/requirements.txt \
-    rm -rf /root/tox.ini
+    rm -rf /root/requirements.* \
+    rm -rf /root/*
 
 # Set workdir to duplicity
 WORKDIR /root/duplicity

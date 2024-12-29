@@ -29,11 +29,11 @@
 import sys
 
 import duplicity.errors
-from duplicity import gpg
 from duplicity import log
 from duplicity import tempdir
 from duplicity import util
 from duplicity.dup_main import main
+from duplicity.gpg import GPGError
 
 sys.stdout.reconfigure(errors="surrogateescape")
 sys.stderr.reconfigure(errors="surrogateescape")
@@ -55,7 +55,7 @@ def with_tempdir(fn):
         tempdir.default().cleanup()
 
 
-if __name__ == "__main__":
+def dup_run():
     try:
         log.setup()
         util.start_debugger()
@@ -77,7 +77,7 @@ if __name__ == "__main__":
         util.release_lockfile()
         sys.exit(4)
 
-    except gpg.GPGError as e:
+    except GPGError as e:
         # For gpg errors, don't show an ugly stack trace by
         # default. But do with sufficient verbosity.
         util.release_lockfile()
@@ -105,3 +105,7 @@ if __name__ == "__main__":
         else:
             # Traceback and that mess
             log.FatalError(util.exception_traceback(), log.ErrorCode.exception, e.__class__.__name__)
+
+
+if __name__ == "__main__":
+    dup_run()

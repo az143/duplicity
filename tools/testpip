@@ -1,0 +1,106 @@
+#!/bin/bash
+# -*- Mode:Shell; indent-tabs-mode:nil; tab-width -*-
+#
+# Copyright 2022 Kenneth Loafman <kenneth@loafman.com>
+#
+# This file is part of duplicity.
+#
+# Duplicity is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
+#
+# Duplicity is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with duplicity; if not, write to the Free Software Foundation,
+# Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+set -e
+
+if [ "`uname`" != "Linux" ]; then
+    echo "$0 does not run on `uname`"
+    exit 2
+fi
+
+if [ "$#" -ne 0 ]; then
+    echo "usage: $0"
+    exit 2
+fi
+
+VERSION=`./setup.py --version`
+echo "$0 of ${VERSION}"
+
+VERS="3.8 3.9 3.10 3.11 3.12 3.13"
+
+# We use pyenv to make a reproducible environment for multiple versions.
+# See: https://github.com/pyenv/pyenv/ for links and install commands.
+
+trap cleanup EXIT ERR
+
+cleanup ()
+{
+    pyenv global system
+    sudo rm -rf dist build duplicity.egg-info
+    pip uninstall duplicity
+    echo "Cleanup done"
+}
+
+# test sdist build and install on each version
+for V in ${VERS}; do
+    echo "Testing sdist on Python$V"
+    pyenv global $V
+    python$V -m build --sdist
+    python$V -m pip -q install dist/duplicity-*.tar.gz
+    echo -e "\n----------"
+    cd ..
+    # test duplicity as module
+    set +e
+    res=$(python$V -m duplicity -V)
+    set -e
+    if [[ "$res" == "duplicity ${VERSION}"* ]]; then
+        echo "duplicity as module passed."
+    else
+        echo "duplicity as module failed."
+        exit 1
+    fi
+    # test duplicity as script
+    set +e
+    res=$(duplicity -V)
+    set -e
+    if [[ "$res" == "duplicity ${VERSION}"* ]]; then
+        echo "duplicity as script passed."
+    else
+        echo "duplicity as script failed."
+        exit 1
+    fi
+    cd -
+    echo -e "----------\n"
+done
+
+# get wheels from last good run of wheels job
+BRANCH=main
+JOB=wheels
+echo "Downloading artifacts.zip from branch ${BRANCH} job ${JOB}"
+curl --location "https://gitlab.com/api/v4/projects/12450835/jobs/artifacts/${BRANCH}/download?job=${JOB}"  \
+     --output /tmp/artifacts.zip
+unzip -o /tmp/artifacts.zip
+
+# test wheel install on each python version supported
+for V in ${VERS}; do
+    echo "Testing wheel on Python$V"
+    pyenv global $V
+    python$V -m pip uninstall -y duplicity
+    python$V -m pip install wheelhouse/duplicity-*-cp${V//.}-*.whl
+    echo -e "\n----------"
+    cd ..
+    python$V -m duplicity -V
+    duplicity -V
+    cd -
+    echo -e "----------\n"
+done
+
+pyenv global system

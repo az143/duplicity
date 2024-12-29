@@ -21,12 +21,16 @@
 
 FROM stilliard/pure-ftpd
 
+# Set to non-interactive so no tzdata prompt
+ARG DEBIAN_FRONTEND=noninteractive
+
 # Install some tools for convenience
 RUN apt-get update \
     && apt-get install -y \
-            nano \
-            mc \
+        ftp \
+        iputils-ping \
+        mc \
+        nano \
+        net-tools \
+        rsync \
     && rm -rf /var/lib/apt/lists/*
-
-# Creating a ftp user account for testing testuser:testuser
-COPY pureftpd.passwd /etc/pure-ftpd/passwd/pureftpd.passwd

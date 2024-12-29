@@ -20,6 +20,7 @@
 
 
 import os
+import sys
 import unittest
 
 from testing import _runtest_dir
@@ -37,17 +38,18 @@ class LogTest(FunctionalTestCase):
         assert not os.system(f"rm -f {self.logfile}")
 
     def tearDown(self):
-        super().tearDown()
         assert not os.system(f"rm -f {self.logfile}")
+        super().tearDown()
 
     def test_command_line_error(self):
         """Check notification of a simple error code"""
 
         # Run actual duplicity command (will fail because bad dirs passed)
-        cmd = f"{_top_dir}/bin/duplicity --log-file={self.logfile} full testing baddir >/dev/null 2>&1"
-        basepython = os.environ.get("TOXPYTHON", None)
-        if basepython is not None:
-            cmd = f"{basepython} {cmd}"
+        basepython = f"python{sys.version_info.major}.{sys.version_info.minor}"
+        cmd = (
+            f"{basepython} {_top_dir}/duplicity/__main__.py --log-file={self.logfile} "
+            f"full testing baddir >/dev/null 2>&1"
+        )
         os.system(cmd)
 
         # The format of the file should be:

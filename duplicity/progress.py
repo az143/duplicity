@@ -65,7 +65,7 @@ class Snapshot(sys_collections.deque):
         # If restarting Full, discard marshalled data and start over
         if config.restart is not None and config.restart.start_vol >= 1:
             try:
-                progressfd = open(f"{config.archive_dir_path.name}/progress", "r")
+                progressfd = open(b"%s/progress" % config.archive_dir_path.name, "rb")
                 snapshot = pickle.load(progressfd)
                 progressfd.close()
             except Exception as e:

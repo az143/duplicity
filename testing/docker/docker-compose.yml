@@ -26,6 +26,7 @@ services:
     duplicity_test:
         image: firstprime/duplicity_test
         container_name: duplicity_test
+        hostname: duplicity_test
         build:
             context: ../..
             dockerfile: testing/docker/duplicity_test/Dockerfile
@@ -33,44 +34,36 @@ services:
         stdin_open: true
         tty: true
         volumes:
-              - ../..:/root/duplicity
+            - ../..:/root/duplicity
+            - gnupg:/root/duplicity/testing/gnupg
+        depends_on:
+            - ftp_server
+            - ssh_server
 
 
-#         depends_on:
-#             - duplicity_ftp
-#             - duplicity_ssh
-#         ports:
-#             - "30000-30009:30000-30009"
-#         networks:
-#             duplicity_test_net:
-#                ipv4_address: ${DUPLICITY_TEST_SUBNET}.2
-#         environment:
-#               - DUPLICITY_IP_SSH_SERVER=${DUPLICITY_TEST_SUBNET}.3
-#               - DUPLICITY_IP_FTP_SERVER=${DUPLICITY_TEST_SUBNET}.4
+    ftp_server:
+        image: firstprime/ftp_server
+        container_name: ftp_server
+        hostname: ftp_server
+        ports:
+            - "21:21"
+            - "30000-30009:30000-30009"
+        environment:
+            PUBLICHOST: "localhost"
+            FTP_USER_NAME: testuser
+            FTP_USER_PASS: testuser
+            FTP_USER_HOME: /home/ftpusers/testuser
+        tty: true
 
 
-#   duplicity_ftp:
-#     image: firstprime/duplicity_ftp
-#     ports:
-#       - "21:21"
-#     networks:
-#       duplicity_test_net:
-#         ipv4_address: ${DUPLICITY_TEST_SUBNET}.3
+    ssh_server:
+        image: firstprime/ssh_server
+        container_name: ssh_server
+        hostname: ssh_server
+        ports:
+            - "2222:22"
+        tty: true
 
 
-#   duplicity_ssh:
-#     image: firstprime/duplicity_ssh
-#     ports:
-#       - "2222:22"
-#     tty: true
-#     networks:
-#       duplicity_test_net:
-#         ipv4_address: ${DUPLICITY_TEST_SUBNET}.4
-
-
-# networks:
-#     duplicity_test_net:
-#         ipam:
-#             driver: default
-#         config:
-#             - subnet: ${DUPLICITY_TEST_SUBNET}.0/24
+volumes:
+    gnupg:

@@ -20,13 +20,21 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
-FROM ubuntu:16.04
+
+FROM ubuntu:20.04
+
+# Set to non-interactive so no tzdata prompt
+ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
     && apt-get install -y \
-            mc \
-            nano \
-            openssh-server\
+        ftp \
+        iputils-ping \
+        mc \
+        nano \
+        net-tools \
+        openssh-server \
+        rsync \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /var/run/sshd
@@ -36,6 +44,8 @@ RUN echo 'root:root' |chpasswd
 RUN sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
 RUN sed -ri "s/UsePAM yes/#UsePAM yes/g" /etc/ssh/sshd_config
 RUN sed -ri "s/#Port 22/Port 2222/g" /etc/ssh/sshd_config
+
+RUN echo >> /etc/ssh/sshd_config
 RUN echo "Match User userWithOnlyKeyAccess" >> /etc/ssh/sshd_config
 RUN echo "     PasswordAuthentication no" >> /etc/ssh/sshd_config
 
@@ -55,11 +65,12 @@ USER userWithPasswordAccess
 WORKDIR /home/userWithPasswordAccess
 
 USER root
+WORKDIR /root
 
-RUN echo 'userWithKeyAccess:userWithKeyAccess' |chpasswd
-RUN echo 'userWithPasswordAccess:userWithPasswordAccess' |chpasswd
+RUN echo 'userWithKeyAccess:userWithKeyAccess' | chpasswd
+RUN echo 'userWithPasswordAccess:userWithPasswordAccess' | chpasswd
 
 RUN chown -R userWithKeyAccess:userWithKeyAccess /home/userWithKeyAccess/.ssh
 RUN chown -R userWithOnlyKeyAccess:userWithOnlyKeyAccess /home/userWithOnlyKeyAccess/.ssh/
 
-RUN ["service", "ssh", "restart"]
+CMD ["/usr/sbin/sshd", "-D"]

@@ -28,13 +28,10 @@ import re
 import socket
 import sys
 from hashlib import md5
+from textwrap import dedent
 
 # TODO: Remove duplicity.argparse311 when py38 goes EOL
-if sys.version_info[0:2] == (3, 8):
-    from duplicity import argparse311 as argparse
-else:
-    import argparse
-
+from duplicity import argparse311 as argparse
 from duplicity import config
 from duplicity import dup_time
 from duplicity import errors
@@ -49,7 +46,7 @@ help_footer = _("Enter 'duplicity --help' for help screen.")
 
 
 class CommandLineError(errors.UserError):
-    sys.tracebacklimit = 4
+    # sys.tracebacklimit = 4
     pass
 
 
@@ -78,7 +75,9 @@ class AddSelectionAction(DuplicityAction):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        addarg = os.fsdecode(value) if isinstance(values, bytes) else values
+        addarg = os.fsdecode(values) if isinstance(values, bytes) else values
+        if addarg == "":
+            command_line_error(f"Option {option_string} cannot be empty.")
         config.select_opts.append((os.fsdecode(option_string), addarg))
 
 
@@ -123,10 +122,11 @@ class IgnoreErrorsAction(DuplicityAction):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
+        var = opt2var(option_string)
         log.Warn(
             _("Running in 'ignore errors' mode due to --ignore-errors.\n" "Please reconsider if this was not intended")
         )
-        config.ignore_errors = True
+        setattr(namespace, var, True)
 
 
 class WarnAsyncStoreConstAction(argparse._StoreConstAction):
@@ -136,13 +136,31 @@ class WarnAsyncStoreConstAction(argparse._StoreConstAction):
     def __call__(self, parser, namespace, values, option_string=None):
         log.Warn(
             _(
-                "Use of the --asynchronous-upload option is experimental "
-                "and not safe for production! There are reported cases of "
-                "undetected data loss during upload. Be aware and "
-                "periodically verify your backups to be safe."
+                dedent(
+                    """
+                    ----------------------------------------------------------------
+                    | WARNING: replaced with `--concurrency`                       |
+                    | Use of the --asynchronous-upload option was known to be      |
+                    | unsafe and may result in data loss.                          |
+                    | It was removed in VERSION 3.0.0 and replaced by              |
+                    | --concurrency which will offer similar functionality, but    |
+                    | thoroughly tested implementation.                            |
+                    | See: https://gitlab.com/duplicity/duplicity/-/issues/745 and |
+                    | https://gitlab.com/duplicity/duplicity/-/merge_requests/153  |
+                    ----------------------------------------------------------------
+                    """
+                )
             )
         )
         setattr(namespace, self.dest, self.const)
+
+
+class SetLogTimestampAction(argparse._StoreConstAction):
+    def __init__(self, option_strings, dest, nargs=None, **kwargs):
+        super().__init__(option_strings, dest, **kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        log._log_timestamp = True
 
 
 def _check_int(val):
@@ -174,7 +192,7 @@ def check_file(val):
     try:
         return os.fsencode(expand_fn(val))
     except Exception as e:
-        command_line_error(f"{val} is not a valide pathname: {str(e)}")
+        command_line_error(f"{val} is not a valid pathname: {str(e)}")
 
 
 def check_interval(val):
@@ -268,6 +286,7 @@ def check_verbosity(val):
         )
 
     log.setverbosity(verb)
+    config.verbosity = verb
     return verb
 
 
@@ -279,6 +298,9 @@ def dflt(val):
 
 
 def expand_fn(filename):
+    """
+    Expand user and vars in filename
+    """
     return os.path.expanduser(os.path.expandvars(filename))
 
 
@@ -307,7 +329,11 @@ def generate_default_backup_name(backend_url):
     # where relative paths are used yet the relative path is the same
     # (but duplicity is run from a different directory or similar),
     # then it is simply up to the user to set --archive-dir properly.
-    burlhash = md5()
+    # TODO: Remove when py38 goes EOL
+    if sys.version_info[:2] == (3, 8):
+        burlhash = md5()
+    else:
+        burlhash = md5(usedforsecurity=False)
     burlhash.update(backend_url.encode())
     return burlhash.hexdigest()
 
@@ -451,3 +477,11 @@ def set_selection():
     sel = selection.Select(config.local_path)
     sel.ParseArgs(config.select_opts, config.select_files)
     config.select = sel.set_iter()
+
+
+def round512(s):
+    """
+    Rounds up to the next 512 boundary. For negative numbers the absolute value will be used.
+    Minimum return value is 512.
+    """
+    return ((max(1, abs(int(s))) + 511) // 512) * 512

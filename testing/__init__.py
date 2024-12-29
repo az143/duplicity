@@ -26,11 +26,14 @@ import subprocess
 import sys
 import time
 import unittest
+from importlib import reload
 
-from duplicity import backend
-from duplicity import config
-from duplicity import log
-from duplicity import util
+from duplicity import (
+    backend,
+    config,
+    log,
+    util,
+)
 
 gettext.install("duplicity", names=["ngettext"])
 
@@ -101,6 +104,9 @@ class DuplicityTestCase(unittest.TestCase):
 
         # Have all file references in tests relative to our runtest dir
         os.chdir(_runtest_dir)
+
+        # reimport duplicity.config in case it changed
+        reload(config)
 
     def tearDown(self):
         for key in self.savedEnviron:

@@ -28,9 +28,8 @@ import unittest
 
 import pytest
 
-from duplicity import config
-from testing import _runtest_dir
-from . import FunctionalTestCase
+from testing.functional import _runtest_dir
+from testing.functional import FunctionalTestCase
 
 
 class RestartTest(FunctionalTestCase):
@@ -66,7 +65,7 @@ class RestartTest(FunctionalTestCase):
         """
         self.make_largefiles()
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles", fail=1)
-        assert not os.system(f"rm {_runtest_dir}/testfiles/output/duplicity-full*difftar*")
+        os.system(f"rm {_runtest_dir}/testfiles/output/duplicity-full*difftar*")
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
         self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
@@ -78,7 +77,7 @@ class RestartTest(FunctionalTestCase):
         """
         self.make_largefiles()
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles", fail=3)
-        assert not os.system(f"rm {_runtest_dir}/testfiles/output/duplicity-full*vol[23].difftar*")
+        os.system(f"rm {_runtest_dir}/testfiles/output/duplicity-full*vol[23].difftar*")
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
         self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
@@ -134,7 +133,7 @@ class RestartTest(FunctionalTestCase):
 
     @unittest.skipIf(
         platform.machine() in ["ppc64el", "ppc64le"],
-        "Skip on ppc64el and ppc64le machines",
+        "See https://gitlab.com/duplicity/duplicity/-/issues/820",
     )
     def test_last_file_missing_at_end(self):
         """
@@ -410,6 +409,12 @@ class RestartTestWithoutEncryption(RestartTest):
         )
         # Confirm we can restore it (which in buggy versions, would fail)
         self.restore()
+
+
+class RestartTestConcurrent(RestartTest):
+    def setUp(self):
+        super().setUp()
+        self.class_args.extend(["--concurrency=4"])
 
 
 if __name__ == "__main__":

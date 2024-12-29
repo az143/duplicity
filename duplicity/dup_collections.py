@@ -144,10 +144,7 @@ class BackupSet(object):
         ), f"Cannot set filename of remote manifest to {remote_filename}; already set to {self.remote_jsonstat_name}."
         self.remote_jsonstat_name = remote_filename
 
-        if self.action != "replicate":
-            local_filename_list = config.archive_dir_path.listdir()
-        else:
-            local_filename_list = []
+        local_filename_list = config.archive_dir_path.listdir()
         for local_filename in local_filename_list:
             pr = file_naming.parse(local_filename)
             if (
@@ -311,7 +308,7 @@ class BackupSet(object):
         elif self.remote_jsonstat_name:
             json_stat_bytes = self.get_remote_file(self.remote_jsonstat_name)
         else:
-            log.Info(_("No Jsonstat file found, return enmty."))
+            log.Info(_("No Jsonstat file found, return empty."))
             return {}
         return json.loads(json_stat_bytes)
 
@@ -770,14 +767,7 @@ class CollectionsStatus(object):
 
         # get local filename list
         local_filename_list = self.archive_dir_path.listdir()
-        log.Debug(
-            ngettext(
-                "%d file exists in cache",
-                "%d files exist in cache",
-                len(local_filename_list),
-            )
-            % len(local_filename_list)
-        )
+        log.Debug(_("%d file(s) exist in cache") % len(local_filename_list))
 
         # check for partial backups
         partials = []
@@ -1242,7 +1232,7 @@ class CollectionsStatus(object):
         """
         # quick fix to spaces in filepath
         modified_filepath = filepath
-        if " " in filepath:
+        if " " in str(filepath):
             modified_filepath = '"' + filepath.replace(" ", r"\x20") + '"'
 
         if not self.matched_chain_pair:

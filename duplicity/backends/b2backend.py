@@ -70,6 +70,7 @@ class B2Backend(duplicity.backend.Backend):
 
         try:  # figure out what version of b2sdk we have
             from b2sdk import __version__ as VERSION  # pylint: disable=import-error
+            import traceback
 
             v_split = VERSION.split(".")
             self.v_num = [int(x) for x in v_split]
@@ -82,7 +83,8 @@ class B2Backend(duplicity.backend.Backend):
             from b2sdk.v2.exception import (
                 NonExistentBucket,
             )  # pylint: disable=import-error
-        except ImportError:
+        except ImportError as e1:
+            log.Debug("".join(traceback.format_exception(None, e1, e1.__traceback__)))
             try:  # if public API v2 not found, try to use public API v1
                 from b2sdk.v1 import B2Api  # pylint: disable=import-error
                 from b2sdk.v1 import InMemoryAccountInfo  # pylint: disable=import-error
@@ -95,7 +97,8 @@ class B2Backend(duplicity.backend.Backend):
 
                 if self.v_num < [1, 9, 0]:
                     from b2sdk.v1.file_version import FileVersionInfoFactory
-            except ImportError:
+            except ImportError as e2:
+                log.Debug("".join(traceback.format_exception(None, e2, e2.__traceback__)))
                 try:  # try to import the new b2sdk internal API if available (and public API isn't)
                     from b2sdk.api import B2Api  # pylint: disable=import-error
                     from b2sdk.account_info import (
@@ -110,7 +113,8 @@ class B2Backend(duplicity.backend.Backend):
                     from b2sdk.file_version import (
                         FileVersionInfoFactory,
                     )  # pylint: disable=import-error
-                except ImportError as e:
+                except ImportError as e3:
+                    log.Debug("".join(traceback.format_exception(None, e3, e3.__traceback__)))
                     raise BackendException("B2 backend requires B2 Python SDK (pip install b2sdk)")
 
         self.service = B2Api(InMemoryAccountInfo())
@@ -217,9 +221,11 @@ class B2Backend(duplicity.backend.Backend):
         log.Log(f"Query: {self.path}{os.fsdecode(filename)}", log.INFO)
         file_version_info = self.file_info(quote_plus(self.path + os.fsdecode(filename), "/"))
         return {
-            "size": int(file_version_info.size)
-            if file_version_info is not None and file_version_info.size is not None
-            else -1
+            "size": (
+                int(file_version_info.size)
+                if file_version_info is not None and file_version_info.size is not None
+                else -1
+            )
         }
 
     def file_info(self, filename):

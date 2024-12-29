@@ -34,6 +34,7 @@ from . import UnitTestCase
 
 class BackendInstanceBase(UnitTestCase):
     def setUp(self):
+        super().setUp()
         UnitTestCase.setUp(self)
         assert not os.system(f"rm -rf {_runtest_dir}/testfiles")
         os.makedirs(f"{_runtest_dir}/testfiles")
@@ -47,6 +48,7 @@ class BackendInstanceBase(UnitTestCase):
             return
         if hasattr(self.backend, "_close"):
             self.backend._close()
+        super().tearDown()
 
     def test_get(self):
         if self.backend is None:
@@ -153,7 +155,7 @@ class BackendInstanceBase(UnitTestCase):
         # Backends can either return -1 themselves, or throw an error
         # that gives log.ErrorCode.backend_not_found.
         try:
-            info = self.backend._query(b"file-a")
+            info = self.backend._query(b"missing-file")
         except BackendException as e:  # pylint:
             pass  # Something went wrong, but it was an 'expected' something
         except Exception as e:
@@ -247,20 +249,18 @@ class FTPSBackendTest(BackendInstanceBase):
 class RCloneBackendTest(BackendInstanceBase):
     def setUp(self):
         super().setUp()
-        # make sure rclone config exists
-        assert not os.system("rclone config touch")
         # add a duptest local config
         try:
-            assert not os.system("rclone config create duptest local local=true --non-interactive")
+            assert not os.system("rclone config create duptest local config_is_local true")
             self.delete_config = True
         except Exception as e:
             self.delete_config = False
         os.makedirs(f"{_runtest_dir}/testfiles/output")
-        url = f"rclone://duptest:/%s/{_runtest_dir}/testfiles/output"
+        url = f"rclone://duptest:/{_runtest_dir}/testfiles/output"
         self.backend = duplicity.backend.get_backend_object(url)
         self.assertEqual(self.backend.__class__.__name__, "RcloneBackend")
 
     def tearDown(self):
-        super().tearDown()
         if self.delete_config:
             assert not os.system("rclone config delete duptest")
+        super().tearDown()

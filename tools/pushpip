@@ -1,12 +1,9 @@
 #!/bin/bash
+# -*- Mode:Shell; indent-tabs-mode:nil; tab-width -*-
 #
-# Copyright 2017 Nils Tekampe <nils@tekampe.org>,
-# Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2022 Kenneth Loafman <kenneth@loafman.com>
 #
 # This file is part of duplicity.
-# This script sets up a test network for the tests of dupclicity
-# This script takes the assumption that the containers for the testinfrastructure do deither run
-# or they are removed. It is not intended to have stopped containers.
 #
 # Duplicity is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -21,10 +18,28 @@
 # You should have received a copy of the GNU General Public License
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-#
 
-cd `dirname "$0"`
+set -e
 
-docker compose up -d
-docker compose exec duplicity_test /bin/bash -c "tox -e code"
-docker compose down
+if [ "`uname`" != "Linux" ]; then
+    echo "$0 does not run on `uname`"
+    exit 2
+fi
+
+if [ "$#" -ne 0 ]; then
+    echo "usage: $0"
+    exit 2
+fi
+
+VERSION=`./setup.py --version`
+echo "$0 of ${VERSION}"
+
+if [ -e "wheelhouse" ]; then
+    mv wheelhouse/duplicity-${VERSION}-*.whl dist
+    rmdir wheelhouse
+fi
+
+## upload to pypi
+for f in dist/duplicity-${VERSION}*; do
+    twine upload --non-interactive $f
+done

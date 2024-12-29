@@ -29,6 +29,7 @@ import gzip
 import locale
 import os
 import re
+import sys
 import tempfile
 
 from duplicity import config
@@ -55,6 +56,10 @@ class GPGProfile(object):
     """
     Just hold some GPG settings, avoid passing tons of arguments
     """
+
+    _version_re = re.compile(
+        b"^gpg.*\\(GnuPG(?:/MacGPG2)?\\) (?P<maj>[0-9]+)\\.(?P<min>[0-9]+)\\.(?P<bug>[0-9]+)(-.+)?$"
+    )
 
     def __init__(self, passphrase=None, sign_key=None, recipients=None, hidden_recipients=None):
         """
@@ -84,9 +89,6 @@ class GPGProfile(object):
             self.hidden_recipients = []
 
         self.gpg_version = self.get_gpg_version(config.gpg_binary)
-
-    rc = re.compile
-    _version_re = rc(b"^gpg.*\\(GnuPG(?:/MacGPG2)?\\) (?P<maj>[0-9]+)\\.(?P<min>[0-9]+)\\.(?P<bug>[0-9]+)(-.+)?$")
 
     def get_gpg_version(self, binary):
         gnupg = gpginterface.GnuPG()
@@ -197,7 +199,10 @@ class GPGFile(object):
                     "stdin",
                 ]
             else:
-                gnupg_fhs = ["stdin", "passphrase"]
+                gnupg_fhs = [
+                    "stdin",
+                    "passphrase",
+                ]
             # Turn off compression if needed
             if not config.compression:
                 cmdlist.append("--compress-algo=none")
@@ -227,7 +232,10 @@ class GPGFile(object):
                     "stdout",
                 ]
             else:
-                gnupg_fhs = ["stdout", "passphrase"]
+                gnupg_fhs = [
+                    "stdout",
+                    "passphrase",
+                ]
             p1 = gnupg.run(["--decrypt"], create_fhs=gnupg_fhs, attach_fhs=gpg_attach)
             if not config.use_agent:
                 p1.handles["passphrase"].write(passphrase)
@@ -389,7 +397,7 @@ def GPGWriteFile(block_iter, filename, profile, size=200 * 1024 * 1024, max_foot
                 at_end_of_blockiter = 1
                 break
             except Exception as e:
-                log.FatalError(f"Read error on {filename}: {str(e)}")
+                log.FatalError(f"Read error on {os.fsdecode(filename)}: {str(e)}")
             file.write(data)
 
         file.write(block_iter.get_footer())
@@ -484,9 +492,17 @@ def get_hash(hash, path, hex=1):  # pylint: disable=redefined-builtin
     # assert path.isreg()
     fp = path.open("rb")
     if hash == "SHA1":
-        hash_obj = sha1()
+        # TODO: Remove when py38 goes EOL
+        if sys.version_info[:2] == (3, 8):
+            hash_obj = sha1()
+        else:
+            hash_obj = sha1(usedforsecurity=False)
     elif hash == "MD5":
-        hash_obj = md5()
+        # TODO: Remove when py38 goes EOL
+        if sys.version_info[:2] == (3, 8):
+            hash_obj = md5()
+        else:
+            hash_obj = md5(usedforsecurity=False)
     else:
         assert 0, f"Unknown hash {hash}"
 

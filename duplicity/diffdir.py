@@ -28,9 +28,12 @@ the second, the ROPath iterator is put into tar block form.
 """
 
 import io
+import math
 
+from duplicity import cli_util
 from duplicity import progress
 from duplicity import statistics
+from duplicity import dup_tarfile
 from duplicity import util
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
@@ -488,9 +491,9 @@ class TarBlockIter(object):
         """
         tarinfo.size = len(file_data)
         headers = tarinfo.tobuf(errors="replace", encoding=config.fsencoding)
-        blocks, remainder = divmod(tarinfo.size, tarfile.BLOCKSIZE)
+        blocks, remainder = divmod(tarinfo.size, dup_tarfile.BLOCKSIZE)
         if remainder > 0:
-            filler_data = b"\0" * (tarfile.BLOCKSIZE - remainder)
+            filler_data = b"\0" * (dup_tarfile.BLOCKSIZE - remainder)
         else:
             filler_data = b""
         return TarBlock(index, b"%s%s%s" % (headers, file_data, filler_data))
@@ -572,11 +575,11 @@ class TarBlockIter(object):
 
     def get_footer(self):
         """
-        Return closing string for tarfile, reset offset
+        Return closing string for dup_tarfile, reset offset
         """
-        blocks, remainder = divmod(self.offset, tarfile.RECORDSIZE)
+        blocks, remainder = divmod(self.offset, dup_tarfile.RECORDSIZE)
         self.offset = 0
-        return b"\0" * (tarfile.RECORDSIZE - remainder)  # remainder can be 0
+        return b"\0" * (dup_tarfile.RECORDSIZE - remainder)  # remainder can be 0
 
     def __iter__(self):  # pylint: disable=non-iterator-returned
         return self
@@ -742,15 +745,16 @@ def write_block_iter(block_iter, out_obj):
 
 def get_block_size(file_len):
     """
-    Return a reasonable block size to use on files of length file_len
+    Return a reasonable block size to use on files of length file_len.
 
-    If the block size is too big, deltas will be bigger than is
-    necessary.  If the block size is too small, making deltas and
-    patching can take a really long time.
+    Use the integer square root of file length as the librsync block size.
+    Minimum being 512 byte with no maximum unless --max-blocksize is supplied.
+
+    Block size is rounded up to the nearest 512 byte boundary.
     """
-    if file_len < 1024000:
-        return 512  # set minimum of 512 bytes
+
+    block_size = cli_util.round512(math.isqrt(file_len))
+    if config.max_blocksize:
+        return min(block_size, config.max_blocksize)
     else:
-        # Split file into about 2000 pieces, rounding to 512
-        file_blocksize = int((file_len / (2000 * 512))) * 512
-        return min(file_blocksize, config.max_blocksize)
+        return block_size

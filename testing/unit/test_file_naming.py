@@ -55,9 +55,6 @@ class FileNamingBase(object):
 
     def test_basic(self):
         """Check get/parse cycle"""
-        dup_time.setprevtime(10)
-        dup_time.setcurtime(20)
-
         file_naming.prepare_regex(force=True)
         filename = file_naming.get("inc", volume_number=23)
         log.Info(f"Inc filename: {os.fsdecode(filename)}")
@@ -162,6 +159,8 @@ class FileNaming(UnitTestCase, FileNamingBase):
 
     def setUp(self):
         super().setUp()
+        dup_time.setprevtime(10)
+        dup_time.setcurtime(20)
 
 
 class FileNamingPrefixes(UnitTestCase, FileNamingBase):
@@ -174,6 +173,8 @@ class FileNamingPrefixes(UnitTestCase, FileNamingBase):
         self.set_config("file_prefix_signature", b"sign-")
         self.set_config("file_prefix_archive", b"arch-")
         self.set_config("file_prefix_jsonstat", b"jsonstat-")
+        dup_time.setprevtime(10)
+        dup_time.setcurtime(20)
 
 
 if __name__ == "__main__":

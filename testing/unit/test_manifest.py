@@ -22,11 +22,7 @@
 
 import re
 import unittest
-
-try:
-    from unittest.mock import patch
-except ImportError:
-    from mock import patch
+from unittest.mock import patch
 
 from duplicity import config
 from duplicity import manifest
@@ -44,7 +40,7 @@ class VolumeInfoTest(UnitTestCase):
         vi.set_info(3, (b"hello", b"there"), None, (), None)
         vi.set_hash("MD5", "aoseutaohe")
         s = vi.to_string()
-        assert isinstance(s, (b"".__class__, "".__class__))
+        assert isinstance(s, (bytes, str))
         # print "---------\n%s\n---------" % s
         vi2 = manifest.VolumeInfo()
         vi2.from_string(s)
@@ -93,12 +89,14 @@ class ManifestTest(UnitTestCase):
     """Test Manifest class"""
 
     def setUp(self):
+        super().setUp()
         UnitTestCase.setUp(self)
         self.old_files_changed = config.file_changed
         config.file_changed = "testing"
 
     def tearDown(self):
         config.file_changed = self.old_files_changed
+        super().tearDown()
 
     def test_basic(self):
         vi1 = manifest.VolumeInfo()

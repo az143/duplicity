@@ -24,6 +24,7 @@ Data for parse command line, check for consistency, and set config
 
 from dataclasses import dataclass
 
+from duplicity import __reldate__
 from duplicity import __version__
 from duplicity.cli_util import *
 
@@ -108,7 +109,7 @@ OptionKwargs = dict(
         action=WarnAsyncStoreConstAction,
         const=1,
         dest="async_concurrency",
-        help="Number of async upload tasks, max of 1",
+        help="Discontiniued, use --concurrency",
         default=dflt(config.async_concurrency),
     ),
     azure_blob_tier=dict(
@@ -157,6 +158,16 @@ OptionKwargs = dict(
         action="store_true",
         help="Compare data on verify not only signatures",
         default=dflt(config.compare_data),
+    ),
+    concurrency=dict(
+        metavar=_("number"),
+        type=int,
+        help="Number n of concurrent backend processes to get better performance.\n"
+        "Allow parallel creation of new volume and transfer. Some backends may profit more than one transfer, too.\n"
+        "Typically a value of 1-4 is a good starting point. The impact totally depends on the backend,\n"
+        "network and other condition. This will also increase the temporary local disk usage\n"
+        "from 1 to n + 1 volumes.",
+        default=dflt(config.concurrency),
     ),
     config_dir=dict(
         metavar=_("path"),
@@ -223,6 +234,7 @@ OptionKwargs = dict(
     ),
     exclude_older_than=dict(
         metavar=_("time"),
+        type=check_time,
         action=AddSelectionAction,
         help="Exclude files older than time",
         default=dflt(None),
@@ -351,7 +363,12 @@ OptionKwargs = dict(
     gpg_options=dict(
         metavar=_("options"),
         action=SplitOptionsAction,
-        help="Verbatim gpg options.  May be supplied multiple times.",
+        help=(
+            "Verbatim gpg options.  May be supplied multiple times.\n"
+            "NOTE: --gpg-options and value should be bound with an '=' as in\n"
+            "      --gpg-options='--some-option=value'\n"
+            "See man page at ARGPARSE PROBLEM."
+        ),
         default=dflt(config.gpg_options),
     ),
     hidden_encrypt_key=dict(
@@ -410,18 +427,34 @@ OptionKwargs = dict(
         default=dflt(config.jsonstat),
     ),
     # log_fd is directly applied in set_log_fd(), not saved in config
-    log_fd=dict(metavar=_("file_descriptor"), dest="", type=set_log_fd, help="File descriptor to be used for logging"),
+    log_fd=dict(
+        metavar=_("file_descriptor"),
+        dest="",
+        type=set_log_fd,
+        help="File descriptor to be used for logging",
+    ),
     # log_file is directly applied in set_log_file(), not saved in config
-    log_file=dict(metavar=_("log_filename"), dest="", type=set_log_file, help="Logging filename to use"),
+    log_file=dict(
+        metavar=_("log_filename"),
+        dest="",
+        type=set_log_file,
+        help="Logging filename to use",
+    ),
+    # log_timestamp is directly applied in SetLogTimestampAction(), not saved in config
     log_timestamp=dict(
-        action="store_true",
+        dest="",
+        action=SetLogTimestampAction,
         help="Whether to include timestamp and level in log",
         default=dflt(False),
     ),
     max_blocksize=dict(
         metavar=_("number"),
-        type=int,
-        help="Maximum block size for large files in MB",
+        type=round512,
+        help=(
+            "The integer square root of file length is used as the librsync block size\n"
+            "up to this maximum block size value in bytes if supplied.\n"
+            "Block size is rounded up to the nearest 512 byte boundary."
+        ),
         default=dflt(config.max_blocksize),
     ),
     metadata_sync_mode=dict(
@@ -495,7 +528,12 @@ OptionKwargs = dict(
     par2_options=dict(
         metavar=_("options"),
         action=SplitOptionsAction,
-        help="Verbatim par2 options.  May be supplied multiple times.",
+        help=(
+            "Verbatim par2 options.  May be supplied multiple times.\n"
+            "NOTE: --par2-options and value should be bound with an '=' as in\n"
+            "      --par2-options='--some-option=value'\n"
+            "See man page at ARGPARSE PROBLEM."
+        ),
         default=dflt(config.par2_options),
     ),
     par2_redundancy=dict(
@@ -544,7 +582,12 @@ OptionKwargs = dict(
     rsync_options=dict(
         metavar=_("options"),
         action=SplitOptionsAction,
-        help="Verbatim rsync options.  May be supplied multiple times.",
+        help=(
+            "Verbatim rsync options.  May be supplied multiple times.\n"
+            "NOTE: --rsync-options and value should be bound with an '=' as in\n"
+            "      --rsync-options='--some-option=value'\n"
+            "See man page at ARGPARSE PROBLEM."
+        ),
         default=dflt(config.rsync_options),
     ),
     s3_endpoint_url=dict(
@@ -674,7 +717,12 @@ OptionKwargs = dict(
     ssh_options=dict(
         metavar=_("options"),
         action=SplitOptionsAction,
-        help="Verbatim ssh options.  May be supplied multiple times.",
+        help=(
+            "Verbatim ssh options.  May be supplied multiple times.\n"
+            "NOTE: --ssh-options and value should be bound with an '=' as in\n"
+            "      --ssh-options='--some-option=value'\n"
+            "See man page at ARGPARSE PROBLEM."
+        ),
         default=dflt(config.ssh_options),
     ),
     ssl_cacert_file=dict(
@@ -726,7 +774,7 @@ OptionKwargs = dict(
     ),
     version=dict(
         action="version",
-        version=f"duplicity {__version__}",
+        version=f"duplicity {__version__} {__reldate__}",
         help="Display version and exit",
     ),
     volsize=dict(
@@ -742,18 +790,17 @@ OptionKwargs = dict(
     ),
     # TESTING ONLY - do not use in production
     current_time=dict(
-        type=int,
-        help=argparse.SUPPRESS,
-    ),
-    fail_on_volume=dict(
+        metavar="time",
         type=int,
         help=argparse.SUPPRESS,
     ),
     pydevd=dict(
+        # activate remote debugging
         action="store_true",
         help=argparse.SUPPRESS,
     ),
     skip_volume=dict(
+        metavar="volume",
         type=int,
         help=argparse.SUPPRESS,
     ),
@@ -827,26 +874,6 @@ removed_backup_options = {
 
 # make list of all options available
 all_options = {var2opt(var) for var in OptionKwargs.keys()}
-
-
-@dataclass(order=True)
-class CommandOptions:
-    """
-    legal options by command
-    """
-
-    backup = list(all_options)
-    cleanup = list(all_options - backup_only_options - selection_only_options)
-    collection_status = list(all_options - backup_only_options - selection_only_options)
-    full = list(all_options)
-    incremental = list(all_options)
-    list_current_files = list(all_options - backup_only_options - selection_only_options)
-    remove_older_than = list(all_options - backup_only_options - selection_only_options)
-    remove_all_but_n_full = list(all_options - backup_only_options - selection_only_options)
-    remove_all_inc_of_but_n_full = list(all_options - backup_only_options - selection_only_options)
-    restore = list(all_options - backup_only_options - selection_only_options)
-    verify = list(all_options - backup_only_options)
-
 
 trans = {
     # TRANSL: Used in usage help to represent a Unix-style path name. Example:

@@ -109,8 +109,8 @@ class PatchingTest(UnitTestCase):
         """Test for the .. bug that lets tar overwrite parent dir"""
 
         def make_bad_tar(filename):
-            """Write attack tarfile to filename"""
-            tf = tarfile.TarFile(name=filename, mode="w")
+            """Write attack dup_tarfile to filename"""
+            tf = dup_tarfile.TarFile(name=filename, mode="w")
 
             # file object will be empty, and tarinfo will have path
             # "snapshot/../warning-security-error"
@@ -301,7 +301,7 @@ class TestInnerFuncs(UnitTestCase):
         try_seq(seq5, seq1)
 
     # TODO: fix test_patch_seq2ropath for macOS, maybe others.
-    #       Fails under tox, pytest, and pydevd
+    #       Fails under pytest, and pydevd
     # ----------
     #     def testseq(seq, perms, buf):
     #         result = patchdir.patch_seq2ropath(seq)

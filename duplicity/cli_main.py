@@ -25,18 +25,15 @@ Main for parse command line, check for consistency, and set config
 import copy
 import inspect
 import sys
-from textwrap import dedent
+from textwrap import dedent, wrap
 
 # TODO: Remove duplicity.argparse311 when py38 goes EOL
-if sys.version_info[0:2] == (3, 8):
-    from duplicity import argparse311 as argparse
-else:
-    import argparse
-
+from duplicity import argparse311 as argparse
 from duplicity import backend
 from duplicity import config
 from duplicity import cli_util
 from duplicity import gpg
+from duplicity import log
 from duplicity import util
 from duplicity.cli_data import *
 
@@ -118,7 +115,7 @@ def parse_log_options(arglist):
     try:
         args, remainder = parser.parse_known_intermixed_args(arglist)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
-        raise CommandLineError(str(e))
+        command_line_error(str(e))
 
     return args, remainder
 
@@ -143,7 +140,34 @@ def parse_cmdline_options(arglist):
     try:
         args, remainder = parser.parse_known_intermixed_args(remainder)
     except (argparse.ArgumentError, argparse.ArgumentTypeError) as e:
-        raise CommandLineError(str(e))
+        command_line_error(str(e))
+
+    # let's test the command and try to assume which action,
+    # eventually err out if no valid action could be determined/was given
+    if len(remainder) == 2 and remainder[0] not in all_commands:
+        if is_path(remainder[0]) and is_url(remainder[1]):
+            log.Notice(
+                _(
+                    "No valid action found. Will imply 'backup' because "
+                    "a path source was given and target is a url location."
+                )
+            )
+            remainder.insert(0, "backup")
+        elif is_url(remainder[0]) and is_path(remainder[1]):
+            log.Notice(
+                _(
+                    "No valid action found. Will imply 'restore' because "
+                    "url source was given and target is a local path."
+                )
+            )
+            remainder.insert(0, "restore")
+        else:
+            msg = _(
+                f"Invalid '{remainder[0]}' action and cannot be implied from the "
+                f"given arguments:\n{arglist}\n"
+                f"Valid actions are: {all_commands}"
+            )
+            command_line_error(msg)
 
     # check for added/removed options
     for opt in remainder:
@@ -180,33 +204,6 @@ def parse_cmdline_options(arglist):
                     )
                     + f"{removed_commands_string}"
                 )
-
-    # let's test the command and try to assume which action,
-    # eventually err out if no valid action could be determined/was given
-    if len(remainder) == 2 and remainder[0] not in all_commands:
-        if is_path(remainder[0]) and is_url(remainder[1]):
-            log.Notice(
-                _(
-                    "No valid action found. Will imply 'backup' because "
-                    "a path source was given and target is a url location."
-                )
-            )
-            remainder.insert(0, "backup")
-        elif is_url(remainder[0]) and is_path(remainder[1]):
-            log.Notice(
-                _(
-                    "No valid action found. Will imply 'restore' because "
-                    "url source was given and target is a local path."
-                )
-            )
-            remainder.insert(0, "restore")
-        else:
-            msg = _(
-                f"Invalid '{remainder[0]}' action and cannot be implied from the "
-                f"given arguments:\n{arglist}\n"
-                f"Valid actions are: {all_commands}"
-            )
-            command_line_error(msg)
 
     # check for proper action
     if remainder and remainder[0] in all_commands:
@@ -267,6 +264,19 @@ def process_command_line(cmdline_list):
         config.gpg_binary = util.which("gpg")
     gpg_version = ".".join(map(str, config.gpg_profile.gpg_version))
     log.Info(_(f"GPG binary is {config.gpg_binary}, version {gpg_version}"))
+
+    # --use-agent is not safe for symmetric encryption.
+    # Notify user and let them decide.
+    if (
+        config.use_agent
+        and config.gpg_profile.sign_key is None
+        and len(config.gpg_profile.recipients) == 0
+        and len(config.gpg_profile.hidden_recipients) == 0
+    ):
+        log.Warn(
+            "Option --gpg-agent is unsafe with symmetric encryption.\n"
+            "Refer to https://gitlab.com/duplicity/duplicity/-/issues/799 for more information."
+        )
 
     # shorten incremental to inc, replace backup with inc
     if config.action in ("incremental", "backup"):

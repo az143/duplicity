@@ -25,10 +25,13 @@ import unittest
 
 import pytest
 
-from duplicity import cli_main
-from duplicity import gpg
+from duplicity import (
+    cli_main,
+    gpg,
+)
 from duplicity.cli_data import *
 from duplicity.cli_util import *
+from testing import _runtest_dir
 from testing.unit import UnitTestCase
 
 
@@ -57,9 +60,7 @@ class CommandlineTest(UnitTestCase):
 
     def tearDown(self):
         log.shutdown()
-        os.removedirs("foo/bar")
-        os.removedirs("inc")
-        os.removedirs("full")
+        super().tearDown()
 
     def run_all_commands_with_errors(self, new_args, err_msg):
         """
@@ -504,32 +505,32 @@ class CommandlineTest(UnitTestCase):
         """
         # Issue 766 -- intermixed -- explicit
         cline = shlex.split(
-            "--archive-dir /tmp/backup-metadata/archive/ --tempdir /tmp/backup-metadata/temp/ "
-            "--allow-source-mismatch --encrypt-sign-key DEADDEAD --volsize 4096 --progress -v 4 "
-            "incr --full-if-older-than 30D foo/bar --log-file /tmp/log.txt boto3+s3://foo"
+            f"--archive-dir {_runtest_dir}/backup-metadata/archive/ --tempdir {_runtest_dir}/backup-metadata/temp/ "
+            f"--allow-source-mismatch --encrypt-sign-key DEADDEAD --volsize 4096 --progress -v 4 "
+            f"incr --full-if-older-than 30D foo/bar --log-file {_runtest_dir}/log.txt boto3+s3://foo"
         )
         cli_main.process_command_line(cline)
         self.assertEqual(config.action, "inc")
         self.assertEqual(config.allow_source_mismatch, True)
-        self.assertEqual(config.archive_dir, b"/tmp/backup-metadata/archive/")
+        self.assertEqual(config.archive_dir, f"{_runtest_dir}/backup-metadata/archive/".encode())
         self.assertEqual(config.full_if_older_than, 2592000)
         self.assertEqual(config.progress, True)
-        self.assertEqual(config.temproot, b"/tmp/backup-metadata/temp/")
+        self.assertEqual(config.temproot, f"{_runtest_dir}/backup-metadata/temp/".encode())
         self.assertEqual(config.volsize, 4294967296)
 
         # Issue 766 -- intermixed -- implicit
         cline = shlex.split(
-            "--archive-dir /tmp/backup-metadata/archive/ --tempdir /tmp/backup-metadata/temp/ "
-            "--allow-source-mismatch --encrypt-sign-key DEADDEAD --volsize 4096 --progress -v 4 "
-            "--full-if-older-than 30D foo/bar --log-file /tmp/log.txt boto3+s3://foo"
+            f"--archive-dir {_runtest_dir}/backup-metadata/archive/ --tempdir {_runtest_dir}/backup-metadata/temp/ "
+            f"--allow-source-mismatch --encrypt-sign-key DEADDEAD --volsize 4096 --progress -v 4 "
+            f"--full-if-older-than 30D foo/bar --log-file {_runtest_dir}/log.txt boto3+s3://foo"
         )
         cli_main.process_command_line(cline)
         self.assertEqual(config.action, "inc")
         self.assertEqual(config.allow_source_mismatch, True)
-        self.assertEqual(config.archive_dir, b"/tmp/backup-metadata/archive/")
+        self.assertEqual(config.archive_dir, f"{_runtest_dir}/backup-metadata/archive/".encode())
         self.assertEqual(config.full_if_older_than, 2592000)
         self.assertEqual(config.progress, True)
-        self.assertEqual(config.temproot, b"/tmp/backup-metadata/temp/")
+        self.assertEqual(config.temproot, f"{_runtest_dir}/backup-metadata/temp/".encode())
         self.assertEqual(config.volsize, 4294967296)
 
     @pytest.mark.usefixtures("redirect_stdin")
@@ -563,3 +564,14 @@ class CommandlineTest(UnitTestCase):
         cline = shlex.split("backup --exclude-other-filesystems / file://target_url")
         cli_main.process_command_line(cline)
         self.assertListEqual(config.select_opts, [("--exclude-other-filesystems", [])])
+
+        # Issue 795/816 - invalid option error using --gpg-options - unbound - argparse bug
+        with self.assertRaises(CommandLineError) as cm:
+            cline = shlex.split("backup --gpg-options '--homedir=/home/user' foo/bar file://target_url")
+            cli_main.process_command_line(cline)
+            self.assertIn("design error in argparse", cm.exception)
+
+        # Issue 795/816 - invalid option error using --gpg-options - bound
+        cline = shlex.split("backup --gpg-options='--homedir=/home/user' foo/bar file://target_url")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.gpg_options, "--homedir=/home/user")

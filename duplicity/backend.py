@@ -24,16 +24,20 @@ Provides a common interface to all backends and certain sevices
 intended to be used by the backends themselves.
 """
 
+from datetime import datetime
 import errno
 import getpass
+import multiprocessing
 import os
 import re
-import socket
 import sys
 import time
+import traceback
+from typing import Tuple
 import urllib.error
 import urllib.parse
 import urllib.request
+from duplicity import errors
 
 import duplicity.backends
 from duplicity import config
@@ -86,10 +90,9 @@ def import_backends():
             imp = f"duplicity.backends.{fn}"
             try:
                 __import__(imp)
-                res = "Succeeded"
             except Exception:
                 res = f"Failed: {str(sys.exc_info()[1])}"
-            log.Log(_("Import of %s %s") % (imp, res), log.INFO)
+                log.Info(_(f"Import of {imp} Failed"))
         else:
             continue
 
@@ -403,11 +406,22 @@ def retry(operation, fatal=True):
                             extra = " ".join(
                                 [operation] + [make_filename(x) for x in args if (x and isinstance(x, str))]
                             )
-                            log.FatalError(
-                                _("Giving up after %s attempts. %s: %s") % (n, e.__class__.__name__, util.uexc(e)),
-                                code=code,
-                                extra=extra,
-                            )
+                            if multiprocessing.parent_process():
+                                # running as a child process we need to raise an exception to signal an issue
+                                log.Error(
+                                    _("Giving up after %s attempts. %s: %s. (for trace back: set log level DEBUG)")
+                                    % (n, e.__class__.__name__, util.uexc(e)),
+                                    code=code,
+                                    extra=extra,
+                                )
+                                e.code = code
+                                raise
+                            else:
+                                log.FatalError(
+                                    _("Giving up after %s attempts. %s: %s") % (n, e.__class__.__name__, util.uexc(e)),
+                                    code=code,
+                                    extra=extra,
+                                )
                         else:
                             log.Warn(
                                 _("Attempt of %s Nr. %s failed. %s: %s")
@@ -551,7 +565,21 @@ class BackendWrapper(object):
         """
         if not remote_filename:
             remote_filename = source_path.get_filename()
+        if f"vol{config.put_fail_volume}.difftar" in os.fsdecode(remote_filename):
+            raise FileNotFoundError(f"Forced error for testing at volume {config.put_fail_volume}")
         self.__do_put(source_path, remote_filename)
+
+    def put_validated(self, source_path, remote_filename):
+        self.put(source_path, remote_filename)
+        size = source_path.getsize()
+        res, msg = self.validate(remote_filename, size, source_path)
+        if res:
+            return size
+        else:
+            raise errors.BackendException(
+                f"Remotefile {remote_filename}: Transfer not successful. Validation failed: {msg}",
+                code=log.ErrorCode.backend_validation_failed,
+            )
 
     @retry("move", fatal=True)
     def move(self, source_path, remote_filename=None):
@@ -603,6 +631,42 @@ class BackendWrapper(object):
             return [tobytes(x) for x in self.backend._list()]
         else:
             raise NotImplementedError()
+
+    def validate(self, remote_filename, expected_size, source_path=None) -> Tuple[bool, str]:
+        """
+        validates a file transferred to the backend by comparing the size.
+        source_path is optional to allow the backend do further validation, e.g. by
+        calulating a hash or so.
+        Returns: return a tuple of (result, reason)
+            - result: bool: True if file validation successful otherwise False
+            - reason: str: If False a reason why validation failed; True: emtpy str or description
+        """
+        msg = "Validation fail for unknow reaons."
+        if hasattr(self.backend, "_validate"):
+            return self.backend._validate(remote_filename, expected_size, source_path=source_path)
+        else:
+            # as some backends take some time refresh file attributes after upload
+            # retry config.num_retries times.
+            for attempt in range(0, config.num_retries + 1):
+                info = self.query_info([remote_filename])[remote_filename]
+                size = info["size"]
+                if size is None:
+                    log.Debug(
+                        "File size can't be validated, because of missing capabilities of the backend. "
+                        "Please verify the backup separately."
+                    )
+                    return True, "Backend has no capabilities to check filesize, skip validation."
+                if size == expected_size:
+                    return True, "Validation OK, file size matches."
+                msg = _("%s Remote filesize %d for %s does not match local size %d") % (
+                    datetime.now(),
+                    size,
+                    util.escape(remote_filename),
+                    expected_size,
+                )
+                log.Notice(f"{msg}, retrying.")
+                time.sleep(2**attempt)
+        return False, f"{msg}."
 
     def pre_process_download(self, remote_filename):
         """

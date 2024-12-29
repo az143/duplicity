@@ -22,11 +22,11 @@
 """Store global configuration information"""
 
 import os
+import pickle
 import socket
 import sys
-import time
 
-from duplicity import __version__
+from duplicity import __version__, log
 from duplicity import gpg
 
 # The current version of duplicity
@@ -75,9 +75,6 @@ local_path = None
 
 # The symbolic name of the backup being operated upon.
 backup_name = None
-
-# For testing -- set current time
-current_time = None
 
 # Set to the Path of the archive directory (the directory which
 # contains the signatures and manifests of the relevent backup
@@ -131,7 +128,7 @@ gpg_options = ""
 gpg_profile = None
 
 # Maximum file blocksize
-max_blocksize = 2048
+max_blocksize = 0
 
 # If true, filelists and directory statistics will be split on
 # nulls instead of newlines.
@@ -193,9 +190,10 @@ volsize = 200 * 1024 * 1024
 # file copy blocksize
 copy_blocksize = 128 * 1024
 
-# after this volume, we will switch to multipart upload
-mp_factor = 1.1
-mp_segment_size = int(mp_factor * volsize)
+# Swift has a limit on the size of a single uploaded object; by default this is 5GB.
+# https://docs.openstack.org/swift/latest/overview_large_objects.html
+# With a volume large than this size, we will switch to multipart upload.
+mp_segment_size = 5 * 2**30
 
 # Working directory for the tempfile module. Defaults to /tmp on most systems.
 temproot = None
@@ -322,12 +320,6 @@ rsync_options = ""
 # will be a Restart object if restarting
 restart = None
 
-# used in testing only - raises exception after volume
-fail_on_volume = 0
-
-# used in testing only - skips uploading a particular volume
-skip_volume = 0
-
 # ignore (some) errors during operations; supposed to make it more
 # likely that you are able to restore data under problematic
 # circumstances. the default should absolutely always be True unless
@@ -339,6 +331,9 @@ rename = {}
 
 # enable data comparison on verify runs
 compare_data = False
+
+# sequencial backend tasks by default
+concurrency = 0
 
 # When symlinks are encountered, the item they point to is copied rather than
 # the symlink.
@@ -382,8 +377,24 @@ idr_fakeroot = None
 # whether to check remote manifest (requires private key)
 check_remote = True
 
+# log verbosity.
+verbosity = log.NOTICE
+
 # whether 'inc` is explicit or not
 # inc_explicit = True
+
+# used in testing only -- set current time
+current_time = None
+
+# used in testing only - raises exception after volume
+fail_on_volume = 0
+
+# used in testing only - skips uploading a particular volume
+skip_volume = 0
+
+# used in testing only - fail BackendWrapper.put() on difftar volN
+put_fail_volume = 0
+
 
 # default filesystem encoding
 # It seems that sys.getfilesystemencoding() will normally return
@@ -391,3 +402,34 @@ check_remote = True
 # either 'ascii' or None.  Both are bogus, so default to 'utf-8' if it does.
 fsencoding = sys.getfilesystemencoding()
 fsencoding = fsencoding if fsencoding not in ["ascii", "ANSI_X3.4-1968", None] else "utf-8"
+
+
+def dump_dict(config):
+    """
+    returns "pickleable" config as dict.
+
+    skips all internal attributes (__var__) and atrributes
+    where pickling failed.
+    Know skipped attributes:
+      select: <duplicity.selection.Select object at 0x7fafec27a550>
+      lockfile: <fasteners.process_lock.InterProcessLock object at 0x7fafec706290>
+    """
+    c = {}
+    for k, v in config.__dict__.items():
+        try:
+            if k.startswith("__") and k.endswith("__"):
+                continue
+            pickle.dumps(v)
+        except (pickle.PicklingError, TypeError, AttributeError) as e:
+            log.Debug(f"Skip {k}: {v} in config dump")
+        else:
+            c[k] = v
+    return c
+
+
+def load_dict(config_dict, config):
+    """
+    update config from a dict.
+    """
+    for k, v in config_dict.items():
+        setattr(config, k, v)

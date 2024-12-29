@@ -1,21 +1,14 @@
 
-##### installed first to avoid conflicts #####
-
-chardet<3.10
-cryptography==3.4.8
-requests
-urllib3<1.26
-
 ##### basic requirements #####
 
-fasteners
-python-gettext
-setuptools>=44.1.1
-setuptools-scm>=5.0.2
+fasteners>=0.19
+python-gettext>=5.0
+setuptools
 
 ##### backend libraries #####
 
-atom
+atom==0.10.5 ; python_version <= "3.12"
+atom>=0.11.0 ; python_version >= "3.13"
 azure-storage-blob
 b2sdk
 boto3
@@ -38,24 +31,5 @@ pydrive2
 pyrax
 python-swiftclient
 python-keystoneclient
+requests
 requests-oauthlib
-
-##### testing libraries #####
-
-black==23.7.0
-coverage
-mock>=3.0.5
-pycodestyle
-pylint
-pytest
-pytest-cov
-pytest-runner
-tox<4.0
-
-##### documentation libraries #####
-
-gitchangelog
-myst-parser
-pystache
-sphinx
-sphinx-rtd-theme

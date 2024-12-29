@@ -1,6 +1,611 @@
 # Changelog
 
 
+## rel.3.0.3.2 (2024-11-25)
+
+### Changes
+
+* Improve round512 method docstring. [ede]
+
+* Remove 'test' mentions from setup.py. [Kenneth Loafman]
+
+* Set dev version for LP. [Kenneth Loafman]
+
+* Fix so amd64 snaps build with tahoe support. [Kenneth Loafman]
+
+* Set dev version for LP. [Kenneth Loafman]
+
+### Fix
+
+* Concurrency without setting verbosity throws exception. [Kenneth Loafman]
+
+* Argument --max-blocksize: invalid round512 value. [Kenneth Loafman]
+
+* Fix handling of zero length files for older librsync versions. [edeso]
+
+    Fixes #848
+
+
+## rel.3.0.3.1 (2024-11-19)
+
+### Changes
+
+* Fix .gitchangelog.rc for 4 digit version. [Kenneth Loafman]
+
+* Fix so amd64 snaps build with tahoe support. [Kenneth Loafman]
+
+### Fix
+
+* Fix handling of zero length files for older librsync versions. [edeso]
+
+    Fixes #848
+
+
+## rel.3.0.3 (2024-11-17)
+
+### Changes
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Move config from code to pyproject.toml. [Kenneth Loafman]
+
+* Fix docs for --max-blocksize. [Kenneth Loafman]
+
+* Upgrade black to 24.10.0 for py313. [Kenneth Loafman]
+
+* Allow Python 3.13 to install. [Kenneth Loafman]
+
+* Some code test changes. [Kenneth Loafman]
+
+    - move pylint to pyproject.toml
+    - remove giobackend.py from files to test
+
+* High memory usage when creating duplicity backup of a single very
+large file. [Kenneth Loafman]
+
+    Return a reasonable block size to use on files of length file_len
+
+    If max_blocksize==N is supplied use it, otherwise use the
+    integer square root of file_len as the block size.
+
+    Block size is rounded up to the nearest 512 byte boundary.
+
+* Fix problem with reading ".../progress" file after aborted. [Charles Lane]
+
+    This is mentioned in (long ago!) issue #80 I've hit the same problem many times, so tracked it down with a fix.
+
+    Fix problem with reading ".../progress" file after aborted backup run. This results in an error message (and lack of %backup) when using the --progress command line option.
+
+    Note that the code to save the "progress" file worked fine, and this change is so that reading the "progress" file is similar: making the path to the "progress" file, and having the "b" flag for binary i/o.
+
+    Fixes #80
+
+* Allow failure on py13 test. [Kenneth Loafman]
+
+* Revert gdocsbackend.py.  Remove TODO's. [Kenneth Loafman]
+
+* Fix requirements for upcoming atom release. [Kenneth Loafman]
+
+    - 0.10.5 or earlier for python <= 3.12
+    - 0.11.0 or later for python >= 3.13
+
+* Turn off atom for py313. [Kenneth Loafman]
+
+    - add error for py313 in gdocksbackend.py
+    - Only used by gdocsbackend.py
+    - fails install on py313.
+
+* Temp removal of atom requirement. [Kenneth Loafman]
+
+    Only used by gdocsbackend.py.  Fails install.
+
+* Remove py38 and add py313. [Kenneth Loafman]
+
+* Cleanup pytest run. [Kenneth Loafman]
+
+    make sure super().setUp() and super().tearDown() are called.
+    * remove files from the \_runtest_dir that we created.
+    * added conftest:pytest_sessionfinish().
+    * added more warning suppression.
+
+* Fix unit/test\_file\_naming.py. [Kenneth Loafman]
+
+    - curtime* set in wrong place for tests.
+    - set curtime and curtimestr from setUp().
+
+* Mark test\_GPGWriteFile as xfail. [Kenneth Loafman]
+
+    - some machines like ppc64* and i686 may fail
+
+* Testfortestsonlys and other dirs should be in \_runtest\_dir. [Kenneth Loafman]
+
+    Fixes #838
+
+* Testing/functional/test\_concurrency.py hangs on ppc64le only. [Kenneth Loafman]
+
+* Remove version specs in requirements.txt. [Kenneth Loafman]
+
+    - pipdeptree shows no upper limit that forced specs.
+
+* Only log if backend import failed. [Kenneth Loafman]
+
+* Set version for LP. [Kenneth Loafman]
+
+### Fix
+
+* Typo in max block size doc. [ede]
+
+* Fix testing/docker to enable pytest to run w/o gpg fails. [Kenneth Loafman]
+
+    Also fixes the following new issues:
+
+    * ignores new pylint error (new pylint)
+    * fixes RCloneBackenTest (new rclone)
+    * ignore fork() DeprecationWarning (nonsense)
+    * change tests from tox to pytest
+    * exclude pytest plugins that cause problems
+
+* Add setuptools to requirements.txt. [Kenneth Loafman]
+
+    Seems py312 no longer supplies by default.
+
+* Verbosity setting is broken with concurrency. [Kenneth Loafman]
+
+    Fixes #839
+
+
+## rel.3.0.2 (2024-08-09)
+
+### Changes
+
+* Fix collection-status print. [Kenneth Loafman]
+
+
+## rel.3.0.1 (2024-08-05)
+
+### Changes
+
+* Remove version limits on urllib3. [Kenneth Loafman]
+
+    - did nothing since requests loads urllib3 first.
+
+* Add some debug output to help pinpoint B2 backend import issues. [ede]
+
+* Make sure rclone backend is tested. [Kenneth Loafman]
+
+    - add to .gitlab-ci.yml
+    - fix test_query_missing
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Fixes #832, urllib3 error under python3.12. [Kenneth Loafman]
+
+* Fix typo in setuptools section and migrate to new structure. [Sandro]
+
+* Use functools.lru\_cache with limit, not unlimited. [Kenneth Loafman]
+
+* Set dev branch to 3.0.1.dev. [Kenneth Loafman]
+
+### Fix
+
+* Rework logging to be compatible with Python's logging. [Kenneth Loafman]
+
+* S3 glacier storage class and --concurrency #831. [Thomas Laubrock]
+
+* Unblock multiprocessing deadlock, ensure local disk usage not exceed
+n+1 volumes, switch to "spawn". [Thomas Laubrock]
+
+    Fixed a bug when many processed volumes causing a deadlock in an unused queue.
+    * Switched to multiprocessing.get_context(method="spawn") as "fork" is known to cause issues, "spawn" is the default/recommended method since python 3.13 anyway
+    * Throttle local volume creation to keep disk use to n+1, which n as number concurrent uploads
+    * Several smaller bug fixes and cleanups.
+
+* Add file-size query support to rclonebackend. [Michael Terry]
+
+* Allow empty manifest list. #827. [Thomas Laubrock]
+
+* Make --ignore-errors actually ignore (and recover from) errors. [David Huggins-Daines]
+
+* SSLCertVerificationError despite --ssl-no-check-certificate. [ede]
+
+    tested and works https://gitlab.com/duplicity/duplicity/-/issues/822#note_1937487522 thx Nico J
+
+    Fixes #822
+
+* Instead of raise call command\_line\_error() directly. [Kenneth Loafman]
+
+    Will make sure the help footer is printed after error.
+
+* Empty exclude string results in unfriendly traceback. [Kenneth Loafman]
+
+    Fixes #821
+
+
+## rel.3.0.0 (2024-05-29)
+
+### Changes
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Collected fixes to setup process. [Kenneth Loafman]
+
+    only check Python version's lower bound
+    * remove install_requires again
+    * minor changes to tools/testpip\[x\]
+    * revert pip-compile additions
+
+* CommandLineError: argument --gpg-options: expected one argument. [Kenneth Loafman]
+
+* Set dev branch to 2.2.5.dev. [Kenneth Loafman]
+
+* Skip tests on Launchpad. [Kenneth Loafman]
+
+### Fix
+
+* Volume missing if --asynchronous-upload and put fails. [Kenneth Loafman]
+
+    Closes #745, #807, #815
+
+    - --asynchronous-upload is replaced with --concurrency=N
+    - without --concurrency=N it defaults to no multiprocessing
+    - with --concurrency=N it uses a multiprocessing pool of N
+    - requires N volumes of temp space if used, otherwise 1
+
+* Don't raise KeyError if OSError.errno is unrecognized. [Michael Terry]
+
+
+## rel.2.2.4 (2024-05-20)
+
+### Changes
+
+* Bump to version 2.2.4. [Kenneth Loafman]
+
+* Add tools/testpipx. [Kenneth Loafman]
+
+* Move install-requires back to setup.py. [Kenneth Loafman]
+
+    - See https://gitlab.com/duplicity/duplicity/-/merge_requests/233
+
+
+## rel.2.2.4rc3 (2024-05-19)
+
+### Changes
+
+* Bump version to 2.2.4.rc3. [Kenneth Loafman]
+
+* Use pip-compile to build requirements.txt. [Kenneth Loafman]
+
+
+## rel.2.2.4rc2 (2024-05-18)
+
+### Changes
+
+* Adjust since twine does not do wildcards. [Kenneth Loafman]
+
+* Revert "chg:pkg: Add missing fasteners install dependency" [Kenneth Loafman]
+
+    This reverts commit ce3baa9a86ed6734dc7b013b6aaa1b873a2ba481.
+
+* Add requirements.dev to tests. [Kenneth Loafman]
+
+* Bump version to 2.2.4.rc2. [Kenneth Loafman]
+
+* Split requirements.txt into .txt and .dev. [Kenneth Loafman]
+
+* Add missing fasteners install dependency. [Michael Terry]
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Fix typo in ignore new pylint warning. [Kenneth Loafman]
+
+* Ignore new pylint warning E0606 (possibly-used-before-assignment). [Kenneth Loafman]
+
+### Fix
+
+* Onedrive: fix "unauthorized" upload error by not passing auth. [Michael Terry]
+
+    After the initial createUploadSession, apparently OneDrive actively dislikes it if you send Authorization headers on the subsequent PUT calls.
+
+    See their docs: https://learn.microsoft.com/en-us/graph/api/driveitem-createuploadsession?view=graph-rest-1.0#remarks
+
+    If you do include the Authorization header, you get 401 responses.
+
+
+## rel.2.2.4rc1 (2024-05-15)
+
+### Changes
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Fix typo in ignore new pylint warning. [Kenneth Loafman]
+
+* Ignore new pylint warning E0606 (possibly-used-before-assignment). [Kenneth Loafman]
+
+* Upgrade setup process and instructions (2nd try) [Kenneth Loafman]
+
+    Finally fix #797
+
+    * enhance README.md to match current PyPA install process
+    * improve and expand pyproject.toml
+      * build requires section
+      * build excludes section
+    * improve and shrink setup.py
+      * remove SdistCommand
+      * suppress nonsense warnings
+    * pyproject.toml now does most of the heavy lifting
+    * requires updates to pip, pipx, and setuptools
+      * the newer pip builds a virtual environment
+      * it installs the build requirements in that venv
+      * the build is then done in that venv
+    * fixes to tools/install\* scripts to build/test VM environment
+    * replaces argparse with duplicity/argparse311 globally
+
+* Reformating, typos. [Thomas Laubrock]
+
+* Add deprecation warning for `--async` [poggenpower]
+
+* Restore previous docs/Makefile. [Kenneth Loafman]
+
+* Set version for LP dev PPA. [Kenneth Loafman]
+
+* Set packaging and black version requirements. [Kenneth Loafman]
+
+* Adjust debian/control for focal builds. [Kenneth Loafman]
+
+* Adjust debian/control for focal builds. [Kenneth Loafman]
+
+* Adjust debian/control for focal builds. [Kenneth Loafman]
+
+### Fix
+
+* Don't drop args when restarting with execve. [Michael Terry]
+
+* Really fix invalid option error. [Kenneth Loafman]
+
+    - remove code trying to emulate subparsers
+    - all options accepted but may be ignored
+
+    Closes #795
+
+* Fix invalid option error. [Kenneth Loafman]
+
+    Closes #795
+
+* Move missleading warning to debug level #813. [Thomas Laubrock]
+
+* Duplicity 2.2.3: --use-agent can be wrongly turned off. [Kenneth Loafman]
+
+* Adjust #810 fix for py38. [Kenneth Loafman]
+
+    - py38 does not support usedforsecurity= option.
+    - FIPS will still break duplicity under py38.
+
+* Pass "usedforsecurity=False" to md5() and sha1(). [Kenneth Loafman]
+
+    - GnuPG used for security, hash for matching
+    - only needed under FIPS mode, somewhat rare
+
+    Fixes #810
+
+
+## rel.2.2.3 (2024-03-20)
+
+### New
+
+* Add test case issue725.sh. [Kenneth Loafman]
+
+### Changes
+
+* Remove setuptools\_scm and usages. [Kenneth Loafman]
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* !Minor changes to pip build and test. [Kenneth Loafman]
+
+* Pip install duplicity fails with "AssertionError: es\_PR" (or other
+language) [Kenneth Loafman]
+
+* Launchpad PPAs not built correctly for 2.2.[0,1], PyPI pips for
+2.2.[0,1,2] [Kenneth Loafman]
+
+    - tested on:
+      - Ubuntu 20.04, 22.04, 24.04
+      - Python 3.8, 3.9, 3.10, 3.11, 3.12
+    - added tools/testpip
+    - added wheel builds to .gitlab-ci.yml
+      - build wheels for manylinux
+    - added tools/testpip
+    - remove disutils includes in setup.py
+    - remove old test command in setup.py
+    - moved use of setuptools-scm to scmversion command
+    - add tools to build pyenv & pythons & more.
+      - installpyenv - install pyenv and environ
+      - installpythons - install pythons and environ
+      - pushpip - push pip sdist and wheels
+     - tools/list_python_files - removed, unused
+
+    Fixes #797
+
+* Change ngettext to \_ and fix wording. [Kenneth Loafman]
+
+* Move validate to backend. [Thomas Laubrock]
+
+* Run only one pipeline on merge request. [Kenneth Loafman]
+
+* Small fixes to the test system. [Kenneth Loafman]
+
+    - run test cases with the same Python as pytest
+    - fix some comments that pointed to wrong config file
+    - code tests now run without RUN_CODE_TESTS=1
+
+* Change from --capture=no to --capture=fd. [Kenneth Loafman]
+
+    - Should only print on test failure.
+
+* Warn on symmetric encrypt with --use-agent. [Kenneth Loafman]
+
+    Fixes #799
+
+* Warn on symmetric encrypt with --use-agent. [Kenneth Loafman]
+
+    Fixes #799
+
+* Remove last of bin/duplicity. [Kenneth Loafman]
+
+### Fix
+
+* Add fail open condition, for backends with no support. [Thomas Laubrock]
+
+* Update homepage. [sblondon]
+
+* Change path logging from Info to Debug. [Kenneth Loafman]
+
+    Fixes #804
+
+* Whoops! Remove parens in fix of #803. [Kenneth Loafman]
+
+* Exception using --exclude-older-than. [Kenneth Loafman]
+
+    fixes #803
+
+* Manpage remove superfluous indentions, some formatting fixes. [ede]
+
+
+## rel.2.2.2 (2024-02-03)
+
+### Changes
+
+* Ask google\_auth\_oauthlib not to open browser during authentication
+flow. [Christopher Haglund]
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Update `python\_requires` to allow py3.12. [Kenneth Loafman]
+
+### Fix
+
+* Clean up debian/rules. [Kenneth Loafman]
+
+* Add duplicity console script. [Kenneth Loafman]
+
+    - Copied from pip install
+    - LP does not generate it
+
+
+## rel.2.2.0 (2024-01-27)
+
+### Changes
+
+* Use pytest not tox on GitLab CI. [Kenneth Loafman]
+
+    - saves build time
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Remove support for old mock. [Alexandre Detiste]
+
+    Project says "REQUIREMENTS: Python 3.8 to 3.12"
+
+* Allow pipelines to run if not merge request. [Kenneth Loafman]
+
+* Version as 2.2.0. [Kenneth Loafman]
+
+* Upgrade current build and test systems. [Kenneth Loafman]
+
+    # Changes:
+      - move bin/duplicity to duplicity/__main__.py
+      - add entry point dup_run() no args
+      - rename bin to man (only contents now)
+      - rename duplicity/tarfile.py to duplicity/dup_tarfile.py to avoid import problems
+      - duplicity now runs as a module `python3 -m duplicity` as well as a script `/usr/bin/duplicity`
+      - py2->py3 oddities changed, `"".__class__` and `b"".__class__` changed to `str` and `bytes`
+      - tox v4 now runs correctly as `tox run -e code`
+      - moved [pycodestyle] from tox.ini to setup.cfg
+      - moved .pylintrc from to setup.cfg
+      - sources released fully versioned
+        - duplicity/\_\_init\_\_.py
+        - man/duplicity.1
+        - pyproject.toml
+        - setup.py
+        - snap/snapcraft.yaml
+
+    Closes #774,#793
+
+### Fix
+
+* Remove test\_GPGWriteFile. [Kenneth Loafman]
+
+    - Fails on GitLab
+    - Runs on Linux and macOS just fine
+
+* Invalid option error using `--[gpg|par2|rsync|ssh]-options '...' [Kenneth Loafman]
+
+    Fixes #795.
+
+
+## rel.2.1.5 (2023-12-28)
+
+### New
+
+* \_testbackend to simulate issues. [Thomas Laubrock]
+
+    \_testbackend is a copy of the localbackend and allows to trigger certain miss behaviours. Failure type and condition can be set via env vars. Some test cases are added to test_badupload.py.
+
+    This is pre-work for !153 but want to decouple it for better handling.
+
+### Changes
+
+* Fix debian/rules for versioned. [Kenneth Loafman]
+
+* Version as 2.1.5. [Kenneth Loafman]
+
+* Run po/update-pot. [Kenneth Loafman]
+
+* Remove "backup" and "replicate" dead code. [Kenneth Loafman]
+
+* Fix imports in \_testbackend.py. [Kenneth Loafman]
+
+* Move addhandler() to \_\_init\_\_. [Kenneth Loafman]
+
+    - Will not produce temp log unless in use
+    - Reorg imports
+
+* Deprecate PyDrive backend. Replaced with GDrive backend. [Kenneth Loafman]
+
+* Setuptools\_scm not needed at runtime. [Gwyn Ciesla]
+
+* Fix swift uploads to default to 5GB segment size. [Garth Williamson]
+
+* Add venv* to .gitignore. [Kenneth Loafman]
+
+* Some formatting fixes. [Kenneth Loafman]
+
+* Fix check of versions in setup.py. [Kenneth Loafman]
+
+* Limit range of versions in setup.py. [Kenneth Loafman]
+
+    - We already had lower limit of 3.8, make 3.11 upper limit.
+
+* Update version for LP. [Kenneth Loafman]
+
+### Fix
+
+* Swap implied and removed action checks. [Kenneth Loafman]
+
+* Error on dry-run with verify. [Kenneth Loafman]
+
+* Fix imports in boxbackend.py. [Kenneth Loafman]
+
+* Multibackend not working with remove-all-but-n-full in stripe mode. [Kenneth Loafman]
+
+    remove short-circuit logic that fails
+    * add test in testing/regression
+
+    Fixes #781
+
+* Fix collection-status with file-changed argument. [JulianWgs]
+
+
 ## rel.2.1.4 (2023-10-20)
 
 ### Changes

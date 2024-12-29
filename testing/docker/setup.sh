@@ -26,4 +26,5 @@
 cd `dirname "$0"`
 
 docker compose up -d
+docker cp -a ../gnupg/. duplicity_test:/root/duplicity/testing/gnupg/
 docker compose exec duplicity_test /bin/bash

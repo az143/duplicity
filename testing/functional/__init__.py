@@ -26,11 +26,13 @@ import time
 
 import pexpect
 
-from duplicity import config
 from duplicity import backend
-from .. import DuplicityTestCase
-from .. import _runtest_dir
-from .. import _top_dir
+from duplicity.backends._testbackend import BackendErrors
+from duplicity import config
+from duplicity import util
+from testing import DuplicityTestCase
+from testing import _runtest_dir
+from testing import _top_dir
 
 
 class CmdError(Exception):
@@ -67,7 +69,7 @@ class FunctionalTestCase(DuplicityTestCase):
         self.unpack_testfiles()
 
         self.class_args = []
-        self.backend_url = f"file://{_runtest_dir}/testfiles/output"
+        self.backend_url = f"fortestsonly://{_runtest_dir}/testfiles/output"
         self.last_backup = None
         self.set_environ("PASSPHRASE", self.sign_passphrase)
         self.set_environ("SIGN_PASSPHRASE", self.sign_passphrase)
@@ -79,45 +81,50 @@ class FunctionalTestCase(DuplicityTestCase):
         backend_inst.close()
         self._check_setsid()
 
-    def run_duplicity(self, options=None, current_time=None, fail=None, passphrase_input=None):
+    def run_duplicity(self, options=None, current_time=None, fail=None, passphrase_input=None, timeout=None):
         """
         Run duplicity binary with given arguments and options
         """
-        # We run under setsid and take input from /dev/null (below) because
-        # this way we force a failure if duplicity tries to read from the
-        # console unexpectedly (like for gpg password or such).
 
-        # Check all string inputs are unicode -- we will convert to system encoding before running the command
         if options is None:
             options = []
         if passphrase_input is None:
             passphrase_input = []
 
+        # Check all string inputs are unicode -- we will convert to system encoding before running the command
         for item in passphrase_input:
-            assert isinstance(item, "".__class__), f"item {os.fsdecode(item)} in passphrase_input is not unicode"
+            assert isinstance(item, str), f"item {os.fsdecode(item)} in passphrase_input is not unicode"
 
+        # set python path to be dev directory
+        os.environ["PYTHONPATH"] = _top_dir
+
+        cmd_list = []
+
+        # We run under setsid and take input from /dev/null (below) because
+        # this way we force a failure if duplicity tries to read from the
+        # console unexpectedly (like for gpg password or such).
         if platform.platform().startswith("Linux"):
-            cmd_list = ["setsid"]
+            cmd_list.extend(["setsid"])
             if self._setsid_w:
                 cmd_list.extend(["-w"])
-        else:
-            cmd_list = []
 
-        if basepython := os.environ.get("TOXPYTHON", None):
-            cmd_list.extend([basepython, "-bb"])
-        else:
-            cmd_list.extend(["python3", "-bb"])
+        cmd_list.extend([f"python{sys.version_info.major}.{sys.version_info.minor}"])
 
-        if run_coverage := os.environ.get("RUN_COVERAGE", None):
+        if os.environ.get("RUN_COVERAGE", None):
             cmd_list.extend(["-m", "coverage", "run", "--source=duplicity", "-p"])
 
-        cmd_list.extend([f"{_top_dir}/bin/duplicity"])
+        cmd_list.extend([os.path.join(_top_dir, "duplicity", "__main__.py")])
         cmd_list.extend(options)
 
-        if run_debugger := os.environ.get("PYDEVD", None):
+        if os.environ.get("PYDEVD", None):
             cmd_list.extend(["--pydevd"])
 
-        cmd_list.extend(["-v0"])
+        if os.environ.get("TESTDEBUG", False):
+            # enable debug logging for trouble shooting
+            cmd_list.extend(["-vd"])
+        else:
+            # keep duplicity quite for a condensed test log.
+            cmd_list.extend(["-v0"])
         cmd_list.extend(["--no-print-statistics"])
         cmd_list.extend([f"--archive-dir={_runtest_dir}/testfiles/cache"])
 
@@ -126,16 +133,28 @@ class FunctionalTestCase(DuplicityTestCase):
 
         cmd_list.extend(self.class_args)
 
+        dup_env = dict(os.environ)
         if fail:
-            cmd_list.extend(["--fail", "".__class__(fail)])
+            # cmd_list.extend(["--fail", fail]) replaced by ENV
+            dup_env[BackendErrors.FAIL_SYSTEM_EXIT] = f"vol{fail}.difftar"
+            cmd_list.extend(["--num-ret=2", "--backend-ret=3"])  # fail faster
 
-        cmdline = " ".join([f'"{x}"' for x in cmd_list])
+        # convert to string and single quote to avoid shell expansion
+        cmdline = " ".join([f"'{x}'" for x in cmd_list])
 
         if not passphrase_input:
             cmdline += " < /dev/null"
 
-        # Set encoding to filesystem encoding and send to spawn
-        child = pexpect.spawn("/bin/sh", ["-c", cmdline], timeout=None, encoding=config.fsencoding)
+        # Set encoding to filesystem encoding and send to spawn.
+        # option -f to shell avoids globbing which breaks selection tests.
+        # shell used instead of cmdline to allow setsid to be prepended.
+        child = pexpect.spawn(
+            "/bin/sh",
+            ["-f", "-c", cmdline],
+            timeout=timeout,
+            env=dup_env,  # type: ignore
+            encoding=config.fsencoding,
+        )
 
         for passphrase in passphrase_input:
             child.expect("passphrase.*:")
@@ -149,24 +168,24 @@ class FunctionalTestCase(DuplicityTestCase):
         child.ptyproc.delayafterclose = 0.0
         return_val = child.exitstatus
 
+        print("\n...command:", cmdline, file=sys.stderr)
+        print("...cwd:", os.getcwd(), file=sys.stderr)
+        print("...output:", file=sys.stderr)
+        for line in lines:
+            line = line.rstrip()
+            if line:
+                print(os.fsdecode(line), file=sys.stderr)
+        print("...return_val:", return_val, file=sys.stderr)
         if fail:
             self.assertEqual(30, return_val)
         elif return_val:
-            print("\n...command:", cmdline, file=sys.stderr)
-            print("...cwd:", os.getcwd(), file=sys.stderr)
-            print("...output:", file=sys.stderr)
-            for line in lines:
-                line = line.rstrip()
-                if line:
-                    print(os.fsdecode(line), file=sys.stderr)
-            print("...return_val:", return_val, file=sys.stderr)
             raise CmdError(return_val)
 
     def backup(self, type, input_dir, options=None, **kwargs):  # pylint: disable=redefined-builtin
         """Run duplicity backup to default directory"""
         if options is None:
             options = []
-        options = [type, input_dir, self.backend_url, "--volsize", "1"] + options
+        options = [type, input_dir, self.backend_url, "--volsize=1"] + options
         before_files = self.get_backend_files()
 
         # If a chain ends with time X and the next full chain begins at time X,
@@ -182,6 +201,29 @@ class FunctionalTestCase(DuplicityTestCase):
         after_files = self.get_backend_files()
         return after_files - before_files
 
+    def backup_with_failure(
+        self, type, input_dir, failure_type, failure_condition, error_code, options=None, PYDEVD=None, **kwargs
+    ):
+        """
+        using _testbackent to trigger certain failure conditions. See backends/_testbackend.py for possible trigger
+        """
+        if not options:
+            options = [  # lower the retry count to fail faster.
+                "--num-ret=2",
+                "--backend-ret=3",
+            ]
+
+        try:
+            env = {failure_type: failure_condition}
+            if PYDEVD:  # start debugger in forked duplicity execution. Use for troubleshooting only.
+                env["PYDEVD"] = PYDEVD
+            with EnvController(**env):
+                self.backup(type, input_dir, options, **kwargs)
+        except CmdError as e:  # Backup must fail with an exit code != 0
+            self.assertEqual(e.exit_status, error_code, str(e))
+        else:
+            self.fail("Expected CmdError not thrown")
+
     def restore(self, file_to_restore=None, time=None, options=None, **kwargs):
         if options is None:
             options = []
@@ -194,7 +236,7 @@ class FunctionalTestCase(DuplicityTestCase):
         if file_to_restore:
             options.extend(["--path-to-restore", file_to_restore])
         if time:
-            options.extend(["--restore-time", "".__class__(time)])
+            options.extend(["--restore-time", str(time)])
         self.run_duplicity(options=options, **kwargs)
 
     def verify(self, dirname, file_to_verify=None, time=None, options=None, **kwargs):
@@ -204,7 +246,7 @@ class FunctionalTestCase(DuplicityTestCase):
         if file_to_verify:
             options.extend(["--path-to-restore", file_to_verify])
         if time:
-            options.extend(["--restore-time", "".__class__(time)])
+            options.extend(["--restore-time", str(time)])
         self.run_duplicity(options=options, **kwargs)
 
     def cleanup(self, options=None):
@@ -216,10 +258,12 @@ class FunctionalTestCase(DuplicityTestCase):
         options = ["cleanup", self.backend_url, "--force"] + options
         self.run_duplicity(options=options)
 
-    def collection_status(self, options=[]):
+    def collection_status(self, options=None):
         """
         Run duplicity collection-status to default directory
         """
+        if options is None:
+            options = []
         options = ["collection-status", self.backend_url] + options
         self.run_duplicity(options=options)
 
@@ -237,6 +281,20 @@ class FunctionalTestCase(DuplicityTestCase):
         assert not os.system(f"mkdir {_runtest_dir}/testfiles/largefiles")
         for n in range(count):
             assert not os.system(
-                f"dd if=/dev/urandom of={_runtest_dir}/testfiles/largefiles/file{n+1} "
-                f"bs=1024 count={size*1024} > /dev/null 2>&1"
+                f"dd if=/dev/urandom of={_runtest_dir}/testfiles/largefiles/file{n + 1} "
+                f"bs=1024 count={size * 1024} > /dev/null 2>&1"
             )
+
+
+class EnvController:
+    def __init__(self, **kwargs):
+        self.env = kwargs
+
+    def __enter__(self):
+        for k, v in self.env.items():
+            os.environ[k] = v
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        for k, _ in self.env.items():
+            os.unsetenv(k)
+            del os.environ[k]
