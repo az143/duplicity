@@ -1,6 +1,7 @@
 duplicity (3.0.3.2-1) unstable; urgency=medium
 
   * new upstream release (closes: #1090373)
+  * some minor packaging updates
 
  -- Alexander Zangerl <az@debian.org>  Sun, 29 Dec 2024 20:57:50 +1000
 

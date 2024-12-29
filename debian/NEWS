@@ -1,3 +1,17 @@
+duplicity (3.0.3.2-1) unstable; urgency=medium
+
+  this build does not include any python libraries beyond the absolute
+  minimum needed for typical backends. (the newest python build infrastructure
+  seems to insist in packaging everything and the kitchen sink. i do not
+  agree with that. a plain duplicity installation should not pull
+  in 170+ fairly obese packages.)
+
+  please consult requirements.txt for the required dependencies, should you
+  want to use duplicity with optional backends (ie. backends other
+  than file, imap, rsync, scp, sftp, we3bdav).
+
+ -- Alexander Zangerl <az@debian.org>  Sun, 29 Dec 2024 21:42:18 +1000
+
 duplicity (0.8.22-1) unstable; urgency=medium
 
   upstream's requirements.txt is now included in /usr/share/doc/duplicity,
