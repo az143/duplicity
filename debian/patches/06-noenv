@@ -1,11 +1,3 @@
---- a/bin/duplicity
-+++ b/bin/duplicity
-@@ -1,4 +1,4 @@
--#!/usr/bin/env python3
-+#!/usr/bin/python3
- # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
- #
- # duplicity -- Encrypted bandwidth efficient backup
 --- a/testing/overrides/bin/lftp
 +++ b/testing/overrides/bin/lftp
 @@ -1,4 +1,4 @@
@@ -62,3 +54,50 @@
  
  from __future__ import print_function
  
+--- a/duplicity/__main__.py
++++ b/duplicity/__main__.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python3
++#!/usr/bin/python3
+ # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+ #
+ # duplicity -- Encrypted bandwidth efficient backup
+--- a/testing/manual/backendtest.py
++++ b/testing/manual/backendtest.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python3
++#!/usr/bin/python3
+ 
+ # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+ #
+--- a/testing/manual/roottest.py
++++ b/testing/manual/roottest.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python3
++#!/usr/bin/python3
+ 
+ # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+ #
+--- a/testing/manual/test-concurrency-performance-stats.py
++++ b/testing/manual/test-concurrency-performance-stats.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python3
++#!/usr/bin/python3
+ 
+ import glob
+ import json
+--- a/testing/manual/test-concurrency-performance.sh
++++ b/testing/manual/test-concurrency-performance.sh
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env bash
++#!/bin/bash
+ 
+ export PASSPHRASE=test
+ 
+@@ -22,4 +22,4 @@ for tt in "${transfer_times[@]}"; do
+         gpg --batch --passphrase ${PASSPHRASE} --pinentry-mode loopback -d ${dst_dir}/duplicity-full.*.jsonstat.gpg > ${result_dir}/jsonstat-tt${tt}-cc${cc}.json
+      ) &> ${result_dir}/run-tt${tt}-cc${cc}.log
+     done
+-done
+\ No newline at end of file
++done

@@ -3,35 +3,27 @@ Subject: Disable some tests for being flaky
 
 --- a/testing/functional/test_restart.py
 +++ b/testing/functional/test_restart.py
-@@ -132,6 +132,7 @@ class RestartTest(FunctionalTestCase):
+@@ -131,6 +131,7 @@ class RestartTest(FunctionalTestCase):
          self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
          self.verify(f"{_runtest_dir}/testfiles/largefiles")
  
 +    @unittest.skip("Flaky test because it relies on knowing how many volumes the source files will be split into")
      @unittest.skipIf(
          platform.machine() in ["ppc64el", "ppc64le"],
-         "Skip on ppc64el and ppc64le machines",
+         "See https://gitlab.com/duplicity/duplicity/-/issues/820",
 --- a/testing/unit/test_gpg.py
 +++ b/testing/unit/test_gpg.py
-@@ -139,6 +139,7 @@ class GPGTest(UnitTestCase):
-         sig = decrypted_file.get_signature()
-         assert sig == self.sign_key, sig
- 
-+    @unittest.skip("Flaky test because it relies on compressed size of random bytes")
-     @unittest.skipIf(
-         platform.machine() in ["ppc64el", "ppc64le"],
-         "Skip on ppc64el of ppc64el machines",
-@@ -163,6 +164,7 @@ class GPGTest(UnitTestCase):
+@@ -165,6 +165,7 @@ class GPGTest(UnitTestCase):
+         gwfh.set_at_end()
          gpg.GPGWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gpgwrite.gpg", profile, size=size)
-         # print os.stat("/tmp/testfiles/output/gpgwrite.gpg").st_size
  
 +    @unittest.skip("Flaky test because it relies on compressed size of random bytes")
      def test_GzipWriteFile(self):
          """Test GzipWriteFile"""
-         size = 400 * 1000
+ 
 --- a/testing/unit/test_selection.py
 +++ b/testing/unit/test_selection.py
-@@ -196,6 +196,7 @@ class MatchingTest(UnitTestCase):
+@@ -192,6 +192,7 @@ class MatchingTest(UnitTestCase):
          assert select.general_get_sf("**", 0)(root) == 0
          assert select.general_get_sf("/foo/*", 0)(root) is None
  
@@ -58,9 +50,9 @@ Subject: Disable some tests for being flaky
 +import unittest
 +
  import sys
+ from unittest.mock import patch
  
- from duplicity.globmatch import *  # pylint: disable=unused-wildcard-import,redefined-builtin
-@@ -271,6 +273,7 @@ class TestDoubleAsterisk(UnitTestCase):
+@@ -267,6 +269,7 @@ class TestDoubleAsterisk(UnitTestCase):
  class TestSimpleUnicode(UnitTestCase):
      """Test simple unicode comparison"""
  
