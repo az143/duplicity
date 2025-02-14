@@ -4,40 +4,40 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
  
- from __future__ import print_function
- 
+ import subprocess
+ import sys
 --- a/testing/overrides/bin/ncftpls
 +++ b/testing/overrides/bin/ncftpls
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
  
- from __future__ import print_function
- 
+ import os
+ import subprocess
 --- a/testing/overrides/bin/ncftpput
 +++ b/testing/overrides/bin/ncftpput
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
  
- from __future__ import print_function
- 
+ import subprocess
+ import sys
 --- a/testing/overrides/bin/tahoe
 +++ b/testing/overrides/bin/tahoe
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
  
- from __future__ import print_function
- 
+ import os
+ import subprocess
 --- a/testing/overrides/bin/hsi
 +++ b/testing/overrides/bin/hsi
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
  
- from __future__ import print_function
- 
+ import subprocess
+ import sys
 --- a/setup.py
 +++ b/setup.py
 @@ -1,4 +1,4 @@
@@ -52,8 +52,8 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
  
- from __future__ import print_function
- 
+ import subprocess
+ import sys
 --- a/duplicity/__main__.py
 +++ b/duplicity/__main__.py
 @@ -1,4 +1,4 @@

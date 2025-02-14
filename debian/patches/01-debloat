@@ -4,7 +4,7 @@
  
  ##### backend libraries #####
  
--atom==0.10.5 ; python_version <= "3.12"
+-atom==0.10.5 ; python_version < "3.13"
 -atom>=0.11.0 ; python_version >= "3.13"
 -azure-storage-blob
 -b2sdk
@@ -15,7 +15,7 @@
 -gdata-python3
 -google-api-python-client
 -google-auth-oauthlib
-+#atom==0.10.5 ; python_version <= "3.12"
++#atom==0.10.5 ; python_version < "3.13"
 +#atom>=0.11.0 ; python_version >= "3.13"
 +#azure-storage-blob
 +#b2sdk
@@ -28,8 +28,9 @@
 +#google-auth-oauthlib
  httplib2
 -jottalib
+-keyring
 +#jottalib
- keyring
++#keyring
  lxml
 -mediafire
 -megatools
@@ -47,4 +48,5 @@
 +#python-swiftclient
 +#python-keystoneclient
  requests
- requests-oauthlib
+-requests-oauthlib
++#requests-oauthlib
