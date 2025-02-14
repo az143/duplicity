@@ -113,8 +113,8 @@ OptionKwargs = dict(
         default=dflt(config.async_concurrency),
     ),
     azure_blob_tier=dict(
-        metavar=_("Hot|Cool|Archive"),
-        help="Standard storage tier used for storing backup files (Hot|Cool|Archive)",
+        metavar=_("Hot|Cool|Cold|Archive"),
+        help="Standard storage tier used for storing backup files (Hot|Cool|Cold|Archive)",
         default=dflt(config.azure_blob_tier),
     ),
     azure_max_connections=dict(

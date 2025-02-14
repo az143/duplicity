@@ -1,6 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 
+import io
 import os
 import sys
 
@@ -31,6 +32,14 @@ def redirect_stdin():
         sys.stdin = stdin_save  # pylint: disable=used-before-assignment
         os.close(targetfd_save)
         nullfile.close()  # pylint: disable=used-before-assignment
+
+
+@pytest.fixture(scope="function")
+def fake_input():
+    orig_stdin = sys.stdin
+    sys.stdin = io.StringIO("yes\n")
+    yield
+    sys.stdin = orig_stdin
 
 
 @pytest.hookimpl()

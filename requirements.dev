@@ -7,7 +7,6 @@ pycodestyle
 pylint
 pytest
 pytest-cov
-pytest-runner
 
 #### documentation libraries #####
 

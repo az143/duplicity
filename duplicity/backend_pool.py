@@ -52,9 +52,9 @@ from duplicity import (
     util,
 )
 
+# TODO: remove when 3.8 is deprecated.
 if sys.version_info[:2] == (3, 8):
     # patching buggy 3.8 implementation.
-    # TODO: remove when 3.8 is deprecated.
     import atexit
     import concurrent.futures.process
 
@@ -177,7 +177,8 @@ class BackendPool:
         log.setup()
         log.PREFIX = f"Pool{pool_nr}: "
         log.setverbosity(config.verbosity)
-        logger = multiprocessing.log_to_stderr(level=log._logger.getEffectiveLevel())
+        if config.verbosity == log.DEBUG:
+            logger = multiprocessing.log_to_stderr()
         log.Info(f"Staring pool process with pid: {pid}")
         file_naming.prepare_regex()
         util.start_debugger()

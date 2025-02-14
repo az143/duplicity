@@ -79,7 +79,7 @@ class SSHPExpectBackend(duplicity.backend.Backend):
         # make sure remote_dir is always valid
         if parsed_url.path:
             # remove leading '/'
-            self.remote_dir = re.sub(r"^/", r"", parsed_url.path, 1)
+            self.remote_dir = parsed_url.path.lstrip("/")
         else:
             self.remote_dir = "."
         self.remote_prefix = f"{self.remote_dir}/"

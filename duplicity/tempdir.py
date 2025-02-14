@@ -273,22 +273,22 @@ class TemporaryDirectory(object):
         On failure they are logged, but this method will not raise an
         exception.
         """
+        # TODO: _() sometimes is not defined at end of failed run.  Fix if possible.
         self.__lock.acquire()
         try:
             if self.__dir is not None:
                 for file in list(self.__pending.keys()):
                     try:
-                        log.Debug(_("Removing still remembered temporary file %s") % os.fsdecode(file))
+                        log.Debug("Removing still remembered temporary file %s" % os.fsdecode(file))
                         util.ignore_missing(os.unlink, file)
                     except Exception:
-                        log.Info(_("Cleanup of temporary file %s failed") % os.fsdecode(file))
+                        log.Info("Cleanup of temporary file %s failed" % os.fsdecode(file))
                         pass
                 try:
                     os.rmdir(self.__dir)
                 except Exception:
                     log.Warn(
-                        _("Cleanup of temporary directory %s failed - " "this is probably a bug.")
-                        % os.fsdecode(self.__dir)
+                        "Cleanup of temporary directory %s failed - this is probably a bug." % os.fsdecode(self.__dir)
                     )
                     pass
                 self.__pending = None

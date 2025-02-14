@@ -69,7 +69,12 @@ os.environ["PATH"] = f"{_bin_dir}:{os.environ.get('PATH', '')}"
 
 # Now set some variables that help standardize test behavior
 os.environ["LANG"] = ""
-os.environ["GNUPGHOME"] = os.path.join(_testing_dir, "gnupg")
+
+# Set up GNUPGHOME for testing on system or docker
+if os.environ.get("DOCKER_GNUPGHOME", ""):
+    os.environ["GNUPGHOME"] = os.environ["DOCKER_GNUPGHOME"]
+else:
+    os.environ["GNUPGHOME"] = os.path.join(_testing_dir, "gnupg")
 
 # bzr does not honor perms so fix the perms and avoid annoying error
 os.system(f"chmod 700 {os.path.join(_testing_dir, 'gnupg')}")

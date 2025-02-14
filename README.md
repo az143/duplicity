@@ -40,9 +40,9 @@ PyPA (Python Packaging Authority) has been making rapid changes to the way we in
 To accomodate installing new packages on older Pythons prior to 3.11, it is necessary to upgrade 
 packaging tools like this:
 ```shell
-sudo python3 -m pip install --update pip pipx
+sudo python3 -m pip install --upgrade pip pipx
 ````
-**NOTE: _Failure to update will probably result in a failed install._  <--IMPORTANT!**  
+**NOTE: _Failure to upgrade will probably result in a failed install._  <--IMPORTANT!**  
 
 To make sure the pipx dirs are on your path do:
 ```shell

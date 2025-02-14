@@ -1,5 +1,5 @@
 name: duplicity
-version: 3.0.3.2
+version: 3.0.4
 license: GPL-2.0
 summary: Efficient, encrypted backup to local or remote hosts
 description: |
@@ -17,8 +17,11 @@ apps:
     duplicity:
         command: bin/duplicity.sh
         environment:
-            # setup path to find and use packaged python3 in snap
-            PATH: "$SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH:/snap/core20/current/usr/bin"
+            # append path to find and use packaged backend binaries in snap
+            # disabled and done in launcher.sh because empty PATH env var will lead to curdir '.' added e.g. PATH=:other:entries:...
+            # core22 supposedly support expansion like ${PATH:+$PATH:} to add the ':' conditionally
+            # see https://snapcraft.io/docs/migrate-core22#unbound-variable-verification
+            #PATH: ${PATH:+$PATH:}/snap/bin:$SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:/snap/core20/current/usr/bin
             # fixup pythonpath to find modules, for some reason
             # 'lib/python3.8/site-packages' is not added by default
             # add two more host paths for users to install modules in
@@ -27,12 +30,17 @@ apps:
                          /lib/python3.8/site-packages"
     # printing env in snap for debug purposes, help's pinning snap startup issues (missing libs, _rsync ...)
     debug:
-        command: bin/debug.sh
-    debug2:
-        command: bin/debug.sh
+        command: bin/duplicity.sh
         environment:
+            # print plain unmodified PATH/PYTHONPATH etc.
+            DUPL_LAUNCHER: "DEBUG1"
+    debug2:
+        command: bin/duplicity.sh
+        environment:
+            # print patched PATH/PYTHONPATH
+            DUPL_LAUNCHER: "DEBUG2"
             # see above
-            PATH: "$SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:$PATH:/snap/core20/current/usr/bin"
+            #PATH: $PATH:/snap/bin:$SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:/snap/core20/current/usr/bin
             PYTHONPATH: "$SNAP/lib/python3.8/site-packages:\
                          $HOME/.local/lib/python3.8/site-packages:\
                          /lib/python3.8/site-packages"
@@ -61,8 +69,8 @@ parts:
             # python module tahoe-lafs dies trying to compile really old pycddl 
             # on other archs than amd64, as python plugin does not support 
             # conditions we only include it in amd64 snaps manually here
-            if [ "$SNAPCRAFT_BUILD_FOR" != "amd64" ]; then
-                echo "Skipping tahoe-lafs integration on arch '$SNAPCRAFT_BUILD_FOR'!='amd64'"
+            if [ "$SNAPCRAFT_ARCH_BUILD_FOR" != "amd64" ]; then
+                echo "Skipping tahoe-lafs integration on arch that is not 'amd64'."
             else
                 python3 -m pip install zfec==1.5.7.4
                 python3 -m pip install tahoe-lafs
@@ -71,7 +79,7 @@ parts:
         override-prime: |
             snapcraftctl prime
             cp -v "$SNAPCRAFT_PROJECT_DIR"/snap/local/launcher.sh "$SNAPCRAFT_PRIME"/bin/duplicity.sh
-            cp -v "$SNAPCRAFT_PROJECT_DIR"/snap/local/debug.sh "$SNAPCRAFT_PRIME"/bin/
+            #cp -v "$SNAPCRAFT_PROJECT_DIR"/snap/local/debug.sh "$SNAPCRAFT_PRIME"/bin/
         build-environment:
             - PYTHONPATH: "$SNAPCRAFT_PART_INSTALL/usr/lib/python3.8/dist-packages:\
                            $SNAPCRAFT_PART_INSTALL/usr/lib/python3/dist-packages:\

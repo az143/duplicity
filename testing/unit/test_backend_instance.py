@@ -21,7 +21,11 @@
 
 import io
 import os
+import subprocess
 import unittest
+import logging
+
+import pytest
 
 import duplicity.backend
 from duplicity import log
@@ -35,7 +39,6 @@ from . import UnitTestCase
 class BackendInstanceBase(UnitTestCase):
     def setUp(self):
         super().setUp()
-        UnitTestCase.setUp(self)
         assert not os.system(f"rm -rf {_runtest_dir}/testfiles")
         os.makedirs(f"{_runtest_dir}/testfiles")
         self.backend = None
@@ -215,14 +218,14 @@ class TahoeBackendTest(BackendInstanceBase):
 
 
 # TODO: Modernize hsi backend stub
-#  class HSIBackendTest(BackendInstanceBase):
-#      def setUp(self):
-#          super().setUp()
-#          os.makedirs('{0}/testfiles/output')
-#          # hostname is ignored...  Seemingly on purpose
-#          url = 'hsi://hostname%s/{0}/testfiles/output' % os.getcwd()
-#          self.backend = duplicity.backend.get_backend_object(url)
-#          self.assertEqual(self.backend.__class__.__name__, 'HSIBackend')
+# class HSIBackendTest(BackendInstanceBase):
+#     def setUp(self):
+#         super().setUp()
+#         os.makedirs('{0}/testfiles/output')
+#         # hostname is ignored...  Seemingly on purpose
+#         url = 'hsi://hostname%s/{0}/testfiles/output' % os.getcwd()
+#         self.backend = duplicity.backend.get_backend_object(url)
+#         self.assertEqual(self.backend.__class__.__name__, 'HSIBackend')
 
 
 @unittest.skipIf(not util.which("lftp"), "lftp not installed")
@@ -264,3 +267,24 @@ class RCloneBackendTest(BackendInstanceBase):
         if self.delete_config:
             assert not os.system("rclone config delete duptest")
         super().tearDown()
+
+
+# TODO: Need fix to work on both Gitlab Docker and personal Docker.
+# def in_docker():
+#     return os.path.exists("/.dockerenv")
+#
+#
+# TODO: Find out why ssh does not work in Docker.
+# @unittest.skipIf(not in_docker(), "Requires Docker / duplicity_test")
+# class SFTPBackendTest(BackendInstanceBase):
+#     def setUp(self):
+#         super().setUp()
+#         url = f"pexpect+sftp://testuser:testuser@ssh_server/testdup"
+#         self.backend = duplicity.backend.get_backend_object(url)
+#         self.assertEqual(self.backend.__class__.__name__, "SSHPxpectBackend")
+#         for fn in b"file-a", b"file-b", b"file-c":
+#             try:
+#                 self.backend._delete(fn)
+#             except Exception as e:
+#                 log.Error(f"An exception occurred while deleting file {fn}: {e}")
+#                 pass

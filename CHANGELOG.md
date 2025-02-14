@@ -1,6 +1,37 @@
 # Changelog
 
 
+## rel.3.0.4 (2025-02-08)
+
+### New
+
+* Support for Microsoft Azure "Cold" blob storage tier. [Thomas Kent]
+
+### Changes
+
+* Emulate CI for duplicity testing. [Kenneth Loafman]
+
+* Allow to build with py3.13.x. [Rui Chen]
+
+### Fix
+
+* Fix snap PATH handling... [ede]
+
+    to allow usage custom backend binaries e.g. in /snap/bin unified launcher script moved PATH handling there to correctly handle empty PATH vars
+
+    fixes issue #855
+
+* SNAPCRAFT\_BUILD\_FOR unbound error when building snap on Ubuntu24. [ede]
+
+* Allow for python versions 3.12+ e.g. 3.12.8. [ede]
+
+* INFO and DEBUG messages when verbosity is warning. [Kenneth Loafman]
+
+    - fixes #851
+
+* Fix typo in pip command. [Alexis Urien]
+
+
 ## rel.3.0.3.2 (2024-11-25)
 
 ### Changes

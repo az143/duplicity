@@ -23,8 +23,22 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 
+set -e
+
 cd `dirname "$0"`
 
-docker compose up -d
-docker cp -a ../gnupg/. duplicity_test:/root/duplicity/testing/gnupg/
-docker compose exec duplicity_test /bin/bash
+for FILE in Dockerfile.py3*; do
+    # setup gnupg and requirements
+    cp -rp ../../gnupg ./
+    cp -p ./S.* ./gnupg/
+    cp -p ../../../requirements.txt ./
+    sed '1,/documentation libraries/!d' ../../../requirements.dev > requirements.dev
+
+    # build version specced by Dockerfile extenwion
+    VERS="${FILE##*.}"
+    docker build $@ --compress --tag=dupci/${VERS} -f Dockerfile.${VERS} ./
+
+    # cleanup gnupg and requirements
+    rm -r ./gnupg
+    rm ./requirements.*
+done
