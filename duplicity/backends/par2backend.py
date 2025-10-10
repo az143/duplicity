@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2013 Germar Reitze <germar.reitze@gmail.com>
+# Copyright 2013 Germar Reitze
 #
 # This file is part of duplicity.
 #
@@ -85,17 +85,25 @@ class Par2Backend(backend.Backend):
         """
         par2temp = source_path.get_temp_in_same_dir()
         par2temp.mkdir()
-        source_symlink = par2temp.append(remote_filename)
+        # par2cmdline since v1.0 does not accept symlink as source anymore
+        source_hardlink = par2temp.append(remote_filename)
         source_target = source_path.get_canonical()
         if not os.path.isabs(source_target):
             source_target = os.path.join(os.fsencode(os.getcwd()), source_target)
-        os.symlink(source_target, source_symlink.get_canonical())
-        source_symlink.setdata()
+        os.link(source_target, source_hardlink.get_canonical())
+        source_hardlink.setdata()
+        # double-check that the mandatory and correctly named source file now exist
+        if not source_hardlink.exists():
+            par2temp.deltree()
+            log.FatalError(
+                f"FAILED to create hard link for par2 processing as "
+                f"'{os.fsdecode(source_hardlink.get_canonical())}'"
+            )
 
         log.Info("Create Par2 recovery files")
         par2create = (
             f"par2 c -r{int(self.redundancy)} -n{int(self.volumes)} {self.common_options} "
-            f'"{os.fsdecode(source_symlink.get_canonical())}"'
+            f'"{os.fsdecode(source_hardlink.get_canonical())}"'
         )
         returncode, out, err = self.subprocess_popen(par2create)
 
@@ -103,13 +111,13 @@ class Par2Backend(backend.Backend):
             log.Warn("Failed to create par2 file with requested options, retrying with -n1")
             par2create = (
                 f"par2 c -r{int(self.redundancy)} -n1 {self.common_options} "
-                f'"{os.fsdecode(source_symlink.get_canonical())}"'
+                f'"{os.fsdecode(source_hardlink.get_canonical())}"'
             )
             returncode, out, err = self.subprocess_popen(par2create)
             if not returncode:
                 log.Warn("Successfully created par2 file with -n1")
 
-        source_symlink.delete()
+        source_hardlink.delete()
         files_to_transfer = []
         if not returncode:
             for file in par2temp.listdir():

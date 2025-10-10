@@ -2,7 +2,7 @@
 # vim:tabstop=4:shiftwidth=4:expandtab
 #
 # Copyright 2014 Google Inc.
-# Contact Michael Stapelberg <stapelberg+duplicity@google.com>
+# Contact Michael Stapelberg
 # This is NOT a Google product.
 # Revised for Microsoft Graph API 2019 by David Martin
 #

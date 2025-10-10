@@ -1,18 +1,22 @@
 [project]
 name = "duplicity"
-version = "3.0.4"
+version = "3.0.5.1"
 dynamic = ["dependencies"]
 description = "Encrypted backup using rsync algorithm"
 authors = [
-    { name = "Ben Escoto", email = "ben@emrose.org" },
     { name = "Kenneth Loafman", email = "kenneth@loafman.com" },
 ]
+maintainers = [
+    { name = "Edgar Soldin" },
+    { name = "Thomas Laubrock" },
+]
 readme = { file = "README.md", content-type = "text/markdown" }
-requires-python = ">= 3.8, < 3.14"
+requires-python = ">= 3.8, < 3.15"
+# not all LP builders will take license=
+#license = "GPL-2.0-or-later"
 classifiers = [
     "Development Status :: 6 - Mature",
     "Environment :: Console",
-    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
     "Operating System :: MacOS",
     "Operating System :: POSIX",
     "Programming Language :: C",
@@ -33,7 +37,7 @@ requires = [
     "pip>=24.0",
     "pipx>=1.5",
     "packaging>=20.0",
-    "setuptools>=60.0",
+    "setuptools>=78.1.0",
     "wheel>=0.42.0",
 ]
 build-backend = "setuptools.build_meta"
@@ -44,7 +48,13 @@ duplicity = "duplicity.__main__:dup_run"
 
 
 [project.urls]
-url = "http://duplicity.us"
+Homepage = "http://duplicity.us"
+Download = "https://gitlab.com/duplicity/duplicity/-/releases"
+Issues = "https://gitlab.com/duplicity/duplicity/-/issues"
+Contact = "https://lists.nongnu.org/mailman/listinfo/duplicity-talk"
+Documentation = "http://duplicity.us"
+Repository = "https://gitlab.com/duplicity/duplicity"
+Changelog = "https://gitlab.com/duplicity/duplicity/-/blob/main/CHANGELOG.md"
 
 
 [tool.setuptools]

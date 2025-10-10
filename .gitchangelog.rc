@@ -58,18 +58,23 @@
 ## will be ignored and won't be reported in the changelog.
 ##
 ignore_regexps = [
-    r'@minor', r'!minor',
-    r'@cosmetic', r'!cosmetic',
-    r'@refactor', r'!refactor',
-    r'@wip', r'!wip',
-    r'^(.{3,3}\s*:)?\s*[fF]irst commit.?\s*$',
-    r'^Launchpad automatic translations update..*$',
-    r'^.*LP translations.*$',
-    r'^.*New Crowdin updates.*$',
-    r'^.*Change version for LP.*$',
-    r'^.*Update changelog..*$',
-    r'^.*Prep for .*$',
-    r'^$',  ## ignore commits with empty messages
+    r"@minor",
+    r"!minor",
+    r"@cosmetic",
+    r"!cosmetic",
+    r"@refactor",
+    r"!refactor",
+    r"@wip",
+    r"!wip",
+    r"^(.{3,3}\s*:)?\s*[fF]irst commit.?\s*$",
+    r"^.*Launchpad automatic translations update..*$",
+    r"^.*LP translations.*$",
+    r"^.*New Crowdin updates.*$",
+    r"^.*version for LP.*$",
+    r"^.*Bump version to .*$",
+    r"^.*Update changelog..*$",
+    r"^.*Prep for .*$",
+    r"^$",  ## ignore commits with empty messages
 ]
 
 
@@ -86,17 +91,25 @@ ignore_regexps = [
 ## whenever you are tweaking this variable.
 ##
 section_regexps = [
-    ('New', [
-        r'^new\s*:\s*((dev|usr|pkg|test|doc)\s*:\s*)?([^\n]*)$',
-     ]),
-    ('Changes', [
-        r'^chg\s*:\s*((dev|usr|pkg|test|doc)\s*:\s*)?([^\n]*)$',
-     ]),
-    ('Fix', [
-        r'^fix\s*:\s*((dev|usr|pkg|test|doc)\s*:\s*)?([^\n]*)$',
-     ]),
-    ('Other', None ## Match all lines
-     ),
+    (
+        "New",
+        [
+            r"^new\s*:\s*((dev|usr|pkg|test|doc)\s*:\s*)?([^\n]*)$",
+        ],
+    ),
+    (
+        "Changes",
+        [
+            r"^chg\s*:\s*((dev|usr|pkg|test|doc)\s*:\s*)?([^\n]*)$",
+        ],
+    ),
+    (
+        "Fix",
+        [
+            r"^fix\s*:\s*((dev|usr|pkg|test|doc)\s*:\s*)?([^\n]*)$",
+        ],
+    ),
+    ("Other", None),  ## Match all lines
 ]
 
 
@@ -134,12 +147,14 @@ section_regexps = [
 # body_process = Wrap(regexp=r'\n(?=\w+\s*:)') | Indent(chars="  ")
 # body_process = Wrap(regexp=r'\n(?=\w+\s*:)')
 # body_process = noop
-body_process = (strip |
-    ReSub(r'^\* ([A-Za-z])', r'\1') |
-    ReSub(r'((^|\n)[A-Z]\w+(-\w+)*: .*(\n\s+.*)*)+$', r'') |
-    ReSub(r'\[.*\s+skip\]', r'') |
-    ReSub(r'\[skip\s+.*\]', r'') |
-    Indent(chars="  "))
+body_process = (
+    strip
+    | ReSub(r"^\* ([A-Za-z])", r"\1")
+    | ReSub(r"((^|\n)[A-Z]\w+(-\w+)*: .*(\n\s+.*)*)+$", r"")
+    | ReSub(r"\[.*\s+skip\]", r"")
+    | ReSub(r"\[skip\s+.*\]", r"")
+    | Indent(chars="  ")
+)
 
 
 ## ``subject_process`` is a callable
@@ -148,23 +163,25 @@ body_process = (strip |
 ## be used in the changelog.
 ##
 ## Available constructs are those listed in ``body_process`` doc.
-subject_process = (strip |
-    ReSub(r'^[#*-]\s+([A-Za-z])', r'\1') |
-    ReSub(r'~', r'\~') |
-    ReSub(r'_', r'\_') |
-    ReSub(r'^(chg|fix|new)\s*:\s*((dev|usr|pkg|test|doc)\s*:\s*)?([^\n@]*)(@[a-z]+\s+)*$', r'\4') |
-    SetIfEmpty("No commit message.") |
-    Indent(chars="  ") |
-    Wrap(regexp=r"\n\n") |
-    ucfirst |
-    final_dot)
+subject_process = (
+    strip
+    | ReSub(r"^[#*-]\s+([A-Za-z])", r"\1")
+    | ReSub(r"~", r"\~")
+    | ReSub(r"_", r"\_")
+    | ReSub(r"^(chg|fix|new)\s*:\s*((dev|usr|pkg|test|doc)\s*:\s*)?([^\n@]*)(@[a-z]+\s+)*$", r"\4")
+    | SetIfEmpty("No commit message.")
+    | Indent(chars="  ")
+    | Wrap(regexp=r"\n\n")
+    | ucfirst
+    | final_dot
+)
 
 
 ## ``tag_filter_regexp`` is a regexp
 ##
 ## Tags that will be used for the changelog must match this regexp.
 ##
-tag_filter_regexp = r'^rel.[0-9]+(\.[0-9]+){2,3}((a|b|rc|x)[0-9]*)??$'
+tag_filter_regexp = r"^rel.[0-9]+(\.[0-9]+){2,3}((a|b|rc|x)[0-9]*)??$"
 
 ## ``unreleased_version_label`` is a string or a callable that outputs a string
 ##
@@ -201,10 +218,10 @@ unreleased_version_label = "(unreleased)"
 ##        Examples:
 ##           - makotemplate("restructuredtext")
 ##
-#output_engine = rest_py
-#output_engine = mustache("restructuredtext")
+# output_engine = rest_py
+# output_engine = mustache("restructuredtext")
 output_engine = mustache("markdown")
-#output_engine = makotemplate("restructuredtext")
+# output_engine = makotemplate("restructuredtext")
 
 
 ## ``include_merge`` is a boolean
@@ -220,7 +237,7 @@ include_merge = False
 ## The default is to be clever about it: it checks ``git config`` for
 ## ``i18n.logOutputEncoding``, and if not found will default to git's own
 ## default: ``utf-8``.
-log_encoding = 'utf-8'
+log_encoding = "utf-8"
 
 
 ## ``publish`` is a callable
@@ -291,11 +308,11 @@ publish = stdout
 ## changelog.
 ##
 ## The default is to use all commits to make the changelog.
-#revs = ["^1.0.3", ]
-#revs = [
+# revs = ["^1.0.3", ]
+# revs = [
 #    Caret(
 #        FileFirstRegexMatch(
 #            "CHANGELOG.rst",
 #            r"(?P<rev>[0-9]+\.[0-9]+(\.[0-9]+)?)\s+\([0-9]+-[0-9]{2}-[0-9]{2}\)\n--+\n")),
 #    "HEAD"
-#]
+# ]

@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -27,8 +27,10 @@ import unittest
 
 import pytest
 
+from duplicity import config
 from duplicity import gpg
 from duplicity import path
+from duplicity import util
 from testing import _runtest_dir
 from . import UnitTestCase
 
@@ -60,16 +62,22 @@ class GPGTest(UnitTestCase):
 
     def test_gpg1(self):
         """Test gpg short strings"""
+        if config.use_gpgsm:
+            pytest.skip("gpgsm does not support symmetric (password) encryption")
         self.gpg_cycle(b"hello, world")
         self.gpg_cycle(b"ansoetuh aoetnuh aoenstuh aoetnuh asoetuh saoteuh ")
 
     def test_gpg2(self):
         """Test gpg long strings easily compressed"""
+        if config.use_gpgsm:
+            pytest.skip("gpgsm does not support symmetric (password) encryption")
         self.gpg_cycle(b" " * 50000)
         self.gpg_cycle(b"aoeu" * 1000000)
 
     def test_gpg3(self):
         """Test on random data - must have /dev/urandom device"""
+        if config.use_gpgsm:
+            pytest.skip("gpgsm does not support symmetric (password) encryption")
         infp = open("/dev/urandom", "rb")
         rand_buf = infp.read(120000)
         infp.close()
@@ -81,6 +89,9 @@ class GPGTest(UnitTestCase):
             passphrase=self.sign_passphrase,
             recipients=[self.encrypt_key1, self.encrypt_key2],
         )
+        if config.use_gpgsm and profile.gpg_version < (2, 2, 27):
+            pytest.skip(f"Version {profile.gpg_version} of gpgsm is not supported.  Minimum version is 2.2.27")
+
         self.gpg_cycle(b"aoensutha aonetuh saoe", profile)
 
         profile2 = gpg.GPGProfile(passphrase=self.sign_passphrase, recipients=[self.encrypt_key1])
@@ -88,6 +99,8 @@ class GPGTest(UnitTestCase):
 
     def test_gpg_hidden_asym(self):
         """Test GPG asymmetric encryption with hidden key id"""
+        if config.use_gpgsm:
+            pytest.skip("gpgsm does not support hidden recipient")
         profile = gpg.GPGProfile(
             passphrase=self.sign_passphrase,
             hidden_recipients=[self.encrypt_key1, self.encrypt_key2],
@@ -106,6 +119,8 @@ class GPGTest(UnitTestCase):
             sign_key=self.sign_key,
             recipients=[self.encrypt_key1],
         )
+        if config.use_gpgsm and signing_profile.gpg_version <= (2, 2, 27):
+            pytest.skip(f"Version {signing_profile.gpg_version} of gpgsm is not supported.  Minimum version is 2.2.27")
 
         epath = path.Path(f"{_runtest_dir}/testfiles/output/encrypted_file")
         encrypted_signed_file = gpg.GPGFile(1, epath, signing_profile)
@@ -120,6 +135,8 @@ class GPGTest(UnitTestCase):
 
     def test_gpg_signing_and_hidden_encryption(self):
         """Test to make sure GPG reports the proper signature key even with hidden encryption key id"""
+        if config.use_gpgsm:
+            pytest.skip("gpgsm does not support hidden recipient")
         plaintext = b"hello" * 50000
 
         signing_profile = gpg.GPGProfile(
@@ -183,6 +200,30 @@ class GPGTest(UnitTestCase):
             )
         gwfh.set_at_end()
         gpg.GzipWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gzwrite.gz", size=size)
+
+
+@pytest.mark.usefixtures("redirect_stdin")
+class GPGSMTest(GPGTest):
+    """Test compatibility with 'gpgsm' the GnuPG tool for S/MIME"""
+
+    sign_key = None
+    sign_passphrase = None
+    encrypt_key1 = "0x0F1ABB99"
+    encrypt_key2 = "0xBEC52982"
+
+    def setUp(self):
+        super().setUp()
+        self.old_use_gpgsm = config.use_gpgsm
+        self.old_gpg_binary = config.gpg_binary
+        config.use_gpgsm = True
+        config.gpg_binary = util.which("gpgsm")
+        self.default_profile = gpg.GPGProfile(passphrase="foobar")
+
+    def tearDown(self):
+        config.use_gpgsm = self.old_use_gpgsm
+        config.gpg_binary = self.old_gpg_binary
+
+    # Inherited test_gpg_asym
 
 
 class GPGWriteHelper2(object):

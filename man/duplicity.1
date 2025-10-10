@@ -1,4 +1,4 @@
-.TH DUPLICITY 1 "February 08, 2025" "Version 3.0.4" "User Manuals" \"  -*- nroff -*-
+.TH DUPLICITY 1 "June 25, 2025" "Version 3.0.5.1" "User Manuals" \"  -*- nroff -*-
 .\" disable justification (adjust text to left margin only)
 .\" command line examples stay readable through that
 .ad l
@@ -128,11 +128,11 @@ file:///usr/local/backup
 .PP
 .RE
 Duplicity can also access a repository via ftp.  If a user name is
-given, the environment variable FTP_PASSWORD is read to determine the
+given, the environment variable BACKEND_PASSWORD is read to determine the
 password:
 .PP
 .RS
-FTP_PASSWORD=mypassword duplicity /local/dir ftp://user@other.host/some_dir
+BACKEND_PASSWORD=mypassword duplicity /local/dir ftp://user@other.host/some_dir
 
 .SH ACTIONS
 Duplicity uses actions, which can be given in long or in short form
@@ -1090,7 +1090,7 @@ See also
 .TP
 .BI --ssh-askpass
 Tells the ssh backend to prompt the user for the remote system password,
-if it was not defined in target url and no FTP_PASSWORD env var is set.
+if it was not defined in target url and no BACKEND_PASSWORD env var is set.
 This password is also used for passphrase-protected ssh keys.
 
 .TP
@@ -1239,6 +1239,27 @@ uses the agent only if
 is given, just like GnuPG 1.
 
 .TP
+.BI --use-gpgsm
+If this option is specified, then GnuPG encryption process uses binary
+.B gpgsm
+instead of
+.BR gpg .
+This is part of the GnuPG suite, but using the Cryptographic Message Syntax
+(CMS) file format (aka PKCS#7, this file format is also compatible with other tools,
+like
+.BR "openssl smime" ).
+
+Encrypted files will have the file extension
+.B .p7m
+instead of
+.BR .gpg .
+Any operation which requires decryption (restore, list-current-files, etc.)
+must also specify
+.IR --use-gpgsm .
+
+gpgsm does not support symmetric (password) encryption or hidden recipients.
+
+.TP
 .BI "--verbosity " level ", -v" level
 Specify output verbosity level (log level).
 Named levels and corresponding values are
@@ -1289,7 +1310,7 @@ Eventually the option
 supersedes any of these.
 
 .TP
-.B FTP_PASSWORD
+.B BACKEND_PASSWORD, FTP_PASSWORD (deprecated)
 Supported by most backends which are password capable. More secure than
 setting it in the backend url (which might be readable in the operating
 systems process listing to other users on the same machine).
@@ -1333,13 +1354,17 @@ or
 scheme://[/]path
 .RE
 
-It is not recommended to expose the password on the command line since
-it could be revealed to anyone with permissions to do process listings,
-it is permitted however.
-Consider setting the environment variable
-.B FTP_PASSWORD
-instead, which is used by most, if not all backends, regardless of it's name.
+.SS Use BACKEND_PASSWORD (How to provide password in a secure way)
+It is not recommended to expose the password on the command line 
+e.g. as part of the target url since it can be revealed to anyone 
+with permissions to do process listings. it is possible however.
 
+Consider setting the environment variable
+.B BACKEND_PASSWORD
+or other backend specific environment variables instead which do not 
+suffer the security flaw mentioned above.
+
+.SS Details and descriptive examples per backend
 In protocols that support it, the path may be preceded by a single
 slash, '/path', to represent a relative path to the target home directory,
 or preceded by a double slash, '//path', to represent an absolute
@@ -1353,7 +1378,7 @@ can be selected by prefixing the scheme with the name of the alternative
 .RB "backend e.g. " ncftp+ftp://
 and are mentioned below the scheme's syntax summary.
 
-Formats of each of the URL schemes follow:
+Formats for each of the backends follow:
 
 .TP
 .B "Amazon Drive Backend"

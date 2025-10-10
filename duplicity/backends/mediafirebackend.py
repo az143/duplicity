@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2016 Roman Yepishev <rye@keypressure.com>
+# Copyright 2016 Roman Yepishev
 #
 # This file is part of duplicity.
 #

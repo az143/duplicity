@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2022 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2022 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -349,8 +349,8 @@ OptionKwargs = dict(
         default=dflt(config.ftp_connection),
     ),
     full_if_older_than=dict(
-        metavar=_("interval"),
-        type=check_interval,
+        metavar=_("time"),
+        type=check_time_delta,
         help="Perform full backup if last full is older than 'time'",
         default=dflt(config.full_if_older_than),
     ),
@@ -370,6 +370,12 @@ OptionKwargs = dict(
             "See man page at ARGPARSE PROBLEM."
         ),
         default=dflt(config.gpg_options),
+    ),
+    use_gpgsm=dict(
+        action="store_true",
+        dest="use_gpgsm",
+        help="Use gpgsm tool, which is very similar gpg but using PKCS#7 file format.",
+        default=dflt(config.use_gpgsm),
     ),
     hidden_encrypt_key=dict(
         metavar=_("gpg-key-id"),

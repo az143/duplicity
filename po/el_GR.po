@@ -1,9 +1,10 @@
+#: ../duplicity/manifest.py:249
 msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2024-11-17 10:47-0600\n"
-"PO-Revision-Date: 2024-11-17 17:08\n"
+"POT-Creation-Date: 2025-06-19 10:05-0500\n"
+"PO-Revision-Date: 2025-06-19 15:16\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -117,8 +118,8 @@ msgstr "ορίσματα θέσης"
 #. header.) Example:
 #. duplicity [full|incremental] [options] source_path target_url
 #: ../duplicity/argparse311.py:1671 ../duplicity/cli_data.py:364
-#: ../duplicity/cli_data.py:529 ../duplicity/cli_data.py:583
-#: ../duplicity/cli_data.py:718 ../duplicity/cli_data.py:918
+#: ../duplicity/cli_data.py:535 ../duplicity/cli_data.py:589
+#: ../duplicity/cli_data.py:724 ../duplicity/cli_data.py:924
 msgid "options"
 msgstr "επιλογές"
 
@@ -204,52 +205,47 @@ msgstr "μη έγκυρη επιλογή: %(value)r (επιλέξτε από τ�
 msgid "%(prog)s: error: %(message)s\n"
 msgstr "%(prog)s: error: %(message)s\n"
 
-#: ../duplicity/backend.py:95
-#, python-brace-format
-msgid "Import of {imp} Failed"
-msgstr ""
-
-#: ../duplicity/backend.py:200
+#: ../duplicity/backend.py:201
 #, python-format
 msgid "Could not initialize backend: %s"
 msgstr "Αδυναμία αρχικοποίησης του συστήματος υποστήριξης: %s"
 
-#: ../duplicity/backend.py:391
+#: ../duplicity/backend.py:392
 #, python-format
 msgid "Backtrace of previous error: %s"
 msgstr "Backtrace του προηγούμενου σφάλματος: %s"
 
-#: ../duplicity/backend.py:412
+#: ../duplicity/backend.py:413
 #, python-format
 msgid "Giving up after %s attempts. %s: %s. (for trace back: set log level DEBUG)"
 msgstr ""
 
-#: ../duplicity/backend.py:421
+#: ../duplicity/backend.py:422
 #, python-format
 msgid "Giving up after %s attempts. %s: %s"
 msgstr "Εγγραφή μετά από προσπάθειες %s . %s: %s"
 
-#: ../duplicity/backend.py:427
+#: ../duplicity/backend.py:428
 #, python-format
 msgid "Attempt of %s Nr. %s failed. %s: %s"
 msgstr "Η προσπάθεια του %s Nr. %s απέτυχε. %s: %s"
 
-#: ../duplicity/backend.py:526
+#: ../duplicity/backend.py:535
 #, python-format
 msgid "Reading results of '%s'"
 msgstr "Αποτελέσματα ανάγνωσης του '%s'"
 
-#: ../duplicity/backend.py:553
+#: ../duplicity/backend.py:562
 #, python-format
 msgid "Writing %s"
 msgstr "Εγγραφή %s"
 
-#: ../duplicity/backend.py:608
+#: ../duplicity/backend.py:617
 #, python-format
 msgid "File %s not found locally after get from backend"
 msgstr "Το αρχείο %s δεν βρέθηκε τοπικά μετά την λήψη από το σύστημα υποστήριξης"
 
-#: ../duplicity/backend.py:661
+#: ../duplicity/backend.py:670
 #, python-format
 msgid "%s Remote filesize %d for %s does not match local size %d"
 msgstr ""
@@ -345,10 +341,6 @@ msgstr "MultiBackend: απέτυχε να λάβει %s. Δοκίμασε όλα
 msgid "MultiBackend: %s: %d files"
 msgstr "MultiBackend: %s: %d αρχεία"
 
-#: ../duplicity/backends/multibackend.py:334
-msgid "Exception during list of {s.backend.parsed_url.strip_auth()}: "
-msgstr "Εξαίρεση στη λίστα των {s.backend.parsed_url.strip_auth()}: "
-
 #: ../duplicity/backends/multibackend.py:342
 #, python-format
 msgid "MultiBackend: combined list: %s"
@@ -370,113 +362,113 @@ msgstr "Η προσπάθεια initialize_oauth2_session Nr. %s απέτυχε.
 msgid "PyDrive backend: multiple files called '%s'."
 msgstr "PyDrive backend: πολλαπλά αρχεία που ονομάζονται '%s'."
 
-#: ../duplicity/backends/webdavbackend.py:67
+#: ../duplicity/backends/webdavbackend.py:68
 msgid "Missing socket or ssl python modules."
 msgstr "Λείπει η υποδοχή ή ssl python modules."
 
-#: ../duplicity/backends/webdavbackend.py:87
+#: ../duplicity/backends/webdavbackend.py:88
 #, python-format
 msgid "Cacert database file '%s' is not readable."
 msgstr "Το αρχείο βάσης δεδομένων Cacert '%s' δεν είναι αναγνώσιμο."
 
-#: ../duplicity/backends/webdavbackend.py:152
+#: ../duplicity/backends/webdavbackend.py:153
 #, python-format
 msgid "Using WebDAV host %s port %s"
 msgstr "Χρησιμοποιώντας θύρα WebDAV host %s %s"
 
-#: ../duplicity/backends/webdavbackend.py:153
+#: ../duplicity/backends/webdavbackend.py:154
 #, python-format
 msgid "Using WebDAV directory %s"
 msgstr "Using WebDAV directory %s"
 
-#: ../duplicity/backends/webdavbackend.py:183
+#: ../duplicity/backends/webdavbackend.py:184
 #, python-format
 msgid "WebDAV create connection on '%s'"
 msgstr "WebDAV δημιουργία σύνδεσης στο '%s'"
 
-#: ../duplicity/backends/webdavbackend.py:191
+#: ../duplicity/backends/webdavbackend.py:192
 #, python-format
 msgid "WebDAV Unknown URI scheme: %s"
 msgstr "WebDAV Άγνωστο σχήμα URI: %s"
 
-#: ../duplicity/backends/webdavbackend.py:210
+#: ../duplicity/backends/webdavbackend.py:222
 #, python-format
 msgid "WebDAV %s %s request with headers: %s "
 msgstr "WebDAV %s %s αίτημα με κεφαλίδες: %s "
 
-#: ../duplicity/backends/webdavbackend.py:211
-#: ../duplicity/backends/webdavbackend.py:234
+#: ../duplicity/backends/webdavbackend.py:223
+#: ../duplicity/backends/webdavbackend.py:246
 #, python-format
 msgid "WebDAV data length: %s "
 msgstr "Μήκος δεδομένων WebDAV: %s "
 
-#: ../duplicity/backends/webdavbackend.py:214
+#: ../duplicity/backends/webdavbackend.py:226
 #, python-format
 msgid "WebDAV response status %s with reason '%s'."
 msgstr "WebDAV response status %s with reason '%s'."
 
-#: ../duplicity/backends/webdavbackend.py:220
+#: ../duplicity/backends/webdavbackend.py:232
 #, python-format
 msgid "WebDAV redirect to: %s "
 msgstr "WebDAV ανακατευθύνεται σε: %s "
 
-#: ../duplicity/backends/webdavbackend.py:222
+#: ../duplicity/backends/webdavbackend.py:234
 msgid "WebDAV redirected 10 times. Giving up."
 msgstr "WebDAV ανακατευθύνονται 10 φορές. Εγκατέλειψε."
 
-#: ../duplicity/backends/webdavbackend.py:227
+#: ../duplicity/backends/webdavbackend.py:239
 msgid "WebDAV missing location header in redirect response."
 msgstr "WebDAV λείπει κεφαλίδα τοποθεσίας σε απάντηση ανακατεύθυνσης."
 
-#: ../duplicity/backends/webdavbackend.py:232
+#: ../duplicity/backends/webdavbackend.py:244
 msgid "WebDAV retry request with authentification headers."
 msgstr "Αίτημα επανάληψης WebDAV με κεφαλίδες αυθεντικοποίησης."
 
-#: ../duplicity/backends/webdavbackend.py:233
+#: ../duplicity/backends/webdavbackend.py:245
 #, python-format
 msgid "WebDAV %s %s request2 with headers: %s "
 msgstr "WebDAV %s %s αίτημα2 με κεφαλίδες: %s "
 
-#: ../duplicity/backends/webdavbackend.py:237
+#: ../duplicity/backends/webdavbackend.py:249
 #, python-format
 msgid "WebDAV response2 status %s with reason '%s'."
 msgstr "WebDAV απόκριση2 κατάσταση %s με λόγο '%s'."
 
-#: ../duplicity/backends/webdavbackend.py:256
+#: ../duplicity/backends/webdavbackend.py:268
 msgid "python-kerberos needed to use kerberos                           authorization, falling back to basic auth."
 msgstr "python-kerberos χρειάζεται να χρησιμοποιήσετε kerberos εξουσιοδότηση, επιστρέφοντας στη βασική auth."
 
-#: ../duplicity/backends/webdavbackend.py:264
+#: ../duplicity/backends/webdavbackend.py:276
 #, python-format
 msgid "Kerberos authorization failed: %s.                          Falling back to basic auth."
 msgstr "Η άδεια Kerberos απέτυχε: %s. Επιστροφή στη βασική ταυτοποίηση."
 
-#: ../duplicity/backends/webdavbackend.py:365
+#: ../duplicity/backends/webdavbackend.py:377
 #, python-format
 msgid "Creating missing directory %s"
 msgstr "Δημιουργία καταλόγου που λείπει %s"
 
-#: ../duplicity/backends/webdavbackend.py:369
+#: ../duplicity/backends/webdavbackend.py:381
 #, python-format
 msgid "WebDAV MKCOL %s failed: %s %s"
 msgstr "Το WebDAV MKCOL %s απέτυχε: %s %s"
 
-#: ../duplicity/backends/webdavbackend.py:381
+#: ../duplicity/backends/webdavbackend.py:393
 #, python-format
 msgid "WebDAV path decoding and translation: %s -> %s"
 msgstr "Αποκωδικοποίηση διαδρομής WebDAV και μετάφραση: %s -> %s"
 
-#: ../duplicity/backends/webdavbackend.py:417
+#: ../duplicity/backends/webdavbackend.py:429
 #, python-format
 msgid "WebDAV GET Bad status code %s reason %s."
 msgstr "WebDAV GET Κακός κωδικός κατάστασης %s λόγος %s."
 
-#: ../duplicity/backends/webdavbackend.py:438
+#: ../duplicity/backends/webdavbackend.py:450
 #, python-format
 msgid "WebDAV PUT Bad status code %s reason %s."
 msgstr "WebDAV PUT Bad κωδικός κατάστασης %s λόγος %s."
 
-#: ../duplicity/backends/webdavbackend.py:457
+#: ../duplicity/backends/webdavbackend.py:469
 #, python-format
 msgid "WebDAV DEL Bad status code %s reason %s."
 msgstr "WebDAV DEL Bad status code %s reason %s."
@@ -485,42 +477,42 @@ msgstr "WebDAV DEL Bad status code %s reason %s."
 #. --archive-dir <path>
 #: ../duplicity/cli_data.py:103 ../duplicity/cli_data.py:173
 #: ../duplicity/cli_data.py:207 ../duplicity/cli_data.py:255
-#: ../duplicity/cli_data.py:358 ../duplicity/cli_data.py:381
-#: ../duplicity/cli_data.py:552 ../duplicity/cli_data.py:744
-#: ../duplicity/cli_data.py:927
+#: ../duplicity/cli_data.py:358 ../duplicity/cli_data.py:387
+#: ../duplicity/cli_data.py:558 ../duplicity/cli_data.py:750
+#: ../duplicity/cli_data.py:933
 msgid "path"
 msgstr "Διαδρομή"
 
 #: ../duplicity/cli_data.py:116
-msgid "Hot|Cool|Archive"
-msgstr "Αρχείο Hotοl"
+msgid "Hot|Cool|Cold|Archive"
+msgstr ""
 
 #. Used in usage help to represent a desired number of
 #. something. Example:
 #. --num-retries <number>
 #: ../duplicity/cli_data.py:121 ../duplicity/cli_data.py:127
 #: ../duplicity/cli_data.py:135 ../duplicity/cli_data.py:163
-#: ../duplicity/cli_data.py:179 ../duplicity/cli_data.py:451
-#: ../duplicity/cli_data.py:471 ../duplicity/cli_data.py:518
-#: ../duplicity/cli_data.py:540 ../duplicity/cli_data.py:546
-#: ../duplicity/cli_data.py:564 ../duplicity/cli_data.py:635
-#: ../duplicity/cli_data.py:643 ../duplicity/cli_data.py:695
-#: ../duplicity/cli_data.py:781 ../duplicity/cli_data.py:914
+#: ../duplicity/cli_data.py:179 ../duplicity/cli_data.py:457
+#: ../duplicity/cli_data.py:477 ../duplicity/cli_data.py:524
+#: ../duplicity/cli_data.py:546 ../duplicity/cli_data.py:552
+#: ../duplicity/cli_data.py:570 ../duplicity/cli_data.py:641
+#: ../duplicity/cli_data.py:649 ../duplicity/cli_data.py:701
+#: ../duplicity/cli_data.py:787 ../duplicity/cli_data.py:920
 msgid "number"
 msgstr "αριθμός"
 
 #. Used in usage help. Example:
 #. --timeout <seconds>
-#: ../duplicity/cli_data.py:147 ../duplicity/cli_data.py:751
-#: ../duplicity/cli_data.py:940
+#: ../duplicity/cli_data.py:147 ../duplicity/cli_data.py:757
+#: ../duplicity/cli_data.py:946
 msgid "seconds"
 msgstr "δευτερόλεπτα"
 
 #. Used in usage help to represent an ID for a GnuPG key. Example:
 #. --encrypt-key <gpg_key_id>
 #: ../duplicity/cli_data.py:195 ../duplicity/cli_data.py:201
-#: ../duplicity/cli_data.py:375 ../duplicity/cli_data.py:702
-#: ../duplicity/cli_data.py:906
+#: ../duplicity/cli_data.py:381 ../duplicity/cli_data.py:708
+#: ../duplicity/cli_data.py:912
 msgid "gpg-key-id"
 msgstr "gpg-key-id"
 
@@ -528,180 +520,176 @@ msgstr "gpg-key-id"
 #. matching one or more files, as described in the documentation.
 #. Example:
 #. --exclude <shell_pattern>
-#: ../duplicity/cli_data.py:212 ../duplicity/cli_data.py:403
-#: ../duplicity/cli_data.py:945
+#: ../duplicity/cli_data.py:212 ../duplicity/cli_data.py:409
+#: ../duplicity/cli_data.py:951
 msgid "shell_pattern"
 msgstr "μοτίβο_κελύφους"
 
 #. Used in usage help to represent the name of a file. Example:
 #. --log-file <filename>
 #: ../duplicity/cli_data.py:224 ../duplicity/cli_data.py:230
-#: ../duplicity/cli_data.py:291 ../duplicity/cli_data.py:409
-#: ../duplicity/cli_data.py:903
+#: ../duplicity/cli_data.py:291 ../duplicity/cli_data.py:415
+#: ../duplicity/cli_data.py:909
 msgid "filename"
 msgstr "όνομα αρχείου"
 
 #. Used in usage help to represent a time spec for a previous
 #. point in time, as described in the documentation. Example:
 #. duplicity remove-older-than time [options] target_url
-#: ../duplicity/cli_data.py:236 ../duplicity/cli_data.py:577
-#: ../duplicity/cli_data.py:971
+#: ../duplicity/cli_data.py:236 ../duplicity/cli_data.py:352
+#: ../duplicity/cli_data.py:583 ../duplicity/cli_data.py:977
 msgid "time"
 msgstr "ώρα"
 
-#: ../duplicity/cli_data.py:249 ../duplicity/cli_data.py:415
+#: ../duplicity/cli_data.py:249 ../duplicity/cli_data.py:421
 msgid "regex"
 msgstr "regex"
 
-#: ../duplicity/cli_data.py:352
-msgid "interval"
-msgstr "διάστημα"
-
-#: ../duplicity/cli_data.py:398
+#: ../duplicity/cli_data.py:404
 msgid "imap_mailbox"
 msgstr "imap_mailbox"
 
-#: ../duplicity/cli_data.py:423
+#: ../duplicity/cli_data.py:429
 msgid "If set, an extra file with statistics in json format will be stored with each backup. It includes the statistics printed out on stdout by default. With 'collection-status' it returs these stats."
 msgstr "Αν οριστεί, ένα επιπλέον αρχείο με στατιστικά σε μορφή json θα αποθηκευτεί με κάθε αντίγραφο ασφαλείας. Περιλαμβάνει τα στατιστικά στοιχεία που εκτυπώνονται στο stdout από προεπιλογή. Με την «κατάσταση συλλογής» επιστρέφει αυτά τα στατιστικά."
 
-#: ../duplicity/cli_data.py:431
+#: ../duplicity/cli_data.py:437
 msgid "file_descriptor"
 msgstr "file_descriptor"
 
-#: ../duplicity/cli_data.py:438
+#: ../duplicity/cli_data.py:444
 msgid "log_filename"
 msgstr "όνομα αρχείου καταγραφής"
 
-#: ../duplicity/cli_data.py:477
+#: ../duplicity/cli_data.py:483
 msgid "backup name"
 msgstr "όνομα αντιγράφου ασφαλείας"
 
-#: ../duplicity/cli_data.py:594
+#: ../duplicity/cli_data.py:600
 msgid "s3_endpoint_url"
 msgstr "s3_endpoint_url"
 
-#: ../duplicity/cli_data.py:662
+#: ../duplicity/cli_data.py:668
 msgid "s3_kms_key_id"
 msgstr "s3_kms_key_id"
 
-#: ../duplicity/cli_data.py:668
+#: ../duplicity/cli_data.py:674
 msgid "s3_kms_grant"
 msgstr "s3_kms_επιχορήγηση"
 
-#: ../duplicity/cli_data.py:674
+#: ../duplicity/cli_data.py:680
 msgid "s3_region_name"
 msgstr "s3_περιοχή_όνομα"
 
-#: ../duplicity/cli_data.py:680
+#: ../duplicity/cli_data.py:686
 msgid "policy"
 msgstr "πολιτική"
 
 #. noun
-#: ../duplicity/cli_data.py:685 ../duplicity/cli_data.py:690
-#: ../duplicity/cli_data.py:892
+#: ../duplicity/cli_data.py:691 ../duplicity/cli_data.py:696
+#: ../duplicity/cli_data.py:898
 msgid "command"
 msgstr "εντολή"
 
-#: ../duplicity/cli_data.py:730
+#: ../duplicity/cli_data.py:736
 msgid "pem formatted bundle of certificate authorities"
 msgstr "δέσμη των αρχών έκδοσης πιστοποιητικών με μορφότυπο pem"
 
-#: ../duplicity/cli_data.py:735
+#: ../duplicity/cli_data.py:741
 msgid "path to a folder with certificate authority files"
 msgstr "διαδρομή προς ένα φάκελο με αρχεία αρχής πιστοποίησης"
 
 #. abbreviation for "character" (noun)
-#: ../duplicity/cli_data.py:757 ../duplicity/cli_data.py:890
+#: ../duplicity/cli_data.py:763 ../duplicity/cli_data.py:896
 msgid "char"
 msgstr "χαρακτήρας"
 
-#: ../duplicity/cli_data.py:770
+#: ../duplicity/cli_data.py:776
 msgid "verb"
 msgstr "ρήμα"
 
-#: ../duplicity/cli_data.py:788
+#: ../duplicity/cli_data.py:794
 msgid "extra headers for Webdav, like 'Cookie,name=value'"
 msgstr "επιπλέον κεφαλίδες για το Webdav, όπως 'Cookie,name=value'"
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other_host[:port]//absolute_path
-#: ../duplicity/cli_data.py:881
+#: ../duplicity/cli_data.py:887
 msgid "absolute_path"
 msgstr "απόλυτη_διαδρομή"
 
 #. Used in usage help. Example:
 #. tahoe://alias/some_dir
-#: ../duplicity/cli_data.py:884
+#: ../duplicity/cli_data.py:890
 msgid "alias"
 msgstr "alias"
 
 #. Used in help to represent a "bucket name" for Amazon Web
 #. Services' Simple Storage Service (S3). Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/cli_data.py:888
+#: ../duplicity/cli_data.py:894
 msgid "bucket_name"
 msgstr "όνομα bucket_name"
 
 #. Used in usage help to represent the name of a container in
 #. Amazon Web Services' Cloudfront. Example:
 #. cf+http://container_name
-#: ../duplicity/cli_data.py:896
+#: ../duplicity/cli_data.py:902
 msgid "container_name"
 msgstr "όνομα_εμπορευματοκιβωτίου"
 
 #. noun
-#: ../duplicity/cli_data.py:898
+#: ../duplicity/cli_data.py:904
 msgid "count"
 msgstr "υπολογισμός"
 
 #. Used in usage help to represent the name of a file directory
-#: ../duplicity/cli_data.py:900
+#: ../duplicity/cli_data.py:906
 msgid "directory"
 msgstr "κατάλογος"
 
 #. Used in usage help, e.g. to represent the name of a code
 #. module. Example:
 #. rsync://user[:password]@other.host[:port]::/module/some_dir
-#: ../duplicity/cli_data.py:910
+#: ../duplicity/cli_data.py:916
 msgid "module"
 msgstr "ενότητα"
 
 #. Used in usage help to represent an internet hostname. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:921
+#: ../duplicity/cli_data.py:927
 msgid "other.host"
 msgstr "other.host"
 
 #. Used in usage help. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:924
+#: ../duplicity/cli_data.py:930
 msgid "password"
 msgstr "κωδικός πρόσβασης"
 
 #. Used in usage help to represent a TCP port number. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:930
+#: ../duplicity/cli_data.py:936
 msgid "port"
 msgstr "θύρα"
 
 #. Used in usage help. This represents a string to be used as a
 #. prefix to names for backup files created by Duplicity. Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/cli_data.py:934
+#: ../duplicity/cli_data.py:940
 msgid "prefix"
 msgstr "πρόθεμα"
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other.host[:port]/relative_path
-#: ../duplicity/cli_data.py:937
+#: ../duplicity/cli_data.py:943
 msgid "relative_path"
 msgstr "σχετική_διαδρομή"
 
 #. Used in usage help to represent the name of a single file
 #. directory or a Unix-style path to a directory. Example:
 #. file:///some_dir
-#: ../duplicity/cli_data.py:949
+#: ../duplicity/cli_data.py:955
 msgid "some_dir"
 msgstr "κάποιος_dir"
 
@@ -709,14 +697,14 @@ msgstr "κάποιος_dir"
 #. directory or a Unix-style path to a directory where files will be
 #. coming FROM. Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:954
+#: ../duplicity/cli_data.py:960
 msgid "source_path"
 msgstr "διαδρομή_πηγής"
 
 #. Used in usage help to represent a URL files will be coming
 #. FROM. Example:
 #. duplicity [restore] [options] source_url target_dir
-#: ../duplicity/cli_data.py:958
+#: ../duplicity/cli_data.py:964
 msgid "source_url"
 msgstr "source_url"
 
@@ -724,42 +712,42 @@ msgstr "source_url"
 #. directory or a Unix-style path to a directory. where files will be
 #. going TO. Example:
 #. duplicity [restore] [options] source_url target_dir
-#: ../duplicity/cli_data.py:963
+#: ../duplicity/cli_data.py:969
 msgid "target_dir"
 msgstr "target_dir"
 
 #. Used in usage help to represent a URL files will be going TO.
 #. Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:967
+#: ../duplicity/cli_data.py:973
 msgid "target_url"
 msgstr "target_url"
 
 #. Used in usage help to represent a user name (i.e. login).
 #. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:975
+#: ../duplicity/cli_data.py:981
 msgid "user"
 msgstr "χρήστης"
 
 #. account id for b2. Example: b2://account_id@bucket/
-#: ../duplicity/cli_data.py:977
+#: ../duplicity/cli_data.py:983
 msgid "account_id"
 msgstr "id"
 
 #. application_key for b2.
 #. Example: b2://account_id:application_key@bucket/
-#: ../duplicity/cli_data.py:980
+#: ../duplicity/cli_data.py:986
 msgid "application_key"
 msgstr "κλειδί_εφαρμογή"
 
 #. remote name for rclone.
 #. Example: rclone://remote:/some_dir
-#: ../duplicity/cli_data.py:983 ../duplicity/dup_collections.py:565
+#: ../duplicity/cli_data.py:989 ../duplicity/dup_collections.py:564
 msgid "remote"
 msgstr "απομακρυσμένο"
 
-#: ../duplicity/cli_data.py:987
+#: ../duplicity/cli_data.py:993
 msgid "Backends and their URL formats:"
 msgstr "Υποστηρικτικά και τις μορφές URL τους:"
 
@@ -771,26 +759,6 @@ msgstr "Δεν βρέθηκε καμία έγκυρη ενέργεια. Θα σ�
 msgid "No valid action found. Will imply 'restore' because url source was given and target is a local path."
 msgstr "Δεν βρέθηκε καμία έγκυρη ενέργεια. Θα υπονοεί 'επαναφορά' επειδή δόθηκε η πηγή url και ο στόχος είναι μια τοπική διαδρομή."
 
-#: ../duplicity/cli_main.py:166
-#, python-brace-format
-msgid "Invalid '{remainder[0]}' action and cannot be implied from the "
-msgstr "Μη έγκυρη ενέργεια '{remainder[0]}' και δεν μπορεί να υπονοηθεί από την "
-
-#: ../duplicity/cli_main.py:266
-#, python-brace-format
-msgid "GPG binary is {config.gpg_binary}, version {gpg_version}"
-msgstr ""
-
-#: ../duplicity/cli_main.py:315
-#, python-brace-format
-msgid "Using archive dir: {config.archive_dir_path.uc_name}"
-msgstr ""
-
-#: ../duplicity/cli_main.py:316
-#, python-brace-format
-msgid "Using backup name: {config.backup_name}"
-msgstr ""
-
 #: ../duplicity/cli_util.py:45
 msgid "Enter 'duplicity --help' for help screen."
 msgstr "Πληκτρολογήστε το 'duplicity --help' για την οθόνη βοήθειας."
@@ -801,67 +769,12 @@ msgid "Running in 'ignore errors' mode due to --ignore-errors.\n"
 msgstr "Εκτέλεση σε λειτουργία 'αγνόησε σφάλματα' λόγω -- αγνοήσεων-σφαλμάτων.\n"
 "Παρακαλώ επανεξετάστε αν αυτό δεν προοριζόταν"
 
-#: ../duplicity/cli_util.py:170
-msgid "'{val}' is not an int: {str(e)}"
-msgstr "Το '{val}' δεν είναι int: {str( e)}"
-
-#: ../duplicity/cli_util.py:184
-#, python-brace-format
-msgid "'{val} is not a single character."
-msgstr "'{val} δεν είναι ένας μοναδικός χαρακτήρας."
-
-#: ../duplicity/cli_util.py:211
-#, python-brace-format
-msgid "Source should be pathname, not url.  Got '{val}' instead."
-msgstr "Η πηγή πρέπει να είναι όνομα διαδρομής, όχι url. Έχεις '{val}' αντ 'αυτού."
-
-#: ../duplicity/cli_util.py:213
-#, python-brace-format
-msgid "Argument source_path '{val}' does not exist."
-msgstr "Argument source_path '{val}' δεν υπάρχει."
-
-#: ../duplicity/cli_util.py:219
-#, python-brace-format
-msgid "Source should be url, not directory.  Got '{val}' instead."
-msgstr "Η πηγή πρέπει να είναι url, όχι κατάλογος. Έχεις '{val}' αντ 'αυτού."
-
-#: ../duplicity/cli_util.py:225
-#, python-brace-format
-msgid "Target should be directory, not url.  Got '{val}' instead."
-msgstr "Ο στόχος πρέπει να είναι κατάλογος, όχι url. Έχεις '{val}' αντ 'αυτού."
-
-#: ../duplicity/cli_util.py:230
-msgid "Unable to create target dir '{val}': {str(e)}"
-msgstr "Αδυναμία δημιουργίας dir προορισμού '{val}': {str(e)}"
-
-#: ../duplicity/cli_util.py:236
-#, python-brace-format
-msgid "Target should be url, not directory.  Got '{val}' instead."
-msgstr "Ο στόχος πρέπει να είναι url, όχι κατάλογος. Έχεις '{val}' αντ 'αυτού."
-
 #: ../duplicity/cli_util.py:281
 msgid "Verbosity must be one of: digit [0-9], character [ewnid],\n"
 "or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
 "The default is 3 (Notice).  It is strongly recommended\n"
 "that verbosity level is set at 2 (Warning) or higher."
 msgstr ""
-
-#: ../duplicity/cli_util.py:425
-#, python-brace-format
-msgid "Specified archive directory '{archive_dir_path.uc_name}' is not a directory"
-msgstr "Ο καθορισμένος κατάλογος αρχειοθήκης '{archive_dir_path.uc_name}' δεν είναι κατάλογος"
-
-#: ../duplicity/cli_util.py:434
-msgid "Encrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
-msgstr "Κρυπτογράφηση κλειδί θα πρέπει να είναι μια συμβολοσειρά 8, 16 ή 40 hex χαρακτήρων, όπως «AA0E73D2».\n"
-
-#: ../duplicity/cli_util.py:454
-msgid "Hidden dncrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
-msgstr "Κρυφό κλειδί dncrypt θα πρέπει να είναι μια συμβολοσειρά 8, 16, ή 40 δεκαεξαδικό χαρακτήρων όπως το 'AA0E73D2'.\n"
-
-#: ../duplicity/cli_util.py:468
-msgid "Sign key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
-msgstr "Το κλειδί υπογραφής πρέπει να είναι μια συμβολοσειρά 8, 16 ή 40 χαρακτήρων δεκαεξαδικής σειράς, όπως «AA0E73D2».\n"
 
 #: ../duplicity/diffdir.py:105 ../duplicity/diffdir.py:404
 #, python-format
@@ -893,527 +806,526 @@ msgstr "Σύγκριση %s και %s"
 msgid "D %s"
 msgstr "D %s"
 
-#: ../duplicity/dup_collections.py:200 ../duplicity/dup_collections.py:209
+#: ../duplicity/dup_collections.py:199 ../duplicity/dup_collections.py:208
 #, python-format
 msgid "BackupSet.delete: missing %s"
 msgstr "BackupSet.delete: λείπει %s"
 
-#: ../duplicity/dup_collections.py:235
+#: ../duplicity/dup_collections.py:234
 msgid "Fatal Error: No manifests found for most recent backup"
 msgstr "Ανεπανόρθωτο σφάλμα: Δεν βρέθηκαν εκδηλώσεις για τα πιο πρόσφατα αντίγραφα ασφαλείας"
 
-#: ../duplicity/dup_collections.py:248
+#: ../duplicity/dup_collections.py:247
 msgid "Fatal Error: Remote manifest does not match local one.  Either the remote backup set or the local archive directory has been corrupted."
 msgstr "Μοιραίο σφάλμα: Η απομακρυσμένη διακήρυξη δεν ταιριάζει με την τοπική. Είτε το απομακρυσμένο αντίγραφο ασφαλείας είτε ο τοπικός φάκελος αρχειοθήκης έχει καταστραφεί."
 
-#: ../duplicity/dup_collections.py:256
+#: ../duplicity/dup_collections.py:255
 #, python-format
 msgid "Error processing remote manifest (%s): %s"
 msgstr "Σφάλμα επεξεργασίας απομακρυσμένου δηλωτικού (%s): %s"
 
-#: ../duplicity/dup_collections.py:265
+#: ../duplicity/dup_collections.py:264
 msgid "Fatal Error: Neither remote nor local manifest is readable."
 msgstr "Ανεπανόρθωτο σφάλμα: Ούτε το απομακρυσμένο ούτε το τοπικό δηλωτικό δεν είναι αναγνώσιμο."
 
-#: ../duplicity/dup_collections.py:276
+#: ../duplicity/dup_collections.py:275
 #, python-format
 msgid "Processing local manifest %s (%s)"
 msgstr "Επεξεργασία τοπικού δηλωτικού %s (%s)"
 
-#: ../duplicity/dup_collections.py:291
-msgid "Error processing remote file ({os.fsdecode(remote_file)}): {util.uexc(message)}"
-msgstr "Σφάλμα επεξεργασίας απομακρυσμένου αρχείου ({os.fsdecode(remote_file)}): {util.uexc(message)}"
-
-#: ../duplicity/dup_collections.py:293
-msgid "Processing remote file {os.fsdecode(remote_file)} ({len(remote_file_buffer)})"
-msgstr "Επεξεργασία απομακρυσμένου αρχείου {os.fsdecode(remote_file)} ({len(remote_file_buffer)})"
-
-#: ../duplicity/dup_collections.py:311
+#: ../duplicity/dup_collections.py:310
 msgid "No Jsonstat file found, return empty."
 msgstr ""
 
-#: ../duplicity/dup_collections.py:404
+#: ../duplicity/dup_collections.py:403
 msgid "Preferring Backupset over previous one!"
 msgstr "Προτιμώντας Backupset σε σχέση με το προηγούμενο!"
 
-#: ../duplicity/dup_collections.py:408
+#: ../duplicity/dup_collections.py:407
 #, python-format
 msgid "Ignoring incremental Backupset (start_time: %s; needed: %s)"
 msgstr "Αγνόηση στοιχειώδους αντιγράφου ασφαλείας (start_time: %s; απαιτείται: %s)"
 
-#: ../duplicity/dup_collections.py:417
+#: ../duplicity/dup_collections.py:416
 #, python-format
 msgid "Added incremental Backupset (start_time: %s / end_time: %s)"
 msgstr "Προστέθηκε οριακό Αντίγραφο Ασφαλείας (έναρξη_ώρα: %s / end_time: %s)"
 
-#: ../duplicity/dup_collections.py:490
+#: ../duplicity/dup_collections.py:489
 msgid "Chain start time: "
 msgstr "Ώρα έναρξης αλυσίδας: "
 
-#: ../duplicity/dup_collections.py:491
+#: ../duplicity/dup_collections.py:490
 msgid "Chain end time: "
 msgstr "Ώρα λήξης αλυσίδας: "
 
-#: ../duplicity/dup_collections.py:492
+#: ../duplicity/dup_collections.py:491
 #, python-format
 msgid "Number of contained backup sets: %d"
 msgstr "Αριθμός περιεχόμενων συνόλων αντιγράφων ασφαλείας: %d"
 
-#: ../duplicity/dup_collections.py:493
+#: ../duplicity/dup_collections.py:492
 #, python-format
 msgid "Total number of contained volumes: %d"
 msgstr "Συνολικός αριθμός περιορισμένων όγκων: %d"
 
-#: ../duplicity/dup_collections.py:494 ../duplicity/dup_collections.py:1301
+#: ../duplicity/dup_collections.py:493 ../duplicity/dup_collections.py:1299
 msgid "Type of backup set:"
 msgstr "Είδος αντιγράφου ασφαλείας:"
 
-#: ../duplicity/dup_collections.py:494 ../duplicity/dup_collections.py:1301
+#: ../duplicity/dup_collections.py:493 ../duplicity/dup_collections.py:1299
 msgid "Time:"
 msgstr "Ώρα:"
 
-#: ../duplicity/dup_collections.py:494
+#: ../duplicity/dup_collections.py:493
 msgid "Num volumes:"
 msgstr "Αριθμός όγκων:"
 
-#: ../duplicity/dup_collections.py:499 ../duplicity/dup_collections.py:1308
+#: ../duplicity/dup_collections.py:498 ../duplicity/dup_collections.py:1306
 msgid "Full"
 msgstr "Πλήρες"
 
-#: ../duplicity/dup_collections.py:502 ../duplicity/dup_collections.py:1310
+#: ../duplicity/dup_collections.py:501 ../duplicity/dup_collections.py:1308
 msgid "Incremental"
 msgstr "Βηματικό"
 
-#: ../duplicity/dup_collections.py:563
+#: ../duplicity/dup_collections.py:562
 msgid "local"
 msgstr "τοπικό"
 
-#: ../duplicity/dup_collections.py:726
+#: ../duplicity/dup_collections.py:724
 msgid "Collection Status"
 msgstr "Κατάσταση Συλλογής"
 
-#: ../duplicity/dup_collections.py:728
+#: ../duplicity/dup_collections.py:726
 #, python-format
 msgid "Connecting with backend: %s"
 msgstr "Σύνδεση με σύστημα υποστήριξης: %s"
 
-#: ../duplicity/dup_collections.py:729
+#: ../duplicity/dup_collections.py:727
 #, python-format
 msgid "Archive dir: %s"
 msgstr "Συρραφή αρχειοθέτησης: %s"
 
-#: ../duplicity/dup_collections.py:732
+#: ../duplicity/dup_collections.py:730
 #, python-format
 msgid "Found %d secondary backup chain(s)."
 msgstr "Βρέθηκαν %d δευτερεύουσες αλυσίδες αντιγράφων ασφαλείας."
 
-#: ../duplicity/dup_collections.py:734
+#: ../duplicity/dup_collections.py:732
 #, python-format
 msgid "Secondary chain %d of %d:"
 msgstr "Δευτερεύουσα αλυσίδα %d %d:"
 
-#: ../duplicity/dup_collections.py:739
+#: ../duplicity/dup_collections.py:737
 msgid "Found primary backup chain with matching signature chain:"
 msgstr "Βρέθηκε η κύρια αλυσίδα αντιγράφων ασφαλείας με την αντίστοιχη αλυσίδα υπογραφών:"
 
-#: ../duplicity/dup_collections.py:742
+#: ../duplicity/dup_collections.py:740
 msgid "No backup chains with active signatures found"
 msgstr "Δεν βρέθηκαν εφεδρικές αλυσίδες με ενεργές υπογραφές"
 
-#: ../duplicity/dup_collections.py:745
+#: ../duplicity/dup_collections.py:743
 #, python-format
 msgid "Also found %d backup set(s) not part of any chain,"
 msgstr "Βρέθηκαν επίσης %d τα σύνολα αντιγράφων ασφαλείας δεν αποτελούν μέρος οποιασδήποτε αλυσίδας,"
 
-#: ../duplicity/dup_collections.py:746
+#: ../duplicity/dup_collections.py:744
 #, python-format
 msgid "and %d incomplete backup set(s)."
 msgstr "και %d ελλιπές σετ αντιγράφων ασφαλείας."
 
 #. "cleanup" is a hard-coded command, so do not translate it
-#: ../duplicity/dup_collections.py:748
+#: ../duplicity/dup_collections.py:746
 msgid "These may be deleted by running duplicity with the \"cleanup\" command."
 msgstr "Αυτά μπορεί να διαγραφούν εκτελώντας διπλή εντολή με την εντολή \"εκκαθάρισης\"."
 
-#: ../duplicity/dup_collections.py:750
+#: ../duplicity/dup_collections.py:748
 msgid "No orphaned or incomplete backup sets found."
 msgstr "Δεν βρέθηκαν ορφανά ή ελλιπή σύνολα αντιγράφων ασφαλείας."
 
-#: ../duplicity/dup_collections.py:766
+#: ../duplicity/dup_collections.py:764
 #, python-format
 msgid "%d file(s) exists on backend"
 msgstr "%d αρχείο(α) υπάρχει στο σύστημα υποστήριξης"
 
-#: ../duplicity/dup_collections.py:770
+#: ../duplicity/dup_collections.py:768
 #, python-format
 msgid "%d file(s) exist in cache"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:824
+#: ../duplicity/dup_collections.py:822
 msgid "Warning, discarding last backup set, because of missing signature file."
 msgstr "Προειδοποίηση, απόρριψη του τελευταίου αντιγράφου ασφαλείας, λόγω του ελλείποντος αρχείου υπογραφής."
 
-#: ../duplicity/dup_collections.py:847
+#: ../duplicity/dup_collections.py:845
 msgid "Warning, found the following local orphaned signature file(s):"
 msgstr "Προειδοποίηση, βρέθηκαν τα ακόλουθα τοπικά ορφανά αρχεία υπογραφής:"
 
-#: ../duplicity/dup_collections.py:855
+#: ../duplicity/dup_collections.py:853
 msgid "Warning, found the following remote orphaned signature file(s):"
 msgstr "Προειδοποίηση, βρέθηκαν τα ακόλουθα απομακρυσμένα ορφανά αρχεία υπογραφής:"
 
-#: ../duplicity/dup_collections.py:863
+#: ../duplicity/dup_collections.py:861
 msgid "Warning, found signatures but no corresponding backup files"
 msgstr "Προειδοποίηση, βρέθηκαν υπογραφές αλλά δεν υπάρχουν αντίστοιχα αρχεία αντιγράφων ασφαλείας"
 
-#: ../duplicity/dup_collections.py:869
+#: ../duplicity/dup_collections.py:867
 msgid "Warning, found incomplete backup sets, probably left from aborted session"
 msgstr "Προειδοποίηση, βρέθηκε ελλιπής δημιουργία αντιγράφων ασφαλείας, πιθανώς απέμεινε από την ακυρωμένη συνεδρία"
 
-#: ../duplicity/dup_collections.py:875
+#: ../duplicity/dup_collections.py:873
 msgid "Warning, found the following orphaned backup file(s):"
 msgstr "Προειδοποίηση, βρέθηκαν τα ακόλουθα ορφανά αρχεία αντιγράφων ασφαλείας:"
 
-#: ../duplicity/dup_collections.py:890
+#: ../duplicity/dup_collections.py:888
 #, python-format
 msgid "Extracting backup chains from list of files: %s"
 msgstr "Εξαγωγή αλυσίδων αντιγράφων ασφαλείας από λίστα αρχείων: %s"
 
-#: ../duplicity/dup_collections.py:901
+#: ../duplicity/dup_collections.py:899
 #, python-format
 msgid "File %s is part of known set"
 msgstr "Το αρχείο %s είναι μέρος του γνωστού σετ"
 
-#: ../duplicity/dup_collections.py:904
+#: ../duplicity/dup_collections.py:902
 #, python-format
 msgid "File %s is not part of a known set; creating new set"
 msgstr "Το αρχείο %s δεν αποτελεί μέρος ενός γνωστού σετ, δημιουργώντας νέο σετ"
 
-#: ../duplicity/dup_collections.py:909
+#: ../duplicity/dup_collections.py:907
 #, python-format
 msgid "Ignoring file (rejected by backup set) '%s'"
 msgstr "Αγνόηση αρχείου (απορρίφθηκε από το σύνολο αντιγράφων ασφαλείας) '%s'"
 
-#: ../duplicity/dup_collections.py:925
+#: ../duplicity/dup_collections.py:923
 #, python-format
 msgid "Found backup chain %s"
 msgstr "Βρέθηκε αλυσίδα αντιγράφων ασφαλείας %s"
 
-#: ../duplicity/dup_collections.py:930
+#: ../duplicity/dup_collections.py:928
 #, python-format
 msgid "Added set %s to pre-existing chain %s"
 msgstr "Προστέθηκε %s σε προϋπάρχουσα αλυσίδα %s"
 
-#: ../duplicity/dup_collections.py:933
+#: ../duplicity/dup_collections.py:931
 #, python-format
 msgid "Found orphaned set %s"
 msgstr "Βρέθηκε ορφανά σετ %s"
 
-#: ../duplicity/dup_collections.py:1081
+#: ../duplicity/dup_collections.py:1079
 #, python-format
 msgid "No signature chain for the requested time. Using oldest available chain, starting at time %s."
 msgstr "Δεν υπάρχει αλυσίδα υπογραφής για το χρόνο που ζητήθηκε. Χρησιμοποιώντας την παλαιότερη διαθέσιμη αλυσίδα, ξεκινώντας από τη στιγμή %s."
 
-#: ../duplicity/dup_collections.py:1299
+#: ../duplicity/dup_collections.py:1297
 #, python-format
 msgid "File: %s"
 msgstr "Αρχείο: %s"
 
-#: ../duplicity/dup_collections.py:1300
+#: ../duplicity/dup_collections.py:1298
 #, python-format
 msgid "Total number of backup: %d"
 msgstr "Συνολικός αριθμός αντιγράφων ασφαλείας: %d"
 
-#: ../duplicity/dup_collections.py:1301 ../duplicity/dup_collections.py:1337
+#: ../duplicity/dup_collections.py:1299 ../duplicity/dup_collections.py:1335
 msgid "Type of file change:"
 msgstr "Τύπος αλλαγής αρχείου:"
 
-#: ../duplicity/dup_collections.py:1335
+#: ../duplicity/dup_collections.py:1333
 #, python-format
 msgid " Backup set time: %s"
 msgstr " Ώρα δημιουργίας αντιγράφων ασφαλείας: %s"
 
-#: ../duplicity/dup_collections.py:1336
+#: ../duplicity/dup_collections.py:1334
 #, python-format
 msgid "Total number of changes: %d"
 msgstr "Συνολικός αριθμός αλλαγών: %d"
 
-#: ../duplicity/dup_collections.py:1337
+#: ../duplicity/dup_collections.py:1335
 msgid "File:"
 msgstr "Αρχείο:"
 
-#: ../duplicity/dup_main.py:109
+#: ../duplicity/dup_main.py:111
 msgid "Reuse configured PASSPHRASE as SIGN_PASSPHRASE"
 msgstr "Επαναχρησιμοποίηση ρυθμισμένου PASSPHRASE ως SIGN_PASSPHRASE"
 
-#: ../duplicity/dup_main.py:120
+#: ../duplicity/dup_main.py:122
 msgid "Reuse configured SIGN_PASSPHRASE as PASSPHRASE"
 msgstr "Επαναχρησιμοποίηση του ρυθμισμένου SIGN_PASSPHRASE ως PASSPHRASE"
 
-#: ../duplicity/dup_main.py:155
+#: ../duplicity/dup_main.py:160
+msgid "Skipping passphrase input for full backup with encryption keys."
+msgstr ""
+
+#: ../duplicity/dup_main.py:165
 msgid "PASSPHRASE variable not set, asking user."
 msgstr "Η μεταβλητή PASSPHRASE δεν έχει οριστεί, ζητώντας από το χρήστη."
 
 #: ../duplicity/dup_main.py:180
+msgid "GnuPG passphrase for signing key:"
+msgstr ""
+
+#: ../duplicity/dup_main.py:185
+msgid "GnuPG passphrase for decryption:"
+msgstr ""
+
+#: ../duplicity/dup_main.py:190
 msgid "Retype passphrase for signing key to confirm: "
 msgstr "Πληκτρολογήστε ξανά τη φράση πρόσβασης για την υπογραφή του κλειδιού για επιβεβαίωση: "
 
-#: ../duplicity/dup_main.py:182
+#: ../duplicity/dup_main.py:192
 msgid "Retype passphrase for decryption to confirm: "
 msgstr "Πληκτρολογήστε ξανά τη φράση πρόσβασης για την αποκρυπτογράφηση για επιβεβαίωση: "
 
-#: ../duplicity/dup_main.py:186
+#: ../duplicity/dup_main.py:196
 msgid "First and second passphrases do not match!  Please try again."
 msgstr "Οι φράσεις πρώτου και δεύτερου κωδικού δεν ταιριάζουν! Παρακαλώ προσπαθήστε ξανά."
 
-#: ../duplicity/dup_main.py:197
+#: ../duplicity/dup_main.py:207
 msgid "Cannot use empty passphrase with symmetric encryption!  Please try again."
 msgstr "Αδυναμία χρήσης κενής φράσης πρόσβασης με συμμετρική κρυπτογράφηση! Παρακαλώ δοκιμάστε ξανά."
 
-#: ../duplicity/dup_main.py:257
+#: ../duplicity/dup_main.py:267
 #, python-format
 msgid "File %s complete in backup set.\n"
 "Continuing restart on file %s."
 msgstr "Το αρχείο %s ολοκληρώθηκε στο εφεδρικό σετ.\n"
 "Συνεχίζοντας την επανεκκίνηση στο αρχείο %s."
 
-#: ../duplicity/dup_main.py:267
+#: ../duplicity/dup_main.py:277
 #, python-format
 msgid "File %s missing in backup set.\n"
 "Continuing restart on file %s."
 msgstr "Το αρχείο %s λείπει από το αντίγραφο ασφαλείας.\n"
 "Συνεχίζοντας την επανεκκίνηση στο αρχείο %s."
 
-#: ../duplicity/dup_main.py:322
+#: ../duplicity/dup_main.py:332
 #, python-format
 msgid "File %s was corrupted during upload."
 msgstr "Το %s ήταν κατεστραμμένο κατά τη μεταφορά."
 
-#: ../duplicity/dup_main.py:352
+#: ../duplicity/dup_main.py:362
 msgid "Restarting backup, but current encryption settings do not match original settings"
 msgstr "Επανεκκίνηση αντιγράφων ασφαλείας, αλλά οι τρέχουσες ρυθμίσεις κρυπτογράφησης δεν ταιριάζουν με τις αρχικές ρυθμίσεις"
 
-#: ../duplicity/dup_main.py:375 ../duplicity/dup_main.py:511
+#: ../duplicity/dup_main.py:385 ../duplicity/dup_main.py:521
 #, python-format
 msgid "Processed volume %d"
 msgstr "Επεξεργασμένος όγκος %d"
 
-#: ../duplicity/dup_main.py:423
+#: ../duplicity/dup_main.py:433
 msgid "Skipping encryption validation due to glacier/deep storage"
 msgstr "Παράλειψη επικύρωσης κρυπτογράφησης λόγω παγετώνας/βαθιάς αποθήκευσης"
 
-#: ../duplicity/dup_main.py:427
+#: ../duplicity/dup_main.py:437
 #, python-format
 msgid "Restarting after volume %s, file %s, block %s"
 msgstr "Επανεκκίνηση μετά την ένταση %s, αρχείο %s, μπλοκ %s"
 
-#: ../duplicity/dup_main.py:479
+#: ../duplicity/dup_main.py:489
 msgid "Skipped volume upload, as effectivly nothing has changed"
 msgstr "Παράκαμψη φόρτισης τόμου, καθώς ουσιαστικά τίποτα δεν έχει αλλάξει"
 
-#: ../duplicity/dup_main.py:702
+#: ../duplicity/dup_main.py:712
 msgid "Fatal Error: Unable to start incremental backup.  Old signatures not found and incremental specified"
 msgstr "Ανεπανόρθωτο σφάλμα: Αδυναμία εκκίνησης στοιχειώδους αντιγράφου ασφαλείας. Δεν βρέθηκαν παλιές υπογραφές και καθορισμένες στοιχειώδεις"
 
-#: ../duplicity/dup_main.py:708
+#: ../duplicity/dup_main.py:718
 msgid "No signatures found, switching to full backup."
 msgstr "Δεν βρέθηκαν υπογραφές, μετάβαση σε πλήρη αντίγραφα ασφαλείας."
 
-#: ../duplicity/dup_main.py:722
+#: ../duplicity/dup_main.py:732
 msgid "Backup Statistics"
 msgstr "Στατιστικά αντιγράφων ασφαλείας"
 
-#: ../duplicity/dup_main.py:862
+#: ../duplicity/dup_main.py:872
 #, python-format
 msgid "%s not found in archive - no files restored."
 msgstr "Το %s δεν βρέθηκε στην αρχειοθήκη - δεν έγινε επαναφορά αρχείων."
 
-#: ../duplicity/dup_main.py:866
+#: ../duplicity/dup_main.py:876
 msgid "No files found in archive - nothing restored."
 msgstr "Δεν βρέθηκαν αρχεία στην αρχειοθήκη - τίποτα δεν αποκαταστάθηκε."
 
-#: ../duplicity/dup_main.py:904
+#: ../duplicity/dup_main.py:914
 #, python-format
 msgid "Processed volume %d of %d"
 msgstr "Επεξεργασμένος όγκος %d %d"
 
-#: ../duplicity/dup_main.py:947
+#: ../duplicity/dup_main.py:957
 #, python-format
 msgid "Invalid data - %s hash mismatch for file:"
 msgstr "Μη έγκυρα δεδομένα - Ασυμφωνία %s hash για το αρχείο:"
 
-#: ../duplicity/dup_main.py:949
+#: ../duplicity/dup_main.py:959
 #, python-format
 msgid "Calculated hash: %s"
 msgstr "Υπολογισμένο hash: %s"
 
-#: ../duplicity/dup_main.py:950
+#: ../duplicity/dup_main.py:960
 #, python-format
 msgid "Manifest hash: %s"
 msgstr "Κατακερματισμός εκδήλωσης: %s"
 
-#: ../duplicity/dup_main.py:957 ../duplicity/util.py:110
+#: ../duplicity/dup_main.py:967 ../duplicity/util.py:110
 #, python-format
 msgid "IGNORED_ERROR: Warning: ignoring error as requested: %s: %s"
 msgstr "IGNORED_ERROR: Προειδοποίηση: αγνοώντας το σφάλμα όπως ζητήθηκε: %s: %s"
 
-#: ../duplicity/dup_main.py:1004
+#: ../duplicity/dup_main.py:1014
 #, python-format
 msgid "Volume was signed by key %s, not %s"
 msgstr "Ο τόμος υπογράφηκε από το κλειδί %s, όχι %s"
 
-#: ../duplicity/dup_main.py:1036
+#: ../duplicity/dup_main.py:1046
 #, python-format
 msgid "Verify complete: %s, %s."
 msgstr "Η επαλήθευση ολοκληρώθηκε: %s, %s."
 
-#: ../duplicity/dup_main.py:1037
+#: ../duplicity/dup_main.py:1047
 #, python-format
 msgid "%d file(s) compared"
 msgstr ""
 
-#: ../duplicity/dup_main.py:1037
+#: ../duplicity/dup_main.py:1047
 #, python-format
 msgid "%d difference(s) found"
 msgstr "%d βρέθηκε διαφορά(ες)"
 
-#: ../duplicity/dup_main.py:1056
+#: ../duplicity/dup_main.py:1066
 msgid "No extraneous files found, nothing deleted in cleanup."
 msgstr "Δεν βρέθηκαν εξωγενή αρχεία, τίποτα δεν διαγράφηκε κατά τον καθαρισμό."
 
 #: ../duplicity/dup_main.py:1071
+msgid "Deleting these file(s) from backend:"
+msgstr ""
+
+#: ../duplicity/dup_main.py:1081
 msgid "Found the following file(s) to delete:"
 msgstr "Βρέθηκαν τα παρακάτω αρχεία για διαγραφή:"
 
-#: ../duplicity/dup_main.py:1075
+#: ../duplicity/dup_main.py:1085
 msgid "Run duplicity again with the --force option to actually delete."
 msgstr "Εκτελέστε ξανά διπλότυπη λειτουργία με την επιλογή --force για να διαγράψετε πραγματικά."
 
-#: ../duplicity/dup_main.py:1121
+#: ../duplicity/dup_main.py:1131
 msgid "There are backup set(s) at time(s):"
 msgstr "Υπάρχουν σύνολο(α) αντιγράφων ασφαλείας την (τις) ώρα(-ες):"
 
-#: ../duplicity/dup_main.py:1123
+#: ../duplicity/dup_main.py:1133
 msgid "Which can't be deleted because newer sets depend on them."
 msgstr "Ποια δεν μπορεί να διαγραφεί, επειδή τα νεότερα σετ εξαρτώνται από αυτά."
 
-#: ../duplicity/dup_main.py:1130
+#: ../duplicity/dup_main.py:1140
 msgid "Current active backup chain is older than specified time.  However, it will not be deleted.  To remove all your backups, manually purge the repository."
 msgstr "Η τρέχουσα ενεργή αλυσίδα αντιγράφων ασφαλείας είναι παλαιότερη από την καθορισμένη ώρα. Ωστόσο, δεν θα διαγραφεί. Για να καταργήσετε όλα τα αντίγραφα ασφαλείας, καθαρίστε χειροκίνητα το αποθετήριο."
 
-#: ../duplicity/dup_main.py:1148
+#: ../duplicity/dup_main.py:1158
 msgid "No old backup sets found, nothing deleted."
 msgstr "Δεν βρέθηκαν παλιά σύνολα αντιγράφων ασφαλείας, τίποτα δεν διαγράφηκε."
 
-#: ../duplicity/dup_main.py:1151
+#: ../duplicity/dup_main.py:1161
 msgid "Deleting backup chain(s) at time:"
 msgstr "Διαγραφή αλυσίδας(ών) αντιγράφων ασφαλείας ταυτόχρονα:"
 
-#: ../duplicity/dup_main.py:1160
+#: ../duplicity/dup_main.py:1170
 #, python-format
 msgid "Deleting any incremental signature chain rooted at %s"
 msgstr "Διαγραφή κάθε στοιχειώδους αλυσίδας υπογραφής ριζωμένη στο %s"
 
-#: ../duplicity/dup_main.py:1162
+#: ../duplicity/dup_main.py:1172
 #, python-format
 msgid "Deleting any incremental backup chain rooted at %s"
 msgstr "Διαγραφή κάθε αυξητικής αλυσίδας αντιγράφων ασφαλείας ριζωμένη στο %s"
 
-#: ../duplicity/dup_main.py:1165
+#: ../duplicity/dup_main.py:1175
 #, python-format
 msgid "Deleting complete signature chain %s"
 msgstr "Διαγραφή πλήρους αλυσίδας υπογραφής %s"
 
-#: ../duplicity/dup_main.py:1167
+#: ../duplicity/dup_main.py:1177
 #, python-format
 msgid "Deleting complete backup chain %s"
 msgstr "Διαγραφή πλήρους αντιγράφου ασφαλείας αλυσίδας %s"
 
-#: ../duplicity/dup_main.py:1174
+#: ../duplicity/dup_main.py:1184
 msgid "Found old backup chain(s) at the following time:"
 msgstr "Βρέθηκαν παλιές εφεδρικές αλυσίδες την ακόλουθη στιγμή:"
 
-#: ../duplicity/dup_main.py:1178
+#: ../duplicity/dup_main.py:1188
 msgid "Rerun command with --force option to actually delete."
 msgstr "Rerun εντολή με την επιλογή --force να διαγραφεί πραγματικά."
 
-#: ../duplicity/dup_main.py:1281
+#: ../duplicity/dup_main.py:1291
 #, python-format
 msgid "Deleting local %s (not authoritative at backend)."
 msgstr "Διαγραφή τοπικών %s (όχι έγκυρων στο σύστημα υποστήριξης)."
 
-#: ../duplicity/dup_main.py:1285
+#: ../duplicity/dup_main.py:1295
 #, python-format
 msgid "Unable to delete %s: %s"
 msgstr "Αδυναμία διαγραφής %s: %s"
 
-#: ../duplicity/dup_main.py:1319 ../duplicity/dup_temp.py:296
+#: ../duplicity/dup_main.py:1329 ../duplicity/dup_temp.py:296
 #, python-format
 msgid "Failed to read %s: %s"
 msgstr "Αποτυχία ανάγνωσης %s: %s"
 
-#: ../duplicity/dup_main.py:1331
+#: ../duplicity/dup_main.py:1341
 #, python-format
 msgid "Copying %s to local cache."
 msgstr "Αντιγραφή %s στην τοπική προσωρινή μνήμη."
 
-#: ../duplicity/dup_main.py:1379
+#: ../duplicity/dup_main.py:1389
 msgid "Local and Remote metadata are synchronized, no sync needed."
 msgstr "Τα τοπικά και απομακρυσμένα μεταδεδομένα συγχρονίζονται, δεν απαιτείται συγχρονισμός."
 
-#: ../duplicity/dup_main.py:1384
+#: ../duplicity/dup_main.py:1394
 msgid "Synchronizing remote metadata to local cache..."
 msgstr "Συγχρονισμός απομακρυσμένων μεταδεδομένων στην τοπική μνήμη..."
 
-#: ../duplicity/dup_main.py:1398
+#: ../duplicity/dup_main.py:1408
 msgid "Sync would copy the following from remote to local:"
 msgstr "Ο συγχρονισμός θα αντιγράψει τα ακόλουθα από απομακρυσμένο σε τοπικό:"
 
-#: ../duplicity/dup_main.py:1404
+#: ../duplicity/dup_main.py:1414
 msgid "Sync would remove the following spurious local files:"
 msgstr "Συγχρονισμός θα καταργήσει τα ακόλουθα παρασιτικά τοπικά αρχεία:"
 
-#: ../duplicity/dup_main.py:1450
+#: ../duplicity/dup_main.py:1460
 msgid "Unable to get free space on temp."
 msgstr "Δεν είναι δυνατή η λήψη ελεύθερου χώρου στον temp."
 
-#: ../duplicity/dup_main.py:1457
-msgid "Temp space has {freespace:,} available, backup needs approx {needspace:,}."
-msgstr ""
-
-#: ../duplicity/dup_main.py:1461
-msgid "Temp has {freespace:,} available, backup will use approx {needspace:,}."
-msgstr ""
-
-#: ../duplicity/dup_main.py:1468
+#: ../duplicity/dup_main.py:1478
 msgid "Unable to get max open files."
 msgstr "Δεν είναι δυνατή η λήψη μέγιστου ανοίγματος αρχείων."
 
-#: ../duplicity/dup_main.py:1473
-#, python-brace-format
-msgid "Max open files of {maxopen} is too low, should be >= 1024.\n"
+#: ../duplicity/dup_main.py:1484
+msgid "Use 'ulimit -n 1024' or higher to correct.\n"
 msgstr ""
 
-#: ../duplicity/dup_main.py:1528
+#: ../duplicity/dup_main.py:1539
 msgid "RESTART: The first volume failed to upload before termination.\n"
 "         Restart is impossible...starting backup from beginning."
 msgstr "RESTART: Ο πρώτος τόμος απέτυχε να φορτώσει πριν το τερματισμό.\n"
 "         Η επανεκκίνηση είναι αδύνατη... ξεκινώντας από την αρχή."
 
-#: ../duplicity/dup_main.py:1538
+#: ../duplicity/dup_main.py:1549
 #, python-format
 msgid "RESTART: Volumes %d to %d failed to upload before termination.\n"
 "         Restarting backup at volume %d."
 msgstr "RESTART: Οι τόμοι %d στο %d απέτυχαν να μεταφορτώσουν πριν το τερματισμό.\n"
 "         Επανεκκίνηση αντιγράφων ασφαλείας στο %d."
 
-#: ../duplicity/dup_main.py:1549
+#: ../duplicity/dup_main.py:1560
 #, python-format
 msgid "RESTART: Impossible backup state: manifest has %d vols, remote has %d vols.\n"
 "         Restart is impossible ... duplicity will clean off the last partial\n"
 "         backup then restart the backup from the beginning."
 msgstr ""
 
-#: ../duplicity/dup_main.py:1575
+#: ../duplicity/dup_main.py:1586
 msgid "                PYTHONOPTIMIZE in the environment causes duplicity to fail to\n"
 "                recognize its own backups.  Please remove PYTHONOPTIMIZE from\n"
 "                the environment and rerun the backup.\n\n"
@@ -1421,25 +1333,19 @@ msgid "                PYTHONOPTIMIZE in the environment causes duplicity to fai
 "                "
 msgstr ""
 
-#: ../duplicity/dup_main.py:1655
-#, python-brace-format
-msgid "Last {action} backup left a partial set, restarting."
-msgstr "Last {action} το αντίγραφο ασφαλείας άφησε ένα μερικό σύνολο, επανεκκίνηση."
-
-#: ../duplicity/dup_main.py:1659
-#, python-brace-format
-msgid "Cleaning up previous partial {action} backup set, restarting."
+#: ../duplicity/dup_main.py:1688
+msgid "Last full backup date:"
 msgstr ""
 
-#: ../duplicity/dup_main.py:1673
+#: ../duplicity/dup_main.py:1690
 msgid "Last full backup date: none"
 msgstr "Τελευταία ημερομηνία πλήρους αντιγράφου ασφαλείας: κανένα"
 
-#: ../duplicity/dup_main.py:1680
+#: ../duplicity/dup_main.py:1697
 msgid "Last full backup is too old, forcing full backup"
 msgstr "Το τελευταίο πλήρες αντίγραφο ασφαλείας είναι πολύ παλιό, αναγκάζοντας πλήρη αντίγραφα ασφαλείας"
 
-#: ../duplicity/dup_main.py:1736
+#: ../duplicity/dup_main.py:1753
 msgid "When using symmetric encryption, the signing passphrase must equal the encryption passphrase."
 msgstr "Όταν χρησιμοποιείτε συμμετρική κρυπτογράφηση, η φράση πρόσβασης υπογραφής πρέπει να ισούται με τη φράση πρόσβασης κρυπτογράφησης."
 
@@ -1470,11 +1376,6 @@ msgstr "Bad time string \"%s\"\n\n"
 "), ή συνηθισμένες ημερομηνίες όπως 2/4/1997 ή 2001-04-23\n"
 "(διάφοροι συνδυασμοί είναι αποδεκτοί, αλλά ο μήνας προηγείται πάντα\n"
 "την ημέρα)."
-
-#: ../duplicity/gpginterface.py:694
-#, python-brace-format
-msgid "GPG process {process.pid} terminated before wait()"
-msgstr "GPG διεργασία {process.pid} τερματίστηκε πριν από την αναμονή()"
 
 #: ../duplicity/lazy.py:349
 #, python-format
@@ -1521,10 +1422,6 @@ msgstr "Βρέθηκε τόμος δηλώσεων %s"
 #, python-format
 msgid "Found %s volumes in manifest"
 msgstr "Βρέθηκαν τόμοι %s στο δηλωτικό"
-
-#: ../duplicity/manifest.py:249
-msgid "Manifest file '{self.fh.base if self.fh else ''}' is corrupt: "
-msgstr "Το αρχείο δήλωσης '{self.fh.base if self.fh else ''}' είναι κατεστραμμένο: "
 
 #: ../duplicity/manifest.py:268
 msgid "Manifests not equal because different volume numbers"
@@ -1582,72 +1479,76 @@ msgstr "Εγγραφή %s τύπου %s"
 msgid "Warning: %s invalid devnums (0x%X), treating as (0, 0)."
 msgstr "Προειδοποίηση: %s μη έγκυροι devnums (0x%X), αντιμετωπίζοντας ως (0, 0)."
 
-#: ../duplicity/path.py:239 ../duplicity/path.py:299
+#: ../duplicity/path.py:235 ../duplicity/path.py:295
 #, python-format
 msgid "Warning: %s has negative mtime, treating as 0."
 msgstr "Προειδοποίηση: %s έχει αρνητικό χρόνο, αντιμετωπίζοντας ως 0."
 
-#: ../duplicity/path.py:372
+#: ../duplicity/path.py:359
+msgid "Difference found:"
+msgstr ""
+
+#: ../duplicity/path.py:368
 #, python-format
 msgid "New file %s"
 msgstr "Νέο αρχείο %s"
 
-#: ../duplicity/path.py:375
+#: ../duplicity/path.py:371
 #, python-format
 msgid "File %s is missing"
 msgstr "Λείπει το αρχείο %s"
 
-#: ../duplicity/path.py:378
+#: ../duplicity/path.py:374
 #, python-format
 msgid "File %%s has type %s, expected %s"
 msgstr "Το αρχείο %%s έχει τύπο %s, αναμένεται %s"
 
-#: ../duplicity/path.py:383 ../duplicity/path.py:412
+#: ../duplicity/path.py:379 ../duplicity/path.py:408
 #, python-format
 msgid "File %%s has permissions %s, expected %s"
 msgstr "Το αρχείο %%s έχει δικαιώματα %s, αναμένεται %s"
 
-#: ../duplicity/path.py:389
+#: ../duplicity/path.py:385
 #, python-format
 msgid "File %%s has mtime %s, expected %s"
 msgstr "Το αρχείο %%s έχει mtime %s, αναμένεται %s"
 
-#: ../duplicity/path.py:400
+#: ../duplicity/path.py:396
 #, python-format
 msgid "Data for file %s is different"
 msgstr "Τα δεδομένα για το αρχείο %s είναι διαφορετικά"
 
-#: ../duplicity/path.py:408
+#: ../duplicity/path.py:404
 #, python-format
 msgid "Symlink %%s points to %s, expected %s"
 msgstr "Symlink %%s points to %s, expected %s"
 
-#: ../duplicity/path.py:415
+#: ../duplicity/path.py:411
 #, python-format
 msgid "Device file %%s has numbers %s, expected %s"
 msgstr "Το αρχείο συσκευής %%s έχει αριθμούς %s, αναμένεται %s"
 
-#: ../duplicity/path.py:605
+#: ../duplicity/path.py:601
 #, python-format
 msgid "Making directory %s"
 msgstr "Δημιουργία καταλόγου %s"
 
-#: ../duplicity/path.py:615
+#: ../duplicity/path.py:611
 #, python-format
 msgid "Deleting %s"
 msgstr "Διαγραφή %s"
 
-#: ../duplicity/path.py:624
+#: ../duplicity/path.py:620
 #, python-format
 msgid "Touching %s"
 msgstr "Αγγίξτε %s"
 
-#: ../duplicity/path.py:632
+#: ../duplicity/path.py:628
 #, python-format
 msgid "Deleting tree %s"
 msgstr "Διαγραφή δέντρου %s"
 
-#: ../duplicity/robust.py:84
+#: ../duplicity/robust.py:85
 #, python-format
 msgid "Error listing directory %s"
 msgstr "Σφάλμα στην καταχώρηση καταλόγου %s"
@@ -1780,21 +1681,6 @@ msgstr "Σφυρηλάτηση προσωρινού αρχείου %s"
 #, python-format
 msgid "Attempt to forget unknown tempfile %s - this is probably a bug."
 msgstr "Προσπάθεια να ξεχάσετε άγνωστο tempfile %s - αυτό είναι πιθανώς ένα σφάλμα."
-
-#: ../duplicity/tempdir.py:281
-#, python-format
-msgid "Removing still remembered temporary file %s"
-msgstr "Αφαίρεση ακόμα θυμόμαστε το προσωρινό αρχείο %s"
-
-#: ../duplicity/tempdir.py:284
-#, python-format
-msgid "Cleanup of temporary file %s failed"
-msgstr "Η εκκαθάριση του προσωρινού αρχείου %s απέτυχε"
-
-#: ../duplicity/tempdir.py:290
-#, python-format
-msgid "Cleanup of temporary directory %s failed - this is probably a bug."
-msgstr "Η εκκαθάριση του προσωρινού καταλόγου %s απέτυχε - αυτό είναι πιθανώς ένα σφάλμα."
 
 #: ../duplicity/util.py:176
 #, python-format

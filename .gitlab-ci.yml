@@ -1,9 +1,9 @@
 # This file is part of duplicity.
 #
-# Copyright 2022 Nils Tekampe <nils@tekampe.org>,
-# Kenneth Loafman <kenneth@loafman.com>,
-# Aaron Whitehouse <code@whitehouse.kiwi.nz>,
-# Edgar Soldin <https://soldin.de>
+# Copyright 2022 Nils Tekampe
+# Copyright 2022 Kenneth Loafman
+# Copyright 2022 Aaron Whitehouse
+# Copyright 2022 Edgar Soldin
 #
 # Duplicity is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the
@@ -51,8 +51,11 @@ workflow:
         - export LC_ALL=C.UTF-8
         - apt-get update
         - apt-get install -y build-essential git intltool lftp librsync-dev
-                             libffi-dev libssl-dev openssl par2 rclone rdiff 
+                             libffi-dev libssl-dev openssl par2 rclone rdiff
                              tzdata
+        - python3 -m pip install -r requirements.txt
+        - python3 -m pip install -r requirements.dev
+        - python3 ./setup.py build_ext
 
 variables:
     # Cache local items
@@ -62,10 +65,6 @@ variables:
     # Signal we are running on GitLab CI
     NON_NATIVE: "true"
 
-#stages:
-#    - test
-#    - deploy
-
 default:
     interruptible: true
 
@@ -74,9 +73,6 @@ code:
     image: python:3.12
     stage: test
     script:
-        - python3 -m pip install -r requirements.txt
-        - python3 -m pip install -r requirements.dev
-        - python3 ./setup.py build_ext
         - pytest testing/test_code.py
     allow_failure: true
 
@@ -85,9 +81,6 @@ py39:
     image: python:3.9
     stage: test
     script:
-        - python3 -m pip install -r requirements.txt
-        - python3 -m pip install -r requirements.dev
-        - python3 ./setup.py build_ext
         - pytest testing/unit testing/functional
 
 py310:
@@ -95,9 +88,6 @@ py310:
     image: python:3.10
     stage: test
     script:
-        - python3 -m pip install -r requirements.txt
-        - python3 -m pip install -r requirements.dev
-        - python3 ./setup.py build_ext
         - pytest testing/unit testing/functional
 
 py311:
@@ -105,9 +95,6 @@ py311:
     image: python:3.11
     stage: test
     script:
-        - python3 -m pip install -r requirements.txt
-        - python3 -m pip install -r requirements.dev
-        - python3 ./setup.py build_ext
         - pytest testing/unit testing/functional
 
 py312:
@@ -115,9 +102,6 @@ py312:
     image: python:3.12
     stage: test
     script:
-        - python3 -m pip install -r requirements.txt
-        - python3 -m pip install -r requirements.dev
-        - python3 ./setup.py build_ext
         - pytest testing/unit testing/functional
 
 py313:
@@ -125,9 +109,13 @@ py313:
     image: python:3.13
     stage: test
     script:
-        - python3 -m pip install -r requirements.txt
-        - python3 -m pip install -r requirements.dev
-        - python3 ./setup.py build_ext
+        - pytest testing/unit testing/functional
+
+py314:
+    <<: *test-template
+    image: python:3.14-rc
+    stage: test
+    script:
         - pytest testing/unit testing/functional
     allow_failure: true
 

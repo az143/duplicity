@@ -1,6 +1,6 @@
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -227,7 +227,10 @@ def get_suffix(encrypted, gzipped):
     if encrypted:
         gzipped = False
     if encrypted:
-        suffix = b".gpg"
+        if config.use_gpgsm:
+            suffix = b".p7m"
+        else:
+            suffix = b".gpg"
     elif gzipped:
         suffix = b".gz"
     else:
@@ -493,7 +496,7 @@ def parse(filename):
         Set encryption and compression flags in ParseResults pr
         """
         pr.compressed = filename.endswith(b".z") or filename.endswith(b".gz")
-        pr.encrypted = filename.endswith(b".g") or filename.endswith(b".gpg")
+        pr.encrypted = filename.endswith(b".g") or filename.endswith(b".gpg") or filename.endswith(b".p7m")
 
     for check in (check_full, check_inc, check_sig, check_stat):
         pr = check()

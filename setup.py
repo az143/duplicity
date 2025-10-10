@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -42,7 +42,7 @@ if not ((3, 8) <= sys.version_info[:2]):
     print("Sorry, duplicity requires version 3.8 thru 3.13 of Python.", file=sys.stderr)
     sys.exit(1)
 
-Version: str = "3.0.4"
+Version: str = "3.0.5.1"
 reldate: str = time.strftime("%B %d, %Y", time.gmtime(int(os.environ.get("SOURCE_DATE_EPOCH", time.time()))))
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions

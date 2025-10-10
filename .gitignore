@@ -33,6 +33,5 @@ testfiles/
 testing/gnupg/S.*
 testing/gnupg/.gpg-v21-migrated
 testing/gnupg/random_seed
-testing/gnupg/private-keys-v1.d/
 venv*/
 wheelhouse/

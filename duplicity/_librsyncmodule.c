@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------- *
  *
- *   Copyright 2002 2003 Ben Escoto <ben@emerose.org>
- *   Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+ *   Copyright 2002 2003 Ben Escoto
+ *   Copyright 2007 Kenneth Loafman
  *
  *   This file is part of duplicity.
  *
@@ -469,10 +469,10 @@ moduleinit(void)
   #if PY_MAJOR_VERSION >= 3 && PY_MINOR_VERSION >= 10
   Py_SET_TYPE(&_librsync_SigMakerType, &PyType_Type);
   Py_SET_TYPE(&_librsync_DeltaMakerType, &PyType_Type);
-  #else 
+  #else
   Py_TYPE(&_librsync_SigMakerType) = &PyType_Type;
   Py_TYPE(&_librsync_DeltaMakerType) = &PyType_Type;
-  #endif 
+  #endif
 
   MOD_DEF(m, "_librsync", "", _librsyncMethods)
   if (m == NULL)

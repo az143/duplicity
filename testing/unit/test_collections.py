@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -105,7 +105,7 @@ class CollectionTest(UnitTestCase):
     def test_backup_chains(self):
         """Test basic backup chain construction"""
         random.shuffle(filename_list1)
-        cs = dup_collections.CollectionsStatus(None, config.archive_dir_path, "full")
+        cs = dup_collections.CollectionsStatus(None, config.archive_dir_path)
         chains, orphaned, incomplete = cs.get_backup_chains(filename_list1)
         if len(chains) != 1 or len(orphaned) != 0:
             print(chains)
@@ -127,7 +127,7 @@ class CollectionTest(UnitTestCase):
             assert cs.matched_chain_pair[0].end_time == 1029826800
             assert len(cs.all_backup_chains) == 1, cs.all_backup_chains
 
-        cs = dup_collections.CollectionsStatus(self.real_backend, config.archive_dir_path, "full").set_values()
+        cs = dup_collections.CollectionsStatus(self.real_backend, config.archive_dir_path).set_values()
         check_cs(cs)
         assert cs.matched_chain_pair[0].islocal()
 
@@ -142,13 +142,13 @@ class CollectionTest(UnitTestCase):
 
     def test_sig_chains(self):
         """Test making signature chains from filename list"""
-        cs = dup_collections.CollectionsStatus(None, config.archive_dir_path, "full")
+        cs = dup_collections.CollectionsStatus(None, config.archive_dir_path)
         chains, orphaned_paths = cs.get_signature_chains(local=1)
         self.sig_chains_helper(chains, orphaned_paths)
 
     def test_sig_chains2(self):
         """Test making signature chains from filename list on backend"""
-        cs = dup_collections.CollectionsStatus(self.archive_dir_backend, config.archive_dir_path, "full")
+        cs = dup_collections.CollectionsStatus(self.archive_dir_backend, config.archive_dir_path)
         chains, orphaned_paths = cs.get_signature_chains(local=None)
         self.sig_chains_helper(chains, orphaned_paths)
 
@@ -206,7 +206,7 @@ class CollectionTest(UnitTestCase):
             p = self.output_dir.append(filename)
             p.touch()
 
-        cs = dup_collections.CollectionsStatus(self.output_dir_backend, config.archive_dir_path, "full")
+        cs = dup_collections.CollectionsStatus(self.output_dir_backend, config.archive_dir_path)
         cs.set_values()
         return cs
 

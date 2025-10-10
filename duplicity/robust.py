@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -54,6 +54,7 @@ def check_common_error(error_handler, function, args=()):
             and errno.errorcode.get(exc.errno)
             in [
                 "EPERM",
+                "ENODEV",
                 "ENOENT",
                 "EACCES",
                 "EBUSY",

@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2016 Stefan Breunig <stefan-duplicity@breunig.xyz>
+# Copyright 2016 Stefan Breunig
 # Based on the backend onedrivebackend.py
 #
 # This file is part of duplicity.

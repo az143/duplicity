@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2011 Carlos Abalde <carlos.abalde@gmail.com>
+# Copyright 2011 Carlos Abalde
 #
 # This file is part of duplicity.
 #

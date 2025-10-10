@@ -1,8 +1,8 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
-# Copyright 2011 Alexander Zangerl <az@snafu.priv.at>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
+# Copyright 2011 Alexander Zangerl
 # Copyright 2012 edso (ssh_config added)
 #
 # This file is part of duplicity.

@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2009 Eric EJ Johnson <ej.johnson@rackspace.com>
+# Copyright 2009 Eric EJ Johnson
 #
 # This file is part of duplicity.
 #

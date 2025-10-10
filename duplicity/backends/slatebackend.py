@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2021 Syeam Bin Abdullah <syeamtechdemon@gmail.com>
+# Copyright 2021 Syeam Bin Abdullah
 #
 # This file is part of duplicity.
 #

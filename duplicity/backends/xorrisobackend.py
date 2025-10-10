@@ -1,8 +1,8 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escotoben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
-# Copyright 2022 Thomas Kramer <code@tkramer.ch>
+# Copyright 2002 Ben Escotodo
+# Copyright 2007 Kenneth Loafman
+# Copyright 2022 Thomas Kramer
 #
 # This file is part of duplicity.
 #

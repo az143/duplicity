@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2014 Andrea Grandi <a.grandi@gmail.com>
+# Copyright 2014 Andrea Grandi
 #
 # This file is part of duplicity.
 #

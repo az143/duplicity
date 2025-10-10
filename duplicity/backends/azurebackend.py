@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2013 Matthieu Huin <mhu@enovance.com>
-# Copyright 2015 Scott McKenzie <noizyland@gmail.com>
+# Copyright 2013 Matthieu Huin
+# Copyright 2015 Scott McKenzie
 #
 # This file is part of duplicity.
 #

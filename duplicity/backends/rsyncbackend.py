@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -38,7 +38,7 @@ class RsyncBackend(duplicity.backend.Backend):
 
     rsync backend contributed by Sebastian Wilhelmi <seppi@seppi.de>
     rsyncd auth, alternate port support
-    Copyright 2010 by Edgar Soldin <edgar.soldin@web.de>
+    Copyright 2010 by Edgar Soldin
     """
 
     def __init__(self, parsed_url):

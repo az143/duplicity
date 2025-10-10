@@ -1,12 +1,9 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
-# Copyright 2010 Marcel Pennewiss <opensource@pennewiss.de>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
+# Copyright 2010 Marcel Pennewiss
 # Copyright 2014 Edgar Soldin
-#                 - webdav, fish, sftp support
-#                 - https cert verification switches
-#                 - debug output
 #
 # This file is part of duplicity.
 #

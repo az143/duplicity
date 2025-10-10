@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -221,18 +221,14 @@ class ROPath(object):
         OR
         --numeric-owner is set
         """
-        try:
-            if config.numeric_owner:
-                raise KeyError
-            self.stat.st_uid = cached_ops.getpwnam(tarinfo.uname)[2]
-        except KeyError:
+        if config.numeric_owner or (passwd := cached_ops.getpwnam(tarinfo.uname)) is None:
             self.stat.st_uid = tarinfo.uid
-        try:
-            if config.numeric_owner:
-                raise KeyError
-            self.stat.st_gid = cached_ops.getgrnam(tarinfo.gname)[2]
-        except KeyError:
+        else:
+            self.stat.st_uid = passwd[2]
+        if config.numeric_owner or (group := cached_ops.getgrnam(tarinfo.gname)) is None:
             self.stat.st_gid = tarinfo.gid
+        else:
+            self.stat.st_gid = group[2]
 
         self.stat.st_mtime = int(tarinfo.mtime)
         if self.stat.st_mtime < 0:

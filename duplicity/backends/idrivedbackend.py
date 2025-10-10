@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2021 Menno Smits <menno@smi-ling.nl>
+# Copyright 2021 Menno Smits
 #
 # This file is part of duplicity.
 #

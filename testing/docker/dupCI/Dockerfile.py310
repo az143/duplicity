@@ -1,8 +1,8 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2019 Nils Tekampe <nils@tekampe.org>,
-# Kenneth Loafman <kenneth@loafman.com>,
-# Aaron Whitehouse <code@whitehouse.kiwi.nz>
+# Copyright 2019 Nils Tekampe,
+# Copyright 2019 Kenneth Loafman
+# Copyright 2019 Aaron Whitehouse
 #
 # This file is part of duplicity.
 #

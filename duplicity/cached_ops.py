@@ -34,12 +34,18 @@ def getgrgid(gid):
 
 @lru_cache(maxsize=limit)
 def getgrnam(name):
-    return grp.getgrnam(name)
+    try:
+        return grp.getgrnam(name)
+    except KeyError:
+        return None
 
 
 @lru_cache(maxsize=limit)
 def getpwnam(name):
-    return pwd.getpwnam(name)
+    try:
+        return pwd.getpwnam(name)
+    except KeyError:
+        return None
 
 
 @lru_cache(maxsize=limit)

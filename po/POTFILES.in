@@ -1,8 +1,8 @@
 duplicity/__init__.py
 duplicity/__main__.py
 duplicity/argparse311.py
-duplicity/backend.py
 duplicity/backend_pool.py
+duplicity/backend.py
 duplicity/backends/__init__.py
 duplicity/backends/_cf_cloudfiles.py
 duplicity/backends/_cf_pyrax.py

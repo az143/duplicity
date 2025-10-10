@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -44,7 +44,7 @@ class BackupSet(object):
     Backup set - the backup information produced by one session
     """
 
-    def __init__(self, backend, action):
+    def __init__(self, backend):
         """
         Initialize new backup set, only backend is required at first
         """
@@ -61,7 +61,6 @@ class BackupSet(object):
         self.partial = False  # true if a partial backup
         self.encrypted = False  # true if an encrypted backup
         self.files_changed = []
-        self.action = action
 
     def is_complete(self):
         """
@@ -669,13 +668,12 @@ class CollectionsStatus(object):
     Hold information about available chains and sets
     """
 
-    def __init__(self, backend, archive_dir_path, action):
+    def __init__(self, backend, archive_dir_path):
         """
         Make new object.  Does not set values
         """
         self.backend = backend
         self.archive_dir_path = archive_dir_path
-        self.action = action
 
         # Will hold (signature chain, backup chain) pair of active
         # (most recent) chains
@@ -902,7 +900,7 @@ class CollectionsStatus(object):
                     break
             else:
                 log.Debug(_("File %s is not part of a known set; creating new set") % (os.fsdecode(filename),))
-                new_set = BackupSet(self.backend, self.action)
+                new_set = BackupSet(self.backend)
                 if new_set.add_filename(filename, pr):
                     sets.append(new_set)
                 else:

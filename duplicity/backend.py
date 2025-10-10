@@ -1,7 +1,8 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
+# Copyright 2013 Edgar Soldin
 #
 # This file is part of duplicity.
 #
@@ -461,17 +462,28 @@ class Backend(object):
         if self.parsed_url.password:
             return self.parsed_url.password
 
-        try:
-            password = os.environ["FTP_PASSWORD"]
-        except KeyError:
-            if self.use_getpass:
-                password = getpass.getpass(f"Password for '{self.parsed_url.username}@{self.parsed_url.hostname}': ")
-                os.environ["FTP_PASSWORD"] = password
-            else:
-                password = None
+        password = os.getenv("BACKEND_PASSWORD")
+        if password:
+            return password
+
+        # TODO: remove deprecated FTP_PASSWORD on next major version raise
+        password = os.getenv("FTP_PASSWORD")
+        if password:
+            log.Warn(
+                "Usage of the environment variable FTP_PASSWORD is deprecated "
+                "and will be removed in duplicity v4.0. "
+                "Please use the replacement BACKEND_PASSWORD instead."
+            )
+            return password
+
+        if not password and self.use_getpass:
+            password = getpass.getpass(f"Password for '{self.parsed_url.username}@{self.parsed_url.hostname}': ")
+            os.environ["BACKEND_PASSWORD"] = password
+
         return password
 
-    def munge_password(self, commandline):
+    @staticmethod
+    def munge_password(commandline):
         """
         Remove password from commandline by substituting the password
         found in the URL, if any, with a generic place-holder.
@@ -480,10 +492,7 @@ class Backend(object):
         guaranteed that the results are correct (i.e., more than just
         the ':password@' may be substituted.
         """
-        if self.parsed_url.password:
-            return re.sub(r"(:([^\s:/@]+)@([^\s@]+))", r":*****@\3", commandline)
-        else:
-            return commandline
+        return re.sub(r"(:([^\s:/@]+)@([^\s@]+))", r":*****@\3", commandline)
 
     def __subprocess_popen(self, args):
         """

@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2013 jno <jno@pisem.net>
-# Copyright 2016 Dmitry Nezhevenko <dion@dion.org.ua>
+# Copyright 2013 jno
+# Copyright 2016 Dmitry Nezhevenko
 #
 # Version: 0.3
 #

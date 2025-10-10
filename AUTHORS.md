@@ -4,7 +4,7 @@ Duplicity Authors
 - Aaron Whitehouse <code@whitehouse.kiwi.nz>
 - Alexander Zangerl <az@snafu.priv.at>
 - Andrea Grandi <a.grandi@gmail.com>
-- Ben Escoto <ben@emerose.org>
+- Ben Escoto
 - Carlos Abalde <carlos.abalde@gmail.com>
 - Dmitry Nezhevenko <dion@dion.org.ua>
 - Edgar Soldin <edgar.soldin@web.de>
@@ -32,6 +32,7 @@ Duplicity Authors
 - Stefan Breunig <stefan-duplicity@breunig.xyz>
 - Steve Tynor <steve.tynor@gmail.com>
 - Thomas Harning Jr <harningt@gmail.com>
+- Thomas Laubrock
 - Tomas Vondra (Launchpad id: tomas-v)
 - Xavier Lucas <xavier.lucas@corp.ovh.com>
 - Yigal Asnis

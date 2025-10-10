@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2008 Michael Terry <mike@mterry.name>
+# Copyright 2008 Michael Terry
 #
 # This file is part of duplicity.
 #

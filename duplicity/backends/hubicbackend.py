@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2013 J.P. Krauss <jkrauss@asymworks.com>
+# Copyright 2013 J.P. Krauss
 #
 # This file is part of duplicity.
 #

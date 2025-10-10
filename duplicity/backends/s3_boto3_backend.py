@@ -1,8 +1,8 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
-# Copyright 2019 Carl A. Adams <carlalex@overlords.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
+# Copyright 2019 Carl A. Adams
 #
 # This file is part of duplicity.
 #

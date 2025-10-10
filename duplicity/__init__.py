@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -21,7 +21,7 @@
 
 import gettext
 
-__version__: str = "3.0.4"
-__reldate__: str = "February 08, 2025"
+__version__: str = "3.0.5.1"
+__reldate__: str = "June 25, 2025"
 
 gettext.install("duplicity", names=["ngettext"])

@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2020 Jose L. Domingo Lopez <github@24x7linux.com>
+# Copyright 2020 Jose L. Domingo Lopez
 #
 # This file is part of duplicity.
 #

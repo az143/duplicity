@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2015 Steve Tynor <steve.tynor@gmail.com>
-# Copyright 2016 Thomas Harning Jr <harningt@gmail.com>
+# Copyright 2015 Steve Tynor
+# Copyright 2016 Thomas Harning Jr
 #                  - mirror/stripe modes
 #                  - write error modes
 #

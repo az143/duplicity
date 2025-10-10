@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2014 Aaron Whitehouse <aaron@whitehouse.kiwi.nz>
+# Copyright 2014 Aaron Whitehouse
 #
 # This file is part of duplicity.
 #

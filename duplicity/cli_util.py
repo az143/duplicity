@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2022 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2022 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -39,7 +39,7 @@ from duplicity import log
 from duplicity import path
 from duplicity import selection
 
-gpg_key_patt = re.compile(r"^(0x)?([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}|[0-9A-Fa-f]{40})$")
+# gpg_key_patt = re.compile(r"^(0x)?([0-9A-Fa-f]{8}|[0-9A-Fa-f]{16}|[0-9A-Fa-f]{40})$")
 url_regexp = re.compile(r"^[\w\+]+://")
 
 help_footer = _("Enter 'duplicity --help' for help screen.")
@@ -195,9 +195,9 @@ def check_file(val):
         command_line_error(f"{val} is not a valid pathname: {str(e)}")
 
 
-def check_interval(val):
+def check_time_delta(val):
     try:
-        return dup_time.intstringtoseconds(val)
+        return dup_time.genstrtoseconds(val)
     except dup_time.TimeException as e:
         command_line_error(str(e))
 
@@ -428,13 +428,6 @@ def set_archive_dir(dirstring):
 
 def set_encrypt_key(encrypt_key):
     """Set config.gpg_profile.encrypt_key assuming proper key given"""
-    if not gpg_key_patt.match(encrypt_key):
-        command_line_error(
-            _(
-                f"Encrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
-                f"Received '{encrypt_key}' length={len(encrypt_key)} instead."
-            )
-        )
     if config.gpg_profile.recipients is None:
         config.gpg_profile.recipients = []
     config.gpg_profile.recipients.append(encrypt_key)
@@ -448,13 +441,6 @@ def set_encrypt_sign_key(encrypt_sign_key):
 
 def set_hidden_encrypt_key(hidden_encrypt_key):
     """Set config.gpg_profile.hidden_encrypt_key assuming proper key given"""
-    if not gpg_key_patt.match(hidden_encrypt_key):
-        command_line_error(
-            _(
-                f"Hidden dncrypt key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
-                f"Received '{hidden_encrypt_key}' length={len(hidden_encrypt_key)} instead."
-            )
-        )
     if config.gpg_profile.hidden_recipients is None:
         config.gpg_profile.hidden_recipients = []
     config.gpg_profile.hidden_recipients.append(hidden_encrypt_key)
@@ -462,13 +448,6 @@ def set_hidden_encrypt_key(hidden_encrypt_key):
 
 def set_sign_key(sign_key):
     """Set config.gpg_profile.sign_key assuming proper key given"""
-    if not gpg_key_patt.match(sign_key):
-        command_line_error(
-            _(
-                f"Sign key should be an 8, 16, or 40 character hex string, like 'AA0E73D2'.\n"
-                f"Received '{sign_key}' length={len(sign_key)} instead."
-            )
-        )
     config.gpg_profile.sign_key = sign_key
 
 

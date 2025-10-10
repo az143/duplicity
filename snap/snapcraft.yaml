@@ -1,5 +1,5 @@
 name: duplicity
-version: 3.0.4
+version: 3.0.5.1
 license: GPL-2.0
 summary: Efficient, encrypted backup to local or remote hosts
 description: |
@@ -11,85 +11,95 @@ description: |
 
 grade: stable
 confinement: classic
-base: core20
+base: core24
+
+environment:
+    # this is applied for all apps:name
+    DUPL_VENV: /usr/local/duplicity.venv
 
 apps:
     duplicity:
-        command: bin/duplicity.sh
-        environment:
-            # append path to find and use packaged backend binaries in snap
-            # disabled and done in launcher.sh because empty PATH env var will lead to curdir '.' added e.g. PATH=:other:entries:...
-            # core22 supposedly support expansion like ${PATH:+$PATH:} to add the ':' conditionally
-            # see https://snapcraft.io/docs/migrate-core22#unbound-variable-verification
-            #PATH: ${PATH:+$PATH:}/snap/bin:$SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:/snap/core20/current/usr/bin
-            # fixup pythonpath to find modules, for some reason
-            # 'lib/python3.8/site-packages' is not added by default
-            # add two more host paths for users to install modules in
-            PYTHONPATH: "$SNAP/lib/python3.8/site-packages:\
-                         $HOME/.local/lib/python3.8/site-packages:\
-                         /lib/python3.8/site-packages"
-    # printing env in snap for debug purposes, help's pinning snap startup issues (missing libs, _rsync ...)
+        command: bin/duplicity-launcher.sh
+    # the following two debug apps allow printing env in snap for debug purposes,
+    # to help pinning snap startup issues (missing libs, _rsync module ...)
+    # duplity.debug : unmodified PATH/PYTHONPATH
     debug:
-        command: bin/duplicity.sh
+        command: bin/duplicity-launcher.sh
         environment:
-            # print plain unmodified PATH/PYTHONPATH etc.
+            # print plain unmodified PATH/PYTHONPATH etc. see laumcher.sh
             DUPL_LAUNCHER: "DEBUG1"
+    # duplicity.debug2 : patched PATH/PYTHONPATH as used by duplicity
     debug2:
-        command: bin/duplicity.sh
+        command: bin/duplicity-launcher.sh
         environment:
-            # print patched PATH/PYTHONPATH
             DUPL_LAUNCHER: "DEBUG2"
-            # see above
-            #PATH: $PATH:/snap/bin:$SNAP/usr/sbin:$SNAP/usr/bin:$SNAP/sbin:$SNAP/bin:/snap/core20/current/usr/bin
-            PYTHONPATH: "$SNAP/lib/python3.8/site-packages:\
-                         $HOME/.local/lib/python3.8/site-packages:\
-                         /lib/python3.8/site-packages"
 
 parts:
     duplicity:
         plugin: python
-        requirements:
-            - requirements.txt
-        override-pull: |
-            snapcraftctl pull
+        source: .
         override-build: |
-            # add pip upgrade install location to path
-            export PATH="$SNAPCRAFT_PART_INSTALL/usr/local/bin/:$PATH"
+            which python3
             # show env vars for debugging
             #env
-            # upgrade pip to latest
-            apt install curl -y
-            curl -s https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-            python3 get-pip.py
-            snapcraftctl build
+
+            # we will not use the default craft parts implementation 
+            # check class BasePythonPlugin in
+            #  https://github.com/canonical/craft-parts/blob/main/craft_parts/plugins/base.py#L267-L275
+            # to see what the default steps are
+            #craftctl default
+
+            # we will do pretty much the same as 'craftctl default' above but 
+            # using a dedicated venv subfolder so snap system and 
+            # venv dependencies stay clearly separated
+            DUPL_VENV=/usr/local/duplicity.venv
+            python3 -m venv "${CRAFT_PART_INSTALL}${DUPL_VENV}"
+            PIP="${CRAFT_PART_INSTALL}${DUPL_VENV}"/bin/pip
+            "$PIP" install -U pip setuptools wheel
+            "$PIP" install -r requirements.txt
+            "$PIP" install -U .
+
             # Some python modules cause snap build to import argparse from pypi.
             # argparse in pypi supports <= 3.4 so we need the distribution version.
-            # Let pip remove that version since the new one is in the distribution.
-            python3 -m pip uninstall -y argparse
+            # Let pip remove that version since a current one is in libpython3-minimal.
+            "$PIP" uninstall -y argparse
             # python module tahoe-lafs dies trying to compile really old pycddl 
             # on other archs than amd64, as python plugin does not support 
             # conditions we only include it in amd64 snaps manually here
-            if [ "$SNAPCRAFT_ARCH_BUILD_FOR" != "amd64" ]; then
+            if [ "$CRAFT_ARCH_BUILD_FOR" != "amd64" ]; then
                 echo "Skipping tahoe-lafs integration on arch that is not 'amd64'."
             else
-                python3 -m pip install zfec==1.5.7.4
-                python3 -m pip install tahoe-lafs
+                "$PIP" install zfec==1.5.7.4
+                "$PIP" install tahoe-lafs
             fi
-            rm -rfv "$SNAPCRAFT_PART_INSTALL/usr/lib/python3.9"
-        override-prime: |
-            snapcraftctl prime
-            cp -v "$SNAPCRAFT_PROJECT_DIR"/snap/local/launcher.sh "$SNAPCRAFT_PRIME"/bin/duplicity.sh
-            #cp -v "$SNAPCRAFT_PROJECT_DIR"/snap/local/debug.sh "$SNAPCRAFT_PRIME"/bin/
-        build-environment:
-            - PYTHONPATH: "$SNAPCRAFT_PART_INSTALL/usr/lib/python3.8/dist-packages:\
-                           $SNAPCRAFT_PART_INSTALL/usr/lib/python3/dist-packages:\
-                           $PYTHONPATH"
+
+            # verify python binary is in snap
+            if [ -z "$(find "${CRAFT_PART_INSTALL}" -type f -executable -name 'python3.12')" ]; then
+              echo "ERROR. Missing python binary in snap. Check stage-packages."
+              exit 1
+            fi
+            # fix symlink in venv/bin/, point to python of this snap
+            ln -sf ../../../bin/python3.12 "${CRAFT_PART_INSTALL}${DUPL_VENV}"/bin/python3
+            "${CRAFT_PART_INSTALL}${DUPL_VENV}"/bin/python3 --version
+            # internet says it's a good idea to remove this file, it supposedly breaks things
+            rm -v "$CRAFT_PART_INSTALL${DUPL_VENV}"/pyvenv.cfg
+
+            # install duplicity launcher wrapper that patches (PYTHON)PATH and supports debug output
+            mkdir -p "$CRAFT_PART_INSTALL"/bin
+            cp -v "$CRAFT_PROJECT_DIR"/snap/local/launcher.sh "$CRAFT_PART_INSTALL"/bin/duplicity-launcher.sh
+        override-stage: |
+            craftctl default
+            # list snap content for debugging purposes
+            find "$CRAFT_STAGE"/ -type f
         build-packages:
             - build-essential
             - ieee-data
             - intltool
             - librsync-dev
             - python3-dev
+            - python3-minimal
+            - python3.12-minimal
+            - python3-venv
             # dependencies needed to build missing pip wheels on non amd64 archs
             - cargo
             - libffi-dev
@@ -100,25 +110,27 @@ parts:
             - python3-openssl
             - pkg-config
         stage-packages:
+            - libpython3.12-minimal
+            - libpython3.12-stdlib
+            - libpython3.12t64
+            - python3-minimal
+            - python3.12-minimal
+            - python3-venv
+            - librsync2t64
+            # (backend) binaries
             - gnupg
             - lftp
-            - libatm1
-            - libpython3-stdlib
-            - libpython3.8-minimal
-            - libpython3.8-stdlib
-            - librsync2
             - ncftp
             - openssh-client
-            - python3-dev
-            - python3-distutils
-            - python3-gi
-            - python3-minimal
-            - python3-venv
-            - python3.8-minimal
             - rclone
             - rsync
+            # pygobject bindings for gio-backend
+            - python3-gi
             # some libraries needed on non amd64 archs
-            - libicu66
+            - libatm1t64
+            - libicu74
             - libxml2
             - libxslt1.1
-        source: .
+        build-attributes:
+            - enable-patchelf
+

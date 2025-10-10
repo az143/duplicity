@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -270,7 +270,7 @@ class StatsObj(object):
         if col_stat:
             backup_meta = {}
             backup_chain = col_stat.matched_chain_pair[1]
-            backup_meta["action"] = col_stat.action
+            backup_meta["action"] = config.action
             backup_meta["skipped_inc"] = config.skipped_inc
             backup_meta["time_full_bkp"] = backup_chain.fullset.time
             backup_meta["time_full_bkp_str"] = dup_time.timetostring(backup_meta["time_full_bkp"])

@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -237,31 +237,6 @@ class CommandlineTest(UnitTestCase):
             cline = f"{start} --sign-key={key}".split()
             cli_main.process_command_line(cline)
             self.assertEqual(config.gpg_profile.sign_key, key)
-
-    @pytest.mark.usefixtures("redirect_stdin")
-    def test_bad_encryption_options(self):
-        """
-        test short option aliases
-        """
-        start = "inc foo/bar file:///target_url "
-        keys = (
-            "DEADFOO",
-            "DEADDEADDEADFOO",
-            "DEADDEADDEADDEADDEADDEADDEADDEADDEADFOO",
-        )
-
-        for key in keys:
-            with self.assertRaises(CommandLineError) as cm:
-                cline = f"{start} --encrypt-key={key}".split()
-                cli_main.process_command_line(cline)
-
-            with self.assertRaises(CommandLineError) as cm:
-                cline = f"{start} --hidden-encrypt-key={key}".split()
-                cli_main.process_command_line(cline)
-
-            with self.assertRaises(CommandLineError) as cm:
-                cline = f"{start} --sign-key={key}".split()
-                cli_main.process_command_line(cline)
 
     @pytest.mark.usefixtures("redirect_stdin")
     def test_implied_commands(self):
@@ -575,3 +550,34 @@ class CommandlineTest(UnitTestCase):
         cline = shlex.split("backup --gpg-options='--homedir=/home/user' foo/bar file://target_url")
         cli_main.process_command_line(cline)
         self.assertEqual(config.gpg_options, "--homedir=/home/user")
+
+        # Issue 869 - accept time formats as well as intervals as arguments to --full-if-older-than
+        cline = shlex.split("backup --full-if-older-than now foo/bar file://target_url")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.full_if_older_than, 0)
+
+        cline = shlex.split("backup --full-if-older-than 1D foo/bar file://target_url")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.full_if_older_than, 86400)
+
+        dup_time.setcurtime()
+
+        cline = shlex.split("backup --full-if-older-than 2025-05-05T00:00:00Z foo/bar file://target_url")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.full_if_older_than, dup_time.curtime - 1746403200)
+
+        cline = shlex.split("backup --full-if-older-than 2025-05-05T00:00:00+00:00 foo/bar file://target_url")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.full_if_older_than, dup_time.curtime - 1746403200)
+
+        cline = shlex.split("backup --full-if-older-than 2025-05-05T00:00:00 foo/bar file://target_url")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.full_if_older_than, dup_time.curtime - 1746403200)
+
+        cline = shlex.split("backup --full-if-older-than 2025-05-05 foo/bar file://target_url")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.full_if_older_than, dup_time.curtime - 1746403200)
+
+        cline = shlex.split("backup --full-if-older-than 1746403200 foo/bar file://target_url")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.full_if_older_than, dup_time.curtime - 1746403200)

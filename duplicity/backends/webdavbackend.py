@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 # Copyright 2013 Edgar Soldin
 #                 - ssl cert verification, some robustness enhancements
 #
@@ -31,6 +31,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import xml.dom.minidom
+import sys
 
 import duplicity.backend
 from duplicity import config
@@ -114,7 +115,7 @@ class CustomHTTPSConnection(http.client.HTTPSConnection):
 class WebDAVBackend(duplicity.backend.Backend):
     """Backend for accessing a WebDAV repository.
 
-    webdav backend contributed in 2006 by Jesper Zedlitz <jesper@zedlitz.de>
+    webdav backend contributed in 2006 by Jesper Zedlitz
     """
 
     """
@@ -149,8 +150,8 @@ class WebDAVBackend(duplicity.backend.Backend):
         self.password = self.get_password()
         self.directory = self.sanitize_path(parsed_url.path)
 
-        log.Info(_("Using WebDAV host %s port %s") % (parsed_url.hostname, parsed_url.port))
-        log.Info(_("Using WebDAV directory %s") % (self.directory,))
+        log.Debug(_("Using WebDAV host %s port %s") % (parsed_url.hostname, parsed_url.port))
+        log.Debug(_("Using WebDAV directory %s") % (self.directory,))
 
         self.conn = None
 
@@ -180,7 +181,7 @@ class WebDAVBackend(duplicity.backend.Backend):
         if not forced and self.conn and self.conn.host == self.parsed_url.hostname:
             return
 
-        log.Info(_("WebDAV create connection on '%s'") % self.parsed_url.hostname)
+        log.Debug(_("WebDAV create connection on '%s'") % self.parsed_url.hostname)
         self._close()
         # http schemes needed for redirect urls from servers
         if self.parsed_url.scheme in ["webdav", "http"]:
@@ -199,6 +200,17 @@ class WebDAVBackend(duplicity.backend.Backend):
         Wraps the connection.request method to retry once if authentication is
         required
         """
+
+        def munge_headers(headers):
+            """
+            Munge http auth headers for debug output below
+            """
+            headers_copy = dict(headers)
+            for key in headers_copy:
+                if str(key).lower() == "authorization":
+                    headers_copy[key] = "**MUNGED**"
+            return headers_copy
+
         self._close()  # or we get previous request's data or exception
         self.connect()
 
@@ -207,11 +219,11 @@ class WebDAVBackend(duplicity.backend.Backend):
         if self.digest_challenge is not None:
             self.headers["Authorization"] = self.get_digest_authorization(path)
 
-        log.Info(_("WebDAV %s %s request with headers: %s ") % (method, quoted_path, self.headers))
-        log.Info(_("WebDAV data length: %s ") % len(str(data)))
+        log.Debug(_("WebDAV %s %s request with headers: %s ") % (method, quoted_path, munge_headers(self.headers)))
+        log.Debug(_("WebDAV data length: %s ") % sys.getsizeof(data))
         self.conn.request(method, quoted_path, data, self.headers)
         response = self.conn.getresponse()
-        log.Info(_("WebDAV response status %s with reason '%s'.") % (response.status, response.reason))
+        log.Debug(_("WebDAV response status %s with reason '%s'.") % (response.status, response.reason))
         # resolve redirects and reset url on listing requests (they usually come before everything else)
         if response.status in [301, 302] and method == "PROPFIND":
             redirect_url = response.getheader("location", None)
@@ -229,12 +241,12 @@ class WebDAVBackend(duplicity.backend.Backend):
             response.read()
             response.close()
             self.headers["Authorization"] = self.get_authorization(response, quoted_path)
-            log.Info(_("WebDAV retry request with authentification headers."))
-            log.Info(_("WebDAV %s %s request2 with headers: %s ") % (method, quoted_path, self.headers))
-            log.Info(_("WebDAV data length: %s ") % len(str(data)))
+            log.Debug(_("WebDAV retry request with authentification headers."))
+            log.Debug(_("WebDAV %s %s request2 with headers: %s ") % (method, quoted_path, munge_headers(self.headers)))
+            log.Debug(_("WebDAV data length: %s ") % sys.getsizeof(data))
             self.conn.request(method, quoted_path, data, self.headers)
             response = self.conn.getresponse()
-            log.Info(_("WebDAV response2 status %s with reason '%s'.") % (response.status, response.reason))
+            log.Debug(_("WebDAV response2 status %s with reason '%s'.") % (response.status, response.reason))
 
         return response
 
@@ -359,10 +371,10 @@ class WebDAVBackend(duplicity.backend.Backend):
             response = self.request("PROPFIND", d)
             del self.headers["Depth"]
 
-            log.Info(f"Checking existence dir {d}: {int(response.status)}")
+            log.Debug(f"Checking existence dir {d}: {int(response.status)}")
 
             if response.status == 404:
-                log.Info(_("Creating missing directory %s") % d)
+                log.Debug(_("Creating missing directory %s") % d)
 
                 res = self.request("MKCOL", d)
                 if res.status != 201:

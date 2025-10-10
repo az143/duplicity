@@ -1,9 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
 # Copyright 2014 Havard Gulldahl
-#
-# in part based on dpbxbackend.py:
-# Copyright 2013 jno <jno@pisem.net>
+# Copyright 2013 jno
 #
 # This file is part of duplicity.
 #

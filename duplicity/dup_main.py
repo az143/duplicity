@@ -2,8 +2,8 @@
 #
 # duplicity -- Encrypted bandwidth efficient backup
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -40,6 +40,7 @@ from textwrap import dedent
 from typing import Dict
 
 from duplicity import __version__
+from duplicity import backend
 from duplicity import backend_pool
 from duplicity import cli_main
 from duplicity import config
@@ -68,6 +69,7 @@ def getpass_safe(message):
     return getpass.getpass(message)
 
 
+# TODO: Simplify and refactor: https://gitlab.com/duplicity/duplicity/-/merge_requests/288#note_2406527475
 def get_passphrase(n, action, for_signing=False):
     """
     Check to make sure passphrase is indeed needed, then get
@@ -148,6 +150,14 @@ def get_passphrase(n, action, for_signing=False):
         and (config.gpg_profile.recipients or config.gpg_profile.hidden_recipients)
         and (not config.gpg_profile.sign_key or (not config.restart and not for_signing))
     ):
+        return ""
+
+    elif (
+        (config.gpg_profile.recipients or config.gpg_profile.hidden_recipients)
+        and config.metadata_sync_mode == "partial"
+        and action in ["full"]
+    ):
+        log.Info(_("Skipping passphrase input for full backup with encryption keys."))
         return ""
 
     # Finally, ask the user for the passphrase
@@ -442,7 +452,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
     backend_pooler = None
     command2vol_map: Dict[int, CommandMetaData] = {}
     if config.concurrency > 0:
-        backend_pooler = backend_pool.BackendPool(backend.backend.parsed_url.url_string, processes=config.concurrency)
+        backend_pooler = backend_pool.BackendPool(config.target_url, processes=config.concurrency)
 
     while not at_end:
         # set up iterator
@@ -1188,7 +1198,7 @@ def sync_archive(col_stats):
     @rtype: void
     @return: void
     """
-    suffixes = [b".g", b".gpg", b".z", b".gz", b".part"]
+    suffixes = [b".g", b".gpg", b".p7m", b".z", b".gz", b".part"]
 
     def is_needed(filename):
         """Indicates if the metadata file should be synced.
@@ -1483,7 +1493,8 @@ def log_startup_parms(verbosity=log.INFO):
     """
     log.Log("=" * 80, verbosity)
     log.Log(f"duplicity {__version__}", verbosity)
-    log.Log(f"Args: {' '.join([os.fsdecode(arg) for arg in sys.argv])}", verbosity)
+    cmd_line = " ".join([os.fsdecode(arg) for arg in sys.argv])
+    log.Log(f"Args: {backend.Backend.munge_password(cmd_line)}", verbosity)
     log.Log(" ".join(platform.uname()), verbosity)
     log.Log(f"{sys.executable or sys.platform} {sys.version}", verbosity)
     log.Log("=" * 80, verbosity)
@@ -1585,7 +1596,7 @@ def main():
         )
 
     # TODO: remove when 3.8 is deprecated.
-    if sys.version_info[:2] == (3, 8):
+    if sys.version_info[:2] == (3, 8) and not os.environ.get("SNAP", False):
         log.Warn(
             "Starting deprecation of python 3.8 support. Support for python 3.8. will finally removed with the "
             "release of 3.14.  For details see https://devguide.python.org/versions/"
@@ -1627,11 +1638,12 @@ def do_backup(action):
     check_resources(action)
 
     # get current collection status
-    col_stats = dup_collections.CollectionsStatus(config.backend, config.archive_dir_path, action).set_values()
+    col_stats = dup_collections.CollectionsStatus(config.backend, config.archive_dir_path).set_values()
 
     # check archive synch with remote, fix if needed
     if action not in [
         "collection-status",
+        "full",
         "remove-all-but-n-full",
         "remove-all-inc-of-but-n-full",
         "remove-old",
@@ -1665,9 +1677,7 @@ def do_backup(action):
                     # remove last partial backup and get new collection status
                     log.Notice(_(f"Cleaning up previous partial {action} backup set, restarting."))
                     last_backup.delete()
-                    col_stats = dup_collections.CollectionsStatus(
-                        config.backend, config.archive_dir_path, action
-                    ).set_values()
+                    col_stats = dup_collections.CollectionsStatus(config.backend, config.archive_dir_path).set_values()
                     continue
             break
         break

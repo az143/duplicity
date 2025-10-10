@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -308,3 +308,12 @@ def genstrtotime(timestr, override_curtime=None):
         return t
     else:
         error()
+
+
+def genstrtoseconds(timestr, override_curtime=None):
+    """Convert a generic time string to a time in seconds since curtime"""
+    if override_curtime is None:
+        if curtime is None:
+            setcurtime()
+        override_curtime = curtime
+    return override_curtime - genstrtotime(timestr, override_curtime)

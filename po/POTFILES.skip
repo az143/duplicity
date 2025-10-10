@@ -15,8 +15,8 @@ testing/manual/test-concurrency-performance-stats.py
 testing/overrides/__init__.py
 testing/test_code.py
 testing/unit/__init__.py
-testing/unit/test_backend.py
 testing/unit/test_backend_instance.py
+testing/unit/test_backend.py
 testing/unit/test_cli_main.py
 testing/unit/test_collections.py
 testing/unit/test_diffdir.py

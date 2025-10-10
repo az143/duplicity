@@ -1,7 +1,7 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2002 Ben Escoto <ben@emerose.org>
-# Copyright 2007 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2002 Ben Escoto
+# Copyright 2007 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -126,6 +126,9 @@ gpg_options = ""
 # Set to GPGProfile that will be used to compress/uncompress encrypted
 # files.  Replaces encryption_keys, sign_key, and passphrase settings.
 gpg_profile = None
+
+# Use gpgsm tool, which is very similar gpg but using PKCS#7 file format.
+use_gpgsm = False
 
 # Maximum file blocksize
 max_blocksize = 0

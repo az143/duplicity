@@ -1,7 +1,7 @@
 #!/bin/bash
 # -*- Mode:Shell; indent-tabs-mode:nil; tab-width -*-
 #
-# Copyright 2022 Kenneth Loafman <kenneth@loafman.com>
+# Copyright 2022 Kenneth Loafman
 #
 # This file is part of duplicity.
 #
@@ -20,11 +20,6 @@
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 set -e
-
-if [ "`uname`" != "Linux" ]; then
-    echo "$0 does not run on `uname`"
-    exit 2
-fi
 
 if [ "$#" -ne 0 ]; then
     echo "usage: $0"
