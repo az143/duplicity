@@ -1,3 +1,9 @@
+duplicity (3.0.5.1-1) unstable; urgency=medium
+
+  * new upstream release (closes: #1115151)
+
+ -- Alexander Zangerl <az@debian.org>  Fri, 10 Oct 2025 11:20:40 +1000
+
 duplicity (3.0.4-1) unstable; urgency=medium
 
   * new upstream release (closes: #1095627)

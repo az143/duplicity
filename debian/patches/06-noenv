@@ -45,7 +45,7 @@
 +#!/usr/bin/python3
  # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
  #
- # Copyright 2002 Ben Escoto <ben@emerose.org>
+ # Copyright 2002 Ben Escoto
 --- a/testing/overrides/bin/ncftpget
 +++ b/testing/overrides/bin/ncftpget
 @@ -1,4 +1,4 @@
