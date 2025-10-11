@@ -36,3 +36,11 @@ testing/gnupg/.gpg-v21-migrated
 testing/gnupg/random_seed
 venv*/
 wheelhouse/
+
+.pybuild
+debian/.debhelper
+debian/files
+debian/debhelper-build-stamp
+debian/duplicity.*.debhelper
+debian/duplicity.substvars
+debian/duplicity

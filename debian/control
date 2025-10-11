@@ -3,23 +3,24 @@ Section: utils
 Priority: optional
 Maintainer: Alexander Zangerl <az@debian.org>
 Build-Depends: debhelper-compat (= 13),
- python3-all-dev, dh-python, python3-setuptools,
+ dh-python,
  gnupg | gnupg1,
- rdiff,
- par2,
- tox,
- rename,
  rsync,librsync-dev (>=0.9.6),
- python3-mock, python3-pexpect,
- python3-fasteners, 
+ par2,
  pylint,
  python3-pytest, python3-pytest-runner,
- python3-pytest-cov, python3-setuptools,
- python3-setuptools-scm
+ python3-pytest-cov,
+ python3-all-dev,
+ python3-fasteners, 
+ python3-pycodestyle,
+ python3-pexpect,
+ python3-setuptools,
+ rdiff,
+ rename,
 Standards-Version: 4.6.2
-Homepage: https://duplicity.gitlab.io/
-Vcs-Git: https://salsa.debian.org/debian/duplicity.git
-Vcs-Browser: https://salsa.debian.org/debian/duplicity
+Homepage: https://duplicity.us/
+Vcs-Git: https://github.com/az143/duplicity.git
+Vcs-Browser: https://github.com/az143/duplicity
 X-Python3-Version: >= 3.7
 
 Package: duplicity
