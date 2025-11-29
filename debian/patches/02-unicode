@@ -3,15 +3,15 @@ Subject: fix unicode decode-does-encode-and-fail problems with iso8859 locales
 
 --- a/duplicity/__main__.py
 +++ b/duplicity/__main__.py
-@@ -28,6 +28,11 @@
- 
+@@ -29,6 +29,11 @@
+ import os
  import sys
  
-+import os
 +# override locale to avoid bug #682837, until
 +# the logger finally deals with locales cleanly
 +os.environ['LC_ALL']="POSIX"
 +
- import duplicity.errors
- from duplicity import log
- from duplicity import tempdir
++
+ from duplicity import (
+     errors,
+     log,

@@ -1,5 +1,13 @@
 version=4
 
+# Use ([0-9][0-9.]*) instead of @ANY_VERSION@ to skip *.dev* tags,
+# like 3.0.6.dev5, which confuse debian's version sorting algorithm
+# because 3.0.6.dev5 > 3.0.6, and even 3.0.6.dev5 > 3.0.6.1, which is
+# not upstream's intent.
+#
+# Note: the alternative is to rewrite: 3.0.6.dev5 to 3.0.6~dev5.
+
 opts="searchmode=plain" \
  https://gitlab.com/@PACKAGE@/@PACKAGE@/tags?sort=updated_desc \
- /@PACKAGE@/@PACKAGE@/-/archive/[^/]+/@PACKAGE@-rel\.@ANY_VERSION@@ARCHIVE_EXT@
+ /@PACKAGE@/@PACKAGE@/-/archive/[^/]+/@PACKAGE@-rel\.([0-9][0-9.]*)@ARCHIVE_EXT@
+

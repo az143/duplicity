@@ -1,3 +1,11 @@
+duplicity (3.0.6.2-1) unstable; urgency=medium
+
+  * thanks for various packaging patches go to Barak Pearlmutter
+  * new upstream release (closes: #977546, #1120839)
+  * adjusted dependencies to suggest b2sdk (closes: #1121044)
+
+ -- Alexander Zangerl <az@debian.org>  Sat, 29 Nov 2025 14:42:18 +1000
+
 duplicity (3.0.5.1-2) unstable; urgency=medium
 
   * fixed and resynced build-dependencies with upstream

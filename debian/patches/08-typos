@@ -1,0 +1,45 @@
+From: "Barak A. Pearlmutter" <barak+git@pearlmutter.net>
+Date: Mon, 17 Nov 2025 10:20:50 +0000
+Subject: typos
+
+---
+ man/duplicity.1 | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/man/duplicity.1 b/man/duplicity.1
+index 78acb17..fc57842 100644
+--- a/man/duplicity.1
++++ b/man/duplicity.1
+@@ -373,8 +373,8 @@ Alternatively you might choose
+ .TP
+ .BI "--concurrency " number
+ Give the number of background process that should be use to run concurrent
+-backend task. This decouples local operations like de/encrption, volume creation etc.
+-from transfering to/from backends.
++backend task. This decouples local operations like de/encrption, volume creation, etc.,
++from transferring to/from backends.
+ The intended end-result is a faster backup, because the local
+ CPU and your bandwidth can be more consistently utilized. Use of this
+ option implies additional need for disk space in the temporary storage
+@@ -724,10 +724,10 @@ section for more information.
+ .TP
+ .BI --jsonstat
+ Record statistic data similar to the default stats printed at the end of a
+-backup job, addtional it includes some meta data about the backup chain e.g. when
++backup job, additionally, it includes some meta data about the backup chain, e.g., when
+ the full backup was created and how many incremental backups were made before.
+ Output format is json. It written to stdout at notice level (as classic stats)
+-and the statistics are kept as a separte file next to the manifest but with
++and the statistics are kept as a separate file next to the manifest but with
+ "jsonstat" as extension.
+ .B collection-status --show-changes-in-set <index> --jsonstat
+ adds data collected in the backup job and switch the output format to json.
+@@ -1826,7 +1826,7 @@ If the pattern starts with "ignorecase:" (case insensitive), then
+ this prefix will be removed and any character in the string can be
+ replaced with an upper- or lowercase version of itself. This prefix is a
+ legacy feature supported for shell globbing selection conditions only,
+-but for backward compatability reasons is otherwise considered part of
++but for backward compatibility reasons is otherwise considered part of
+ the pattern itself (use
+ .B --filter-ignorecase
+ instead).

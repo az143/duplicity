@@ -17,7 +17,7 @@ Build-Depends: debhelper-compat (= 13),
  python3-setuptools,
  rdiff,
  rename,
-Standards-Version: 4.6.2
+Standards-Version: 4.7.2
 Homepage: https://duplicity.us/
 Vcs-Git: https://github.com/az143/duplicity.git
 Vcs-Browser: https://github.com/az143/duplicity
@@ -26,8 +26,8 @@ X-Python3-Version: >= 3.7
 Package: duplicity
 Architecture: any
 Depends: ${shlibs:Depends}, ${python3:Depends}, ${misc:Depends}, python3-fasteners, gnupg | gnupg1
-Recommends: rsync, python3-paramiko, python3-pexpect, python3-urllib3, python3-oauthlib
-Suggests: python3-boto3, ncftp, lftp, tahoe-lafs, python3-swiftclient, python3-pip, par2
+Recommends: rsync, python3-paramiko, python3-pexpect, python3-urllib3, python3-oauthlib, python3-socks
+Suggests: python3-boto3, ncftp, lftp, tahoe-lafs, python3-swiftclient, python3-pip, par2, b2sdk
 Description: encrypted bandwidth-efficient backup
  Duplicity backs directories by producing encrypted tar-format volumes
  and uploading them to a remote or local file server. Because duplicity

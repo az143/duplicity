@@ -1,6 +1,6 @@
 --- a/requirements.txt
 +++ b/requirements.txt
-@@ -7,26 +7,26 @@ setuptools>=78.1.0
+@@ -7,27 +7,27 @@ setuptools>=78.1.0
  
  ##### backend libraries #####
  
@@ -23,13 +23,16 @@
 +# google-api-python-client
 +# google-auth-oauthlib
  httplib2
+-pysocks # optional httplib2 dep, needed for proxy support
 -jottalib
 -keyring
-+# jottalib
-+# keyring
- lxml
+-lxml<=5.4.0  # newer vers do not build on Ubuntu < 24.04
 -mediafire
 -megatools
++# pysocks # optional httplib2 dep, needed for proxy support
++# jottalib
++# keyring
++lxml
 +# mediafire
 +# megatools
  paramiko

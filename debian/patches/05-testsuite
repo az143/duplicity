@@ -3,44 +3,16 @@ Subject: Disable some tests for being flaky
 
 --- a/testing/functional/test_restart.py
 +++ b/testing/functional/test_restart.py
-@@ -131,6 +131,7 @@ class RestartTest(FunctionalTestCase):
-         self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
-         self.verify(f"{_runtest_dir}/testfiles/largefiles")
+@@ -140,6 +140,7 @@ class RestartTest(FunctionalTestCase):
  
+     # TODO: Fix this test on py314
+     @pytest.mark.skipif(sys.version_info[:2] == (3, 14), reason="py314 fails this test in RestartTestWithoutEncryption")
 +    @unittest.skip("Flaky test because it relies on knowing how many volumes the source files will be split into")
      @unittest.skipIf(
          platform.machine() in ["ppc64el", "ppc64le"],
          "See https://gitlab.com/duplicity/duplicity/-/issues/820",
---- a/testing/unit/test_gpg.py
-+++ b/testing/unit/test_gpg.py
-@@ -182,6 +182,7 @@ class GPGTest(UnitTestCase):
-         gwfh.set_at_end()
-         gpg.GPGWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gpgwrite.gpg", profile, size=size)
- 
-+    @unittest.skip("Flaky test because it relies on compressed size of random bytes")
-     def test_GzipWriteFile(self):
-         """Test GzipWriteFile"""
- 
---- a/testing/unit/test_selection.py
-+++ b/testing/unit/test_selection.py
-@@ -192,6 +192,7 @@ class MatchingTest(UnitTestCase):
-         assert select.general_get_sf("**", 0)(root) == 0
-         assert select.general_get_sf("/foo/*", 0)(root) is None
- 
-+    @unittest.skip("unreliable ass-U-me wrt / and /usr on one fs")
-     def test_other_filesystems(self):
-         """Test to see if --exclude-other-filesystems works correctly"""
-         root = Path("/")
---- a/testing/unit/test_statistics.py
-+++ b/testing/unit/test_statistics.py
-@@ -61,6 +61,7 @@ class StatsObjTest(UnitTestCase):
-         s1 = StatsDeltaProcess()
-         assert s1.get_stat("SourceFiles") == 0
- 
-+    @unittest.skip("TZ setting seems to fail under sbuild, #880251")
-     def test_get_stats_string(self):
-         """Test conversion of stat object into string"""
-         s = StatsObj()
+diff --git a/testing/unit/test_globmatch.py b/testing/unit/test_globmatch.py
+index 0650233..563e0a6 100644
 --- a/testing/unit/test_globmatch.py
 +++ b/testing/unit/test_globmatch.py
 @@ -21,6 +21,8 @@
@@ -52,7 +24,7 @@ Subject: Disable some tests for being flaky
  import sys
  from unittest.mock import patch
  
-@@ -267,6 +269,7 @@ class TestDoubleAsterisk(UnitTestCase):
+@@ -262,6 +264,7 @@ class TestDoubleAsterisk(UnitTestCase):
  class TestSimpleUnicode(UnitTestCase):
      """Test simple unicode comparison"""
  
@@ -60,3 +32,39 @@ Subject: Disable some tests for being flaky
      def test_simple_unicode(self):
          """Test simple unicode comparison"""
          self.assertEqual(
+diff --git a/testing/unit/test_gpg.py b/testing/unit/test_gpg.py
+index 97aec6a..7804b9b 100644
+--- a/testing/unit/test_gpg.py
++++ b/testing/unit/test_gpg.py
+@@ -185,6 +185,7 @@ class GPGTest(UnitTestCase):
+         gpg.GPGWriteFile(gwfh, f"{_runtest_dir}/testfiles/output/gpgwrite.gpg", profile, size=size)
+ 
+     @pytest.mark.xfail
++    @unittest.skip("Flaky test because it relies on compressed size of random bytes")
+     def test_GzipWriteFile(self):
+         """Test GzipWriteFile"""
+ 
+diff --git a/testing/unit/test_selection.py b/testing/unit/test_selection.py
+index 7dd8bfe..29cfe6a 100644
+--- a/testing/unit/test_selection.py
++++ b/testing/unit/test_selection.py
+@@ -192,6 +192,7 @@ class MatchingTest(UnitTestCase):
+         assert select.general_get_sf("**", 0)(root) == 0
+         assert select.general_get_sf("/foo/*", 0)(root) is None
+ 
++    @unittest.skip("unreliable ass-U-me wrt / and /usr on one fs")
+     def test_other_filesystems(self):
+         """Test to see if --exclude-other-filesystems works correctly"""
+         root = Path("/")
+diff --git a/testing/unit/test_statistics.py b/testing/unit/test_statistics.py
+index 5a6d92d..d8fe729 100644
+--- a/testing/unit/test_statistics.py
++++ b/testing/unit/test_statistics.py
+@@ -61,6 +61,7 @@ class StatsObjTest(UnitTestCase):
+         s1 = StatsDeltaProcess()
+         assert s1.get_stat("SourceFiles") == 0
+ 
++    @unittest.skip("TZ setting seems to fail under sbuild, #880251")
+     def test_get_stats_string(self):
+         """Test conversion of stat object into string"""
+         s = StatsObj()
