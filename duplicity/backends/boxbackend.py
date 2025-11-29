@@ -30,7 +30,7 @@ class BoxBackend(duplicity.backend.Backend):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
         global Client, JWTAuth
-        from boxsdk import (
+        from boxsdk import (  # pylint: disable=import-error
             Client,
             JWTAuth,
         )

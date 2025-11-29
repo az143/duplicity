@@ -30,51 +30,84 @@ services:
         image: dupci/py39
         container_name: py39
         hostname: py39
+        tty: true
+        environment:
+            - PYTEST_ARGS=${PYTEST_ARGS:-""}
         entrypoint: /bin/bash
-        command: -c "make ext ; pytest ${PYTEST_ARGS}"
+        command: -c "make ext ; pytest ${PYTEST_ARGS:-""}"
         volumes:
             - ../../..:/root/duplicity
-            - pytest:/root/duplicity/.pytest_cache
+            - pytest_py39:/root/duplicity/.pytest_cache
 
     py310:
         image: dupci/py310
         container_name: py310
         hostname: py310
+        tty: true
+        environment:
+            - PYTEST_ARGS=${PYTEST_ARGS:-""}
         entrypoint: /bin/bash
-        command: -c "make ext ; pytest ${PYTEST_ARGS}"
+        command: -c "sleep 2 ; make ext ; pytest ${PYTEST_ARGS:-""}"
         volumes:
             - ../../..:/root/duplicity
-            - pytest:/root/duplicity/.pytest_cache
+            - pytest_py310:/root/duplicity/.pytest_cache
 
     py311:
         image: dupci/py311
         container_name: py311
         hostname: py311
+        tty: true
+        environment:
+            - PYTEST_ARGS=${PYTEST_ARGS:-""}
         entrypoint: /bin/bash
-        command: -c "make ext ; pytest ${PYTEST_ARGS}"
+        command: -c "sleep 4 ; make ext ; pytest ${PYTEST_ARGS:-""}"
         volumes:
             - ../../..:/root/duplicity
-            - pytest:/root/duplicity/.pytest_cache
+            - pytest_py311:/root/duplicity/.pytest_cache
 
     py312:
         image: dupci/py312
         container_name: py312
         hostname: py312
+        tty: true
+        environment:
+            - PYTEST_ARGS=${PYTEST_ARGS:-""}
         entrypoint: /bin/bash
-        command: -c "make ext ; pytest ${PYTEST_ARGS}"
+        command: -c "sleep 6 ; make ext ; pytest ${PYTEST_ARGS:-""}"
         volumes:
             - ../../..:/root/duplicity
-            - pytest:/root/duplicity/.pytest_cache
+            - pytest_py312:/root/duplicity/.pytest_cache
 
     py313:
         image: dupci/py313
         container_name: py313
         hostname: py313
+        tty: true
+        environment:
+            - PYTEST_ARGS=${PYTEST_ARGS:-""}
         entrypoint: /bin/bash
-        command: -c "make ext ; pytest ${PYTEST_ARGS}"
+        command: -c "sleep 8 ; make ext ; pytest ${PYTEST_ARGS:-""}"
         volumes:
             - ../../..:/root/duplicity
-            - pytest:/root/duplicity/.pytest_cache
+            - pytest_py313:/root/duplicity/.pytest_cache
+
+    py314:
+        image: dupci/py314
+        container_name: py314
+        hostname: py314
+        tty: true
+        environment:
+            - PYTEST_ARGS=${PYTEST_ARGS:-""}
+        entrypoint: /bin/bash
+        command: -c "sleep 10 ; make ext ; pytest ${PYTEST_ARGS:-""}"
+        volumes:
+            - ../../..:/root/duplicity
+            - pytest_py314:/root/duplicity/.pytest_cache
 
 volumes:
-    pytest:
+    pytest_py39:
+    pytest_py310:
+    pytest_py311:
+    pytest_py312:
+    pytest_py313:
+    pytest_py314:

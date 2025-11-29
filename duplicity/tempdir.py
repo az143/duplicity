@@ -279,17 +279,15 @@ class TemporaryDirectory(object):
             if self.__dir is not None:
                 for file in list(self.__pending.keys()):
                     try:
-                        log.Debug("Removing still remembered temporary file %s" % os.fsdecode(file))
+                        log.Debug(f"Removing still remembered temporary file {os.fsdecode(file)}")
                         util.ignore_missing(os.unlink, file)
                     except Exception:
-                        log.Info("Cleanup of temporary file %s failed" % os.fsdecode(file))
+                        log.Info(f"Cleanup of temporary file {os.fsdecode(file)} failed")
                         pass
                 try:
-                    os.rmdir(self.__dir)
+                    util.ignore_missing(os.rmdir, self.__dir)
                 except Exception:
-                    log.Warn(
-                        "Cleanup of temporary directory %s failed - this is probably a bug." % os.fsdecode(self.__dir)
-                    )
+                    log.Info(f"Cleanup of temporary directory {os.fsdecode(self.__dir)} failed.")
                     pass
                 self.__pending = None
                 self.__dir = None

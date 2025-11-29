@@ -191,6 +191,14 @@ class WebDAVBackend(duplicity.backend.Backend):
         else:
             raise FatalBackendException(_("WebDAV Unknown URI scheme: %s") % self.parsed_url.scheme)
 
+        if self.username or self.password:
+            # Workaround cpython http.client issue
+            # https://github.com/python/cpython/issues/70107
+            self.conn.request("OPTIONS", self.directory, None)
+            response = self.conn.getresponse()
+            response.read()
+            response.close()
+
     def _close(self):
         if self.conn:
             self.conn.close()
@@ -420,7 +428,7 @@ class WebDAVBackend(duplicity.backend.Backend):
             response = self.request("GET", url)
             if response.status == 200:
                 shutil.copyfileobj(response, target_file)
-                assert not target_file.close()
+                assert not target_file.close(), "target_file failed to close"
                 response.close()
             else:
                 status = response.status

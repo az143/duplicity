@@ -1,0 +1,10 @@
+[
+    {
+        "description": "Backend 1 - success",
+        "url": "file:///tmp/issue881/success"
+    },
+    {
+        "description": "Backend 2 - fails",
+        "url": "file:///nonexistent"
+    }
+]

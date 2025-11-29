@@ -79,7 +79,7 @@ def select_fn_from_glob(glob_str, include, ignore_case=False):
 
     Note: including a folder implicitly includes everything within it.
     """
-    assert isinstance(glob_str, str)
+    assert isinstance(glob_str, str), f"glob_str must be a str (unicode), got {type(glob_str).__name__}: {glob_str!r}"
     glob_ends_w_slash = False
 
     if glob_str == "/":
@@ -170,7 +170,7 @@ def glob_to_regex(pat):
     """
     # Internal. Used by glob_get_sf, glob_get_prefix_res and unit tests.
 
-    assert isinstance(pat, str)
+    assert isinstance(pat, str), f"pat must be a str (unicode), got {type(pat).__name__}: {pat!r}"
 
     i, n, res = 0, len(pat), ""
     while i < n:

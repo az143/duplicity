@@ -76,7 +76,7 @@ if os.environ.get("DOCKER_GNUPGHOME", ""):
 else:
     os.environ["GNUPGHOME"] = os.path.join(_testing_dir, "gnupg")
 
-# bzr does not honor perms so fix the perms and avoid annoying error
+# fix the perms and avoid annoying error
 os.system(f"chmod 700 {os.path.join(_testing_dir, 'gnupg')}")
 
 # Standardize time
@@ -133,7 +133,9 @@ class DuplicityTestCase(unittest.TestCase):
         assert not os.system(f"mkdir {_runtest_dir}/testfiles/output {_runtest_dir}/testfiles/cache")
 
     def remove_testfiles(self):
-        assert not os.system(f"rm -rf {_runtest_dir}/testfiles")
+        assert not os.system(
+            f"rm -rf {_runtest_dir}/testfiles"
+        ), f"Can't remove {_runtest_dir}/testfiles, clean up manually otherwise many test will fail."
 
     def _update_env(self, key, value):
         if value is not None:

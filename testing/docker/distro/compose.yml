@@ -30,31 +30,42 @@ services:
         image: distro/ub20
         container_name: ub20
         hostname: ub20
+        tty: true
+        environment:
+            - PYTEST_ARGS=${PYTEST_ARGS:-""}
         entrypoint: /bin/bash
-        command: -c "make ext ; pytest ${PYTEST_ARGS}"
+        command: -c "make ext ; pytest ${PYTEST_ARGS:-""}"
         volumes:
             - ../../..:/root/duplicity
-            - pytest:/root/duplicity/.pytest_cache
+            - pytest_ub20:/root/duplicity/.pytest_cache
 
     ub22:
         image: distro/ub22
         container_name: ub22
         hostname: ub22
+        tty: true
+        environment:
+            - PYTEST_ARGS=${PYTEST_ARGS:-""}
         entrypoint: /bin/bash
-        command: -c "make ext ; pytest ${PYTEST_ARGS}"
+        command: -c "sleep 2 ; make ext ; pytest ${PYTEST_ARGS:-""}"
         volumes:
             - ../../..:/root/duplicity
-            - pytest:/root/duplicity/.pytest_cache
+            - pytest_ub22:/root/duplicity/.pytest_cache
 
     ub24:
         image: distro/ub24
         container_name: ub24
         hostname: ub24
+        tty: true
+        environment:
+            - PYTEST_ARGS=${PYTEST_ARGS:-""}
         entrypoint: /bin/bash
-        command: -c "make ext ; pytest ${PYTEST_ARGS}"
+        command: -c "sleep 4 ; make ext ; pytest ${PYTEST_ARGS:-""}"
         volumes:
             - ../../..:/root/duplicity
-            - pytest:/root/duplicity/.pytest_cache
+            - pytest_ub24:/root/duplicity/.pytest_cache
 
 volumes:
-    pytest:
+    pytest_ub20:
+    pytest_ub22:
+    pytest_ub24:

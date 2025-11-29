@@ -260,11 +260,7 @@ class _TestBackend(duplicity.backend.Backend):
         self.__hash_fileobj(open(filename, "rb"))
 
     def __hash_fileobj(self, fileobj):
-        # TODO: Remove when py38 goes EOL
-        if sys.version_info[:2] == (3, 8):
-            h = hashlib.sha1()
-        else:
-            h = hashlib.sha1(usedforsecurity=False)
+        h = hashlib.sha1(usedforsecurity=False)
         # loop till the end of the file
         chunk = 0
         while chunk != b"":

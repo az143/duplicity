@@ -1,6 +1,6 @@
 [project]
 name = "duplicity"
-version = "3.0.5.1"
+version = "3.0.6.2"
 dynamic = ["dependencies"]
 description = "Encrypted backup using rsync algorithm"
 authors = [
@@ -11,7 +11,7 @@ maintainers = [
     { name = "Thomas Laubrock" },
 ]
 readme = { file = "README.md", content-type = "text/markdown" }
-requires-python = ">= 3.8, < 3.15"
+requires-python = "> 3.8, < 3.15"
 # not all LP builders will take license=
 #license = "GPL-2.0-or-later"
 classifiers = [
@@ -21,12 +21,12 @@ classifiers = [
     "Operating System :: POSIX",
     "Programming Language :: C",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: System :: Archiving :: Backup",
 ]
 
@@ -92,14 +92,23 @@ exclude = [
 
 [tool.black]
 line-length = 120
-required-version="24"
 target-version = [
     "py39",
     "py310",
     "py311",
     "py312",
     "py313",
+    "py314",
 ]
+
+
+[tool.flynt]
+line-length = 120
+dry-run = true
+aggressive = true
+transform-joins = true
+# TODO: Remove duplicity.argparse311 when py310 goes EOL
+exclude = ["argparse311"]
 
 
 [tool.pytest.ini_options]
@@ -128,18 +137,28 @@ testpaths = [
 
 
 [tool.cibuildwheel]
+
+before-all = [
+    # WARNING: wheel builds are RedHat based, not Debian.
+    "yum update -y",
+    "yum install -y gcc gcc-c++ make git intltool librsync-devel",
+    "yum install -y libffi-devel openssl-devel openssl tzdata",
+    "yum install -y libxml2-devel libxslt-devel",
+    "python -m pip install -q -r requirements.txt",
+    "python ./setup.py build_ext",
+]
+
+[tool.cibuildwheel.config-settings]
+build-option = "--use-pep517"
+
+[tool.cibuildwheel.linux]
 archs = [
     "x86_64",
+    "aarch64",
 ]
 build = [
-    "cp{38,39,310,311,312,313}-manylinux_x86_64",
-]
-before-build = [
-    # WARNING: wheel builds are Centos based, not Debian.
-    "yum install -y gcc gcc-c++ make git intltool lftp librsync-devel",
-    "yum install -y libffi-devel openssl-devel openssl par2cmdline rdiff-backup tzdata",
-    "python -m pip install -r requirements.txt",
-    "python ./setup.py build_ext",
+    "cp{39,310,311,312,313,314}-manylinux_aarch64",
+    "cp{39,310,311,312,313,314}-manylinux_x86_64",
 ]
 
 

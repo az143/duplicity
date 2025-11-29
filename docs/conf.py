@@ -14,17 +14,18 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../bin"))
-sys.path.insert(0, os.path.abspath("../duplicity"))
-sys.path.insert(0, os.path.abspath("../testing"))
-sys.path.insert(0, os.path.abspath("../tools"))
+sys.path.insert(0, os.path.abspath(".."))
+# sys.path.insert(0, os.path.abspath("../bin"))
+# sys.path.insert(0, os.path.abspath("../duplicity"))
+# sys.path.insert(0, os.path.abspath("../testing"))
+# sys.path.insert(0, os.path.abspath("../tools"))
 
 
 # -- Project information -----------------------------------------------------
 
 project = "duplicity"
-copyright = "2021, Kenneth Loafman"  # pylint: disable=redefined-builtin
-author = "Kenneth Loafman"
+copyright = "2025, Duplicity Team"  # pylint: disable=redefined-builtin
+author = "Duplicity Team"
 
 
 # -- General configuration ---------------------------------------------------
@@ -58,6 +59,7 @@ exclude_patterns = [
     "README*",
     "Thumbs.db",
     "_build",
+    "duplicity/argparse311",
     "setup.py",
     "testing/manual",
     "testing/override",

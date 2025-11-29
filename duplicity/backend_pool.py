@@ -52,41 +52,6 @@ from duplicity import (
     util,
 )
 
-# TODO: remove when 3.8 is deprecated.
-if sys.version_info[:2] == (3, 8):
-    # patching buggy 3.8 implementation.
-    import atexit
-    import concurrent.futures.process
-
-    def _python_exit():
-        log.Debug("Python 3.8 patched function concurrent.futures.process._python_exit")
-        global _global_shutdown
-        _global_shutdown = True
-        items = list(concurrent.futures.process._threads_wakeups.items())
-        for _, thread_wakeup in items:
-            if thread_wakeup is not None:
-                try:
-                    thread_wakeup.wakeup()
-                except OSError:
-                    pass
-        for t, _ in items:
-            t.join()
-
-    atexit.unregister(concurrent.futures.process._python_exit)
-    concurrent.futures.process._python_exit = _python_exit
-    atexit.register(_python_exit)
-
-    def clear(self):
-        try:
-            while self._reader.poll():
-                self._reader.recv_bytes()
-        except OSError:
-            # OSError may occur if reader already closed and not "clear" is required.
-            log.Debug("Python 3.8 patched function concurrent.futures.process._ThreadWakeup.clear")
-            pass
-
-    concurrent.futures.process._ThreadWakeup.clear = clear
-
 pool_backend = None
 
 
@@ -324,7 +289,6 @@ class BackendPool:
         }
 
     def shutdown(self, *args):
-        concurrent.futures.wait(self._all_futures, timeout=0.5)  # workaround to make py3.8 more stable
         log.Debug("Process Pool: Start shutdown.")
         self.ppe.shutdown(*args)
         log.Debug("Process Pool: Shutdown done.")

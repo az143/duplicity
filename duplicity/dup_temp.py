@@ -138,7 +138,7 @@ class TempDupPath(path.DupPath):
         """
         Returns a fileobj.  When that is closed, delete file
         """
-        assert mode == "rb"  # Why write a file and then close it immediately?
+        assert mode == "rb", "wrong mode for open_with_delete"
         fh = FileobjHooked(path.DupPath.open(self, mode))
         fh.addhook(self.delete)
         return fh
@@ -187,7 +187,7 @@ class FileobjHooked(object):
         """
         We have achieved the first checkpoint, make file visible and permanent.
         """
-        assert not config.restart
+        assert not config.restart, "may not restart after checkpoint"
         self.tdp.rename(self.dirpath.append(self.partname))
         self.fileobj.flush()
         del self.hooklist[0]
@@ -245,7 +245,7 @@ class FileobjHooked(object):
         """
         Close fileobj, running hooks right afterwards
         """
-        assert not self.fileobj.close()
+        assert not self.fileobj.close(), "self.fileobj failed to close"
         for hook in self.hooklist:
             hook()
 

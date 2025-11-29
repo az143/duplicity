@@ -38,7 +38,7 @@ count = None
 remove_time = None
 source_path = None
 source_url = None
-target_dir = None
+target_path = None
 target_url = None
 
 # action to take
@@ -100,22 +100,14 @@ restore_path = None
 # The backend representing the remote side
 backend = None
 
-# Are errors fatal (set for retry decorator in backend.py)
-# See example of use in multibackend.py _list()
-# Do not use in normal cases!
-are_errors_fatal = {
-    "delete": (True, None),
-    "get": (True, None),
-    "list": (True, None),
-    "move": (True, None),
-    "put": (True, None),
-    "query": (True, None),
-}
-
 # Select object which iterates paths in the local source dir.
 select = None
 select_opts = []
 select_files = []
+
+# true if missing difftars should be run
+# mmising difftar files fount in second call
+first_colstats = False
 
 # gpg binary to use
 gpg_binary = None
@@ -377,7 +369,7 @@ mf_purge = False
 # Fake root directory path for iDrived backend
 idr_fakeroot = None
 
-# whether to check remote manifest (requires private key)
+# whether to check remote metadata (requires private key)
 check_remote = True
 
 # log verbosity.

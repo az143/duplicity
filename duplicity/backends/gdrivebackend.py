@@ -148,6 +148,16 @@ Exception: {str(e)}"""
 
         self.drive = build("drive", "v3", credentials=credentials)
 
+        self.parsed_url = parsed_url
+        # folderid will be lazily fetch on first request
+        self.folder = None
+        self.id_cache = {}
+
+    def lazy_init_parent_folder(self):
+        # already set? nothing to do
+        if self.folder:
+            return
+
         if self.shared_drive_id:
             parent_folder_id = self.shared_drive_id["driveId"]
         elif self.shared_root_folder_id:
@@ -156,7 +166,8 @@ Exception: {str(e)}"""
             parent_folder_id = "root"
 
         # Fetch destination folder entry and create hierarchy if required.
-        folder_names = parsed_url.path.split("/")
+        folder_names = self.parsed_url.path.split("/")
+
         for folder_name in folder_names:
             if not folder_name:
                 continue
@@ -203,7 +214,6 @@ Exception: {str(e)}"""
             parent_folder_id = folder["id"]
 
         self.folder = parent_folder_id
-        self.id_cache = {}
 
     def file_by_name(self, filename):
         from googleapiclient.errors import HttpError
@@ -273,6 +283,8 @@ Exception: {str(e)}"""
             return drive_file["id"]
 
     def _put(self, source_path, remote_filename):
+        self.lazy_init_parent_folder()
+
         from googleapiclient.http import MediaFileUpload
 
         remote_filename = os.fsdecode(remote_filename)
@@ -320,6 +332,8 @@ Exception: {str(e)}"""
         self.id_cache[remote_filename] = drive_file["id"]
 
     def _get(self, remote_filename, local_path):
+        self.lazy_init_parent_folder()
+
         from googleapiclient.http import MediaIoBaseDownload
 
         drive_file = self.file_by_name(remote_filename)
@@ -331,6 +345,8 @@ Exception: {str(e)}"""
                 status, done = downloader.next_chunk()
 
     def _list(self):
+        self.lazy_init_parent_folder()
+
         page_token = None
         drive_files = []
         while True:
@@ -366,6 +382,8 @@ Exception: {str(e)}"""
         return list(filenames)
 
     def _delete(self, filename):
+        self.lazy_init_parent_folder()
+
         file_id = self.id_by_name(filename)
         if file_id == "":
             log.Warn(f"File '{os.fsdecode(filename)}' does not exist while trying to delete it")
@@ -373,6 +391,8 @@ Exception: {str(e)}"""
             self.drive.files().delete(fileId=file_id, **self.shared_drive_flags_support).execute()
 
     def _query(self, filename):
+        self.lazy_init_parent_folder()
+
         drive_file = self.file_by_name(filename)
         if drive_file is None:
             size = -1

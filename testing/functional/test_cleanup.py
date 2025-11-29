@@ -87,6 +87,13 @@ class CleanupTest(FunctionalTestCase):
         leftovers = self.get_backend_files()
         self.assertEqual(full1_files | full2_files, leftovers)
 
+    def test_remove_older_than_keep_latest(self):
+        full1_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir", options=["--jsonstat"])
+        full2_files = self.backup("full", f"{_runtest_dir}/testfiles/empty_dir", options=["--jsonstat"])
+        self.run_duplicity(options=["remove-older-than", "0s", self.backend_url, "--force", "-v9"])
+        leftovers = self.get_backend_files()
+        self.assertEqual(full2_files, leftovers)
+
 
 if __name__ == "__main__":
     unittest.main()

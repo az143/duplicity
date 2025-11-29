@@ -30,7 +30,7 @@ import sys
 from hashlib import md5
 from textwrap import dedent
 
-# TODO: Remove duplicity.argparse311 when py38 goes EOL
+# TODO: Remove duplicity.argparse311 when py310 goes EOL
 from duplicity import argparse311 as argparse
 from duplicity import config
 from duplicity import dup_time
@@ -220,7 +220,7 @@ def check_source_url(val):
     return val
 
 
-def check_target_dir(val):
+def check_target_path(val):
     if not is_path(val):
         command_line_error(_(f"Target should be directory, not url.  Got '{val}' instead."))
     if not os.path.exists(val):
@@ -329,11 +329,7 @@ def generate_default_backup_name(backend_url):
     # where relative paths are used yet the relative path is the same
     # (but duplicity is run from a different directory or similar),
     # then it is simply up to the user to set --archive-dir properly.
-    # TODO: Remove when py38 goes EOL
-    if sys.version_info[:2] == (3, 8):
-        burlhash = md5()
-    else:
-        burlhash = md5(usedforsecurity=False)
+    burlhash = md5(usedforsecurity=False)
     burlhash.update(backend_url.encode())
     return burlhash.hexdigest()
 

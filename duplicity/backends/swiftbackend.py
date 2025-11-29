@@ -25,6 +25,8 @@ from duplicity import config
 from duplicity import log
 from duplicity.errors import BackendException
 
+global Connection, ClientException, SwiftService, SwiftUploadObject
+
 
 class SwiftBackend(duplicity.backend.Backend):
     """
@@ -34,6 +36,7 @@ class SwiftBackend(duplicity.backend.Backend):
     def __init__(self, parsed_url):
         duplicity.backend.Backend.__init__(self, parsed_url)
 
+        global Connection, ClientException, SwiftService, SwiftUploadObject
         try:
             from swiftclient.service import SwiftUploadObject
             from swiftclient.service import SwiftService

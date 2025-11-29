@@ -57,7 +57,6 @@ from duplicity.util import exception_traceback
 
 _backends = {}
 _backend_prefixes = {}
-_last_exception = None
 
 # These URL schemes have a backend with a notion of an RFC "network location".
 # The 'file' and 's3+http' schemes should not be in this list.
@@ -369,72 +368,53 @@ def retry(operation, fatal=True):
     # have to return a decorator function (which itself returns a function!)
     def outer_retry(fn):
         def inner_retry(self, *args):
-            global _last_exception
-            errors_fatal, errors_default = config.are_errors_fatal.get(operation, (True, None))
             for n in range(1, config.num_retries + 1):
                 try:
                     return fn(self, *args)
                 except FatalBackendException as e:
-                    _last_exception = e
-                    if not errors_fatal:
-                        # backend wants to report and ignore errors
-                        return errors_default
-                    else:
-                        # die on fatal errors
-                        raise e
+                    raise
                 except Exception as e:
-                    _last_exception = e
-                    if not errors_fatal:
-                        # backend wants to report and ignore errors
-                        return errors_default
+                    # retry on anything else
+                    log.Debug(_("Backtrace of previous error: %s") % exception_traceback())
+                    at_end = n == config.num_retries
+                    code = _get_code_from_exception(self.backend, operation, e)
+                    if code == log.ErrorCode.backend_not_found:
+                        # If we tried to do something, but the file just isn't there,
+                        # no need to retry.
+                        at_end = True
+                    if at_end and fatal:
+
+                        def make_filename(f):
+                            if isinstance(f, path.ROPath):
+                                return util.escape(f.uc_name)
+                            else:
+                                return util.escape(f)
+
+                        extra = " ".join([operation] + [make_filename(x) for x in args if (x and isinstance(x, str))])
+                        log.Error(
+                            _("Giving up after %s attempts. %s: %s. (for trace back: set log level DEBUG)")
+                            % (n, e.__class__.__name__, util.uexc(e)),
+                            code=code,
+                            extra=extra,
+                        )
+                        e.code = code
+                        # Ensure it's a BackendException, so that __main__ top-level handler exits with
+                        # code backend_error.
+                        if not isinstance(e, BackendException):
+                            e = BackendException(str(e), code=e.code)
+                        raise e
                     else:
-                        # retry on anything else
-                        log.Debug(_("Backtrace of previous error: %s") % exception_traceback())
-                        at_end = n == config.num_retries
-                        code = _get_code_from_exception(self.backend, operation, e)
-                        if code == log.ErrorCode.backend_not_found:
-                            # If we tried to do something, but the file just isn't there,
-                            # no need to retry.
-                            at_end = True
-                        if at_end and fatal:
-
-                            def make_filename(f):
-                                if isinstance(f, path.ROPath):
-                                    return util.escape(f.uc_name)
-                                else:
-                                    return util.escape(f)
-
-                            extra = " ".join(
-                                [operation] + [make_filename(x) for x in args if (x and isinstance(x, str))]
-                            )
-                            if multiprocessing.parent_process():
-                                # running as a child process we need to raise an exception to signal an issue
-                                log.Error(
-                                    _("Giving up after %s attempts. %s: %s. (for trace back: set log level DEBUG)")
-                                    % (n, e.__class__.__name__, util.uexc(e)),
-                                    code=code,
-                                    extra=extra,
-                                )
-                                e.code = code
-                                raise
-                            else:
-                                log.FatalError(
-                                    _("Giving up after %s attempts. %s: %s") % (n, e.__class__.__name__, util.uexc(e)),
-                                    code=code,
-                                    extra=extra,
-                                )
+                        log.Warn(
+                            _("Attempt of %s Nr. %s failed. %s: %s")
+                            % (fn.__name__, n, e.__class__.__name__, util.uexc(e))
+                        )
+                    if not at_end:
+                        if isinstance(e, TemporaryLoadException):
+                            time.sleep(3 * config.backend_retry_delay)  # wait longer before trying again
                         else:
-                            log.Warn(
-                                _("Attempt of %s Nr. %s failed. %s: %s")
-                                % (fn.__name__, n, e.__class__.__name__, util.uexc(e))
-                            )
-                        if not at_end:
-                            if isinstance(e, TemporaryLoadException):
-                                time.sleep(3 * config.backend_retry_delay)  # wait longer before trying again
-                            else:
-                                time.sleep(config.backend_retry_delay)  # wait a bit before trying again
-                            if hasattr(self.backend, "_retry_cleanup"):
-                                self.backend._retry_cleanup()
+                            time.sleep(config.backend_retry_delay)  # wait a bit before trying again
+                        if hasattr(self.backend, "_retry_cleanup"):
+                            self.backend._retry_cleanup()
 
         return inner_retry
 
@@ -697,7 +677,9 @@ class BackendWrapper(object):
         """
         Delete each filename in filename_list, in order if possible.
         """
-        assert not isinstance(filename_list, bytes)
+        assert not isinstance(
+            filename_list, bytes
+        ), "filename_list must be an iterable of filenames (not a byte string)"
         if hasattr(self.backend, "_delete_list"):
             self._do_delete_list(filename_list)
         elif hasattr(self.backend, "_delete"):
@@ -797,5 +779,5 @@ class BackendWrapper(object):
         """
         fin = self.get_fileobj_read(filename, parseresults)
         buf = fin.read()
-        assert not fin.close()
+        assert not fin.close(), "fin failed to close"
         return buf

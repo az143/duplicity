@@ -2273,8 +2273,6 @@ class TestAbsolutePaths(IncludeExcludeFunctionalTest):
 
 
 @unittest.skipUnless(platform.platform().startswith("Linux"), "Skip on non-Linux systems")
-@unittest.skipUnless(sys.getfilesystemencoding().upper() == "UTF-8", "Skip on non-UTF-8 systems")
-@unittest.skipIf(sys.version_info[:2] < (3, 7), "Skip on bad unicode handling")
 class TestUnicode(IncludeExcludeFunctionalTest):
     """Tests include/exclude options with unicode paths"""
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Copyright 2017 Nils Tekampe
-# Copyright 2017 Kenneth Loafman
+# Copyright 2017 Nils Tekampe <nils@tekampe.org>,
+# Kenneth Loafman <kenneth@loafman.com>
 #
 # This file is part of duplicity.
 # This script sets up a test network for the tests of dupclicity
@@ -25,23 +25,19 @@
 
 set -e
 
-cd `dirname "$0"`
+cd `dirname "$0"`/distro
 
 # setup gnupg
 cp -rp ../../gnupg ./
-echo -e "%Assuan%\nsocket=/root/S.gpg-agent\n" > ./gnupg/S.gog-agent
-echo -e "%Assuan%\nsocket=/root/S.gpg-agent.browser\n" > ./gnupg/S.gog-agent.browser
-echo -e "%Assuan%\nsocket=/root/S.gpg-agent.extra\n" > ./gnupg/S.gog-agent.extra
-echo -e "%Assuan%\nsocket=/root/S.gpg-agent.ssh\n" > ./gnupg/S.gog-agent.ssh
 
 # setup requirements
-cp -p ../../../requirements.txt ./
-sed '1,/documentation libraries/!d' ../../../requirements.dev > requirements.dev
+cp -p ../../../requirements.* ./
+cat ../../../requirements.txt | grep -v setuptools | grep -v pyrax > ./requirements.txt
 
 # build version specced by Dockerfile extenwion
-for FILE in Dockerfile.py3*; do
+for FILE in Dockerfile.ub*; do
     VERS="${FILE##*.}"
-    docker build $@ --compress --tag=dupci/${VERS} -f Dockerfile.${VERS} ./
+    docker build $@ --compress --tag=distro/${VERS} -f Dockerfile.${VERS} ./
 done
 
 # cleanup gnupg and requirements

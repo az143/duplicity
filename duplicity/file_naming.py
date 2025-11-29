@@ -253,14 +253,16 @@ def get(
     can be given with the full and inc types.  If manifest is true the
     filename is of a full or inc manifest file.
     """
-    assert dup_time.curtimestr
+    assert dup_time.curtimestr, "dup_time.curtimestr must be set before generating filenames (call setcurtime)"
     if encrypted:
         gzipped = False
     suffix = get_suffix(encrypted, gzipped)
     part_string = b".part" if partial else b""
     if type == "full-sig" or type == "new-sig":
-        assert not volume_number and not manifest
-        assert not (volume_number and part_string)
+        assert not volume_number and not manifest, "volume_number and manifest must not be set for signature files"
+        assert not (
+            volume_number and part_string
+        ), "volume_number and partial (.part) cannot be combined for signature files"
         if type == "full-sig":
             return (
                 config.file_prefix
@@ -280,8 +282,10 @@ def get(
                 )
             )
     elif type == "full-stat" or type == "inc-stat":
-        assert not volume_number and not manifest
-        assert not (volume_number and part_string)
+        assert not volume_number and not manifest, "volume_number and manifest must not be set for statistics files"
+        assert not (
+            volume_number and part_string
+        ), "volume_number and partial (.part) cannot be combined for statistics files"
         type_suffix = b"jsonstat"
         if type == "full-stat":
             main_name = b"duplicity-full"
@@ -299,8 +303,8 @@ def get(
             + b"%s.%s.%s%s%s" % (main_name, timestamp, type_suffix, part_string, suffix)
         )
     else:
-        assert volume_number or manifest
-        assert not (volume_number and manifest)
+        assert volume_number or manifest, "Either 'volume_number' must be provided or 'manifest' must be True"
+        assert not (volume_number and manifest), "'volume_number' and 'manifest' are mutually exclusive"
 
         prefix = config.file_prefix
 
@@ -329,7 +333,7 @@ def get(
                 suffix,
             )
         else:
-            assert 0
+            assert 0, f"Unknown file type '{type}' for constructing name"
 
 
 def parse(filename):
@@ -523,15 +527,24 @@ class ParseResults:
         compressed=None,
         partial=False,
     ):
-        assert type in ["full-sig", "new-sig", "inc", "full", "full-stat", "inc-stat"]
+        assert type in ["full-sig", "new-sig", "inc", "full", "full-stat", "inc-stat"], (
+            f"Invalid duplicity filename type '{type}'. Expected one of:"
+            f" ['full-sig', 'new-sig', 'inc', 'full', 'full-stat', 'inc-stat']"
+        )
 
         self.type = type
         if type in ["inc", "full"]:
-            assert manifest or volume_number
+            assert manifest or volume_number, (
+                "ParseResults for 'full' or 'inc' requires either 'manifest' flag to be True "
+                f"or a 'volume_number' integer. Got manifest={manifest}, volume_number={volume_number}."
+            )
         if type in ["inc", "new-sig", "inc-stat"]:
-            assert start_time and end_time
+            assert start_time and end_time, (
+                f"ParseResults for type '{type}' requires both start_time and end_time; "
+                f"got start_time={start_time}, end_time={end_time}."
+            )
         else:
-            assert time
+            assert time, f"ParseResults for type '{type}' requires a single 'time' value; got time={time}."
 
         self.manifest = manifest
         self.volume_number = volume_number

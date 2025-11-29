@@ -25,12 +25,9 @@
 Log various messages depending on verbosity level.
 """
 
-import datetime
 import logging
-import multiprocessing as mp
 import os
 import sys
-import threading
 
 MIN = 0
 ERROR = 0
@@ -44,7 +41,6 @@ PREFIX = ""
 
 _logger = None
 _log_timestamp = False
-log_queue = mp.Queue()
 
 
 def DupToLoggerLevel(verb):
@@ -79,6 +75,9 @@ def Log(s, verb_level, code=1, extra=None, force_print=False, transfer_progress=
     Write s to stderr if verbosity level low enough
     """
     global _logger
+    if not _logger:
+        setup()
+
     if extra:
         controlLine = f"{int(code)} {extra}"
     else:
@@ -161,124 +160,6 @@ def Progress(s, current, total=None):
     else:
         controlLine = f"{int(current)}"
     Log(s, INFO, InfoCode.progress, controlLine)
-
-
-def _ElapsedSecs2Str(secs):
-    tdelta = datetime.timedelta(seconds=secs)
-    hours, rem = divmod(tdelta.seconds, 3600)
-    minutes, seconds = divmod(rem, 60)
-    fmt = ""
-    if tdelta.days > 0:
-        fmt = f"{int(tdelta.days)}d,"
-    fmt = f"{fmt}{int(hours):02}:{int(minutes):02}:{int(seconds):02}"
-    return fmt
-
-
-def _RemainingSecs2Str(secs):
-    tdelta = datetime.timedelta(seconds=secs)
-    hours, rem = divmod(tdelta.seconds, 3600)
-    minutes, seconds = divmod(rem, 60)
-    fmt = ""
-    if tdelta.days > 0:
-        fmt = f"{int(tdelta.days)}d"
-        if hours > 0:
-            fmt = f"{fmt} {int(hours)}h"
-        if minutes > 0:
-            fmt = f"{fmt} {int(minutes)}min"
-    elif hours > 0:
-        fmt = f"{int(hours)}h"
-        if minutes > 0:
-            fmt = f"{fmt} {int(minutes)}min"
-    elif minutes > 5:
-        fmt = f"{int(minutes)}min"
-    elif minutes > 0:
-        fmt = f"{int(minutes)}min"
-        if seconds >= 30:
-            fmt = f"{fmt} 30sec"
-    elif seconds > 45:
-        fmt = "< 1min"
-    elif seconds > 30:
-        fmt = "< 45sec"
-    elif seconds > 15:
-        fmt = "< 30sec"
-    else:
-        fmt = f"{int(seconds)}sec"
-    return fmt
-
-
-def TransferProgress(progress, eta, changed_bytes, elapsed, speed, stalled):
-    """
-    Shortcut used for upload progress messages (verbosity 5).
-    """
-    dots = int(0.4 * progress)  # int(40.0 * progress / 100.0) -- for 40 chars
-    data_amount = float(changed_bytes) / 1024.0
-    data_scale = "KB"
-    if data_amount > 1000.0:
-        data_amount /= 1024.0
-        data_scale = "MB"
-    if data_amount > 1000.0:
-        data_amount /= 1024.0
-        data_scale = "GB"
-    if stalled:
-        eta_str = "Stalled!"
-        speed_amount = 0
-        speed_scale = "B"
-    else:
-        eta_str = _RemainingSecs2Str(eta)
-        speed_amount = float(speed) / 1024.0
-        speed_scale = "KB"
-        if speed_amount > 1000.0:
-            speed_amount /= 1024.0
-            speed_scale = "MB"
-        if speed_amount > 1000.0:
-            speed_amount /= 1024.0
-            speed_scale = "GB"
-    s = (
-        f"{data_amount:.1f}{data_scale} {_ElapsedSecs2Str(elapsed)} [{speed_amount:.1f}{speed_scale}/s] "
-        f"[{'=' * dots}>{' ' * (40 - dots)}] {int(progress)}% ETA {eta_str}"
-    )
-
-    controlLine = f"{int(changed_bytes)} {int(elapsed)} {int(progress)} {int(eta)} {int(speed)} {int(stalled)}"
-    Log(s, NOTICE, InfoCode.upload_progress, controlLine, transfer_progress=True)
-
-
-def PrintCollectionStatus(col_stats, force_print=False):
-    """
-    Prints a collection status to the log.
-    """
-    Log(
-        str(col_stats),
-        8,
-        InfoCode.collection_status,
-        "\n" + "\n".join(col_stats.to_log_info()),
-        force_print,
-    )
-
-
-def PrintCollectionFileChangedStatus(col_stats, filepath, force_print=False):
-    """
-    Prints a collection status to the log.
-    """
-    Log(
-        str(col_stats.get_file_changed_record(filepath)),
-        8,
-        InfoCode.collection_status,
-        None,
-        force_print,
-    )
-
-
-def PrintCollectionChangesInSet(col_stats, set_index, force_print=False):
-    """
-    Prints changes in the specified set to the log.
-    """
-    Log(
-        str(col_stats.get_all_file_changed_records(set_index)),
-        8,
-        InfoCode.collection_status,
-        None,
-        force_print,
-    )
 
 
 def Notice(s):

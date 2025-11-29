@@ -40,7 +40,7 @@ files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/functional/*.py")
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/unit/*.py")))
 files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/*.py")))
 
-# don't test argparse311.py.  not really ours.
+# TODO: Remove duplicity.argparse311 when py310 xgoes EOL
 files_to_test.remove(os.path.join(_top_dir, "duplicity/argparse311.py"))
 
 # TODO: remove when pylint AST builder is fixed.

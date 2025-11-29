@@ -42,7 +42,6 @@ from duplicity import config
 from . import UnitTestCase
 
 
-@unittest.skipIf(sys.version_info[:2] < (3, 6), "Skip on bad urllib.parse handling")
 class ParsedUrlTest(UnitTestCase):
     """Test the ParsedUrl class"""
 
@@ -172,40 +171,44 @@ class BackendWrapperTest(UnitTestCase):
         self.local = mock.MagicMock()
         self.remote = "remote"
 
-    @mock.patch("sys.exit")
-    def test_default_error_exit(self, exit_mock):
+    def test_default_error_exit(self):
         self.set_config("num_retries", 1)
         try:
             del self.mock._error_code
         except Exception as e:
             return
         self.mock._put.side_effect = Exception
-        self.backend.put(self.local, self.remote)
-        exit_mock.assert_called_once_with(50)
+        with self.assertRaises(BackendException) as cm:
+            self.backend.put(self.local, self.remote)
+            self.assertEquals(50, cm.exception.code)
 
-    @mock.patch("sys.exit")
-    def test_translates_code(self, exit_mock):
+    def test_translates_code(self):
         self.set_config("num_retries", 1)
         self.mock._error_code.return_value = 12345
         self.mock._put.side_effect = Exception
-        self.backend.put(self.local, self.remote)
-        exit_mock.assert_called_once_with(12345)
+        with self.assertRaises(BackendException) as cm:
+            self.backend.put(self.local, self.remote)
+            self.assertEquals(12345, cm.exception.code)
 
-    @mock.patch("sys.exit")
-    def test_uses_exception_code(self, exit_mock):
+    def test_uses_exception_code(self):
         self.set_config("num_retries", 1)
         self.mock._error_code.return_value = 12345
         self.mock._put.side_effect = BackendException("error", code=54321)
-        self.backend.put(self.local, self.remote)
-        exit_mock.assert_called_once_with(54321)
+        with self.assertRaises(BackendException) as cm:
+            self.backend.put(self.local, self.remote)
+            self.assertEquals(12345, cm.exception.code)
 
-    @mock.patch("sys.exit")
     @mock.patch("time.sleep")  # so no waiting
-    def test_cleans_up(self, exit_mock, time_mock):  # pylint: disable=unused-argument
+    def test_cleans_up(self, time_mock):  # pylint: disable=unused-argument
         self.set_config("num_retries", 2)
         self.mock._retry_cleanup.return_value = None
         self.mock._put.side_effect = Exception
-        self.backend.put(self.local, self.remote)
+        try:
+            self.backend.put(self.local, self.remote)
+        except BackendException:
+            # retry should eventually pass through the exception, but that's
+            # not what we're testing here.
+            pass
         self.mock._retry_cleanup.assert_called_once_with()
 
     def test_prefer_lists(self):
@@ -233,29 +236,53 @@ class BackendWrapperTest(UnitTestCase):
         self.backend.query_info([self.remote])
         self.assertEqual(self.mock._query.call_count, 1)
 
-    @mock.patch("sys.exit")
     @mock.patch("time.sleep")  # so no waiting
-    def test_retries(self, exit_mock, time_mock):  # pylint: disable=unused-argument
+    def test_retries(self, time_mock):  # pylint: disable=unused-argument
         self.set_config("num_retries", 2)
 
         self.mock._get.side_effect = Exception
-        self.backend.get(self.remote, self.local)
+        try:
+            self.backend.get(self.remote, self.local)
+        except BackendException:
+            # retry should eventually pass through the exception, but that's
+            # not what we're testing here.
+            pass
         self.assertEqual(self.mock._get.call_count, config.num_retries)
 
         self.mock._put.side_effect = Exception
-        self.backend.put(self.local, self.remote)
+        try:
+            self.backend.put(self.local, self.remote)
+        except BackendException:
+            # retry should eventually pass through the exception, but that's
+            # not what we're testing here.
+            pass
         self.assertEqual(self.mock._put.call_count, config.num_retries)
 
         self.mock._list.side_effect = Exception
-        self.backend.list()
+        try:
+            self.backend.list()
+        except BackendException:
+            # retry should eventually pass through the exception, but that's
+            # not what we're testing here.
+            pass
         self.assertEqual(self.mock._list.call_count, config.num_retries)
 
         self.mock._delete_list.side_effect = Exception
-        self.backend.delete([self.remote])
+        try:
+            self.backend.delete([self.remote])
+        except BackendException:
+            # retry should eventually pass through the exception, but that's
+            # not what we're testing here.
+            pass
         self.assertEqual(self.mock._delete_list.call_count, config.num_retries)
 
         self.mock._query_list.side_effect = Exception
-        self.backend.query_info([self.remote])
+        try:
+            self.backend.query_info([self.remote])
+        except BackendException:
+            # retry should eventually pass through the exception, but that's
+            # not what we're testing here.
+            pass
         self.assertEqual(self.mock._query_list.call_count, config.num_retries)
 
         try:
@@ -263,7 +290,12 @@ class BackendWrapperTest(UnitTestCase):
         except Exception as e:
             return
         self.mock._delete.side_effect = Exception
-        self.backend.delete([self.remote])
+        try:
+            self.backend.delete([self.remote])
+        except BackendException:
+            # retry should eventually pass through the exception, but that's
+            # not what we're testing here.
+            pass
         self.assertEqual(self.mock._delete.call_count, config.num_retries)
 
         try:
@@ -271,11 +303,21 @@ class BackendWrapperTest(UnitTestCase):
         except Exception as e:
             return
         self.mock._query.side_effect = Exception
-        self.backend.query_info([self.remote])
+        try:
+            self.backend.query_info([self.remote])
+        except BackendException:
+            # retry should eventually pass through the exception, but that's
+            # not what we're testing here.
+            pass
         self.assertEqual(self.mock._query.call_count, config.num_retries)
 
         self.mock._move.side_effect = Exception
-        self.backend.move(self.local, self.remote)
+        try:
+            self.backend.move(self.local, self.remote)
+        except BackendException:
+            # retry should eventually pass through the exception, but that's
+            # not what we're testing here.
+            pass
         self.assertEqual(self.mock._move.call_count, config.num_retries)
 
     def test_move(self):

@@ -46,7 +46,7 @@ class CommandlineTest(UnitTestCase):
         "remove_time": "100",
         "source_path": "foo/bar",
         "source_url": "file://duptest",
-        "target_dir": "foo/bar",
+        "target_path": "foo/bar",
         "target_url": "file://duptest",
     }
 
@@ -134,14 +134,14 @@ class CommandlineTest(UnitTestCase):
         for cmd in ["restore"] + cli_main.CommandAliases.restore:
             cli_main.process_command_line(f"{cmd} file://duptest foo/bar".split())
             self.assertEqual(config.action, "restore")
-            self.assertTrue(config.source_path.endswith("foo/bar"))
-            self.assertEqual(config.target_url, "file://duptest")
+            self.assertTrue(config.target_path.endswith("foo/bar"))
+            self.assertEqual(config.source_url, "file://duptest")
 
         for cmd in ["verify"] + cli_main.CommandAliases.verify:
             cli_main.process_command_line(f"{cmd} file://duptest foo/bar".split())
             self.assertEqual(config.action, "verify")
-            self.assertTrue(config.source_path.endswith("foo/bar"))
-            self.assertEqual(config.target_url, "file://duptest")
+            self.assertTrue(config.target_path.endswith("foo/bar"))
+            self.assertEqual(config.source_url, "file://duptest")
 
     @pytest.mark.usefixtures("redirect_stdin")
     def test_full_command_errors_reversed_args(self):
@@ -151,7 +151,7 @@ class CommandlineTest(UnitTestCase):
         new_args = {
             "source_path": "file://duptest",
             "source_url": "foo/bar",
-            "target_dir": "file://duptest",
+            "target_path": "file://duptest",
             "target_url": "foo/bar",
         }
         err_msg = "should be url|should be pathname"
@@ -253,7 +253,7 @@ class CommandlineTest(UnitTestCase):
         cli_main.process_command_line(cline)
         self.assertEqual(config.action, "restore")
         self.assertEqual(config.source_url, "file:///source_url")
-        self.assertEqual(config.target_dir, "foo/bar")
+        self.assertEqual(config.target_path, "foo/bar")
 
         cline = "-v9 foo/bar file:///target_url".split()
         cli_main.process_command_line(cline)
@@ -265,7 +265,7 @@ class CommandlineTest(UnitTestCase):
         cli_main.process_command_line(cline)
         self.assertEqual(config.action, "restore")
         self.assertEqual(config.source_url, "file:///source_url")
-        self.assertEqual(config.target_dir, "foo/bar")
+        self.assertEqual(config.target_path, "foo/bar")
 
         cline = "foo/bar -v9 file:///target_url".split()
         cli_main.process_command_line(cline)
@@ -277,7 +277,7 @@ class CommandlineTest(UnitTestCase):
         cli_main.process_command_line(cline)
         self.assertEqual(config.action, "restore")
         self.assertEqual(config.source_url, "file:///source_url")
-        self.assertEqual(config.target_dir, "foo/bar")
+        self.assertEqual(config.target_path, "foo/bar")
 
         cline = "--verbosity n foo/bar file:///target_url".split()
         cli_main.process_command_line(cline)
@@ -289,7 +289,7 @@ class CommandlineTest(UnitTestCase):
         cli_main.process_command_line(cline)
         self.assertEqual(config.action, "restore")
         self.assertEqual(config.source_url, "file:///source_url")
-        self.assertEqual(config.target_dir, "foo/bar")
+        self.assertEqual(config.target_path, "foo/bar")
 
         cline = "foo/bar --verbosity n file:///target_url".split()
         cli_main.process_command_line(cline)
@@ -301,7 +301,7 @@ class CommandlineTest(UnitTestCase):
         cli_main.process_command_line(cline)
         self.assertEqual(config.action, "restore")
         self.assertEqual(config.source_url, "file:///source_url")
-        self.assertEqual(config.target_dir, "foo/bar")
+        self.assertEqual(config.target_path, "foo/bar")
 
         # this incremental misses the path argument
         with self.assertRaises(CommandLineError) as cm:

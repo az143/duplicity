@@ -307,7 +307,7 @@ Exception: {str(e)}"""
                     retry_number = config.num_retries
 
                     if not is_eof:
-                        assert len(buf) != 0
+                        assert len(buf) != 0, "buffer should not be empty"
                         log.Debug(
                             f"dpbx,files_upload_sesssion_append([{len(buf)} bytes], "
                             f"offset={int(upload_cursor.offset)})"

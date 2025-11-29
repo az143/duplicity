@@ -26,12 +26,15 @@
 # Please send mail to me or the mailing list if you find bugs or have
 # any suggestions.
 
+import os
 import sys
 
-import duplicity.errors
-from duplicity import log
-from duplicity import tempdir
-from duplicity import util
+from duplicity import (
+    errors,
+    log,
+    tempdir,
+    util,
+)
 from duplicity.dup_main import main
 from duplicity.gpg import GPGError
 
@@ -56,6 +59,13 @@ def with_tempdir(fn):
 
 
 def dup_run():
+    # check that we can function here
+    if os.environ.get("PYTEST_VERSION") is not None:
+        pass
+    elif not ((3, 9) <= sys.version_info[:2] <= (3, 14)):
+        print("Sorry, duplicity requires version 3.9 thru 3.14 of Python.", file=sys.stderr)
+        sys.exit(1)
+
     try:
         log.setup()
         util.start_debugger()
@@ -84,19 +94,19 @@ def dup_run():
         log.Info(_("GPG error detail: %s") % util.exception_traceback())
         log.FatalError(f"{e.__class__.__name__}: {e.args[0]}", log.ErrorCode.gpg_failed, e.__class__.__name__)
 
-    except duplicity.errors.UserError as e:
+    except errors.UserError as e:
         util.release_lockfile()
         # For user errors, don't show an ugly stack trace by
         # default. But do with sufficient verbosity.
         log.Info(_("User error detail: %s") % util.exception_traceback())
         log.FatalError(f"{e.__class__.__name__}: {util.uexc(e)}", log.ErrorCode.user_error, e.__class__.__name__)
 
-    except duplicity.errors.BackendException as e:
+    except errors.BackendException as e:
         util.release_lockfile()
         # For backend errors, don't show an ugly stack trace by
         # default. But do with sufficient verbosity.
         log.Info(_("Backend error detail: %s") % util.exception_traceback())
-        log.FatalError(f"{e.__class__.__name__}: {util.uexc(e)}", log.ErrorCode.user_error, e.__class__.__name__)
+        log.FatalError(f"{e.__class__.__name__}: {util.uexc(e)}", log.ErrorCode.backend_error, e.__class__.__name__)
 
     except Exception as e:
         util.release_lockfile()

@@ -31,6 +31,8 @@ from duplicity.errors import (
     BackendException,
 )
 
+global boto3, botocore, ClientError, S3UploadFailedError, TransferConfig
+
 
 # Note: current gaps with the old boto backend include:
 #       - Glacier restore to S3 not implemented. Should this
@@ -66,6 +68,25 @@ class S3Boto3Backend(duplicity.backend.Backend):
     """
 
     def __init__(self, parsed_url):
+        global boto3, botocore, ClientError, S3UploadFailedError, TransferConfig
+        import boto3
+        import botocore
+        from boto3.s3.transfer import S3UploadFailedError, TransferConfig
+        from botocore.exceptions import ClientError
+
+        if not (boto3.__version__ < "1.36.0" and botocore.__version__ < "1.36.0"):
+            # TODO: remove this workaround when issue #870 is fixed.
+            # https://github.com/boto/boto3/issues/2913
+            log.Warn(
+                "WARNING: Using boto3 >= 1,36.0 may result in errors, so we qre applying\n"
+                "the workaround for https://gitlab.com/duplicity/duplicity/-/issues/870\n"
+                "    export AWS_REQUEST_CHECKSUM_CALCULATION=when_required\n"
+                "    export AWS_RESPONSE_CHECKSUM_VALIDATION=when_required\n"
+                "NOTE: This workaround is temporary and will be removed when issue is fixed.\n."
+            )
+            os.environ["AWS_REQUEST_CHECKSUM_CALCULATION"] = "when_required"
+            os.environ["AWS_RESPONSE_CHECKSUM_VALIDATION"] = "when_required"
+
         duplicity.backend.Backend.__init__(self, parsed_url)
 
         # This folds the null prefix and all null parts, which means that:
@@ -89,10 +110,6 @@ class S3Boto3Backend(duplicity.backend.Backend):
         self.tracker = UploadProgressTracker()
 
     def reset_connection(self):
-        import boto3
-        import botocore
-        from botocore.exceptions import ClientError
-
         self.bucket = None
         self.s3 = boto3.resource(
             "s3",
@@ -116,8 +133,6 @@ class S3Boto3Backend(duplicity.backend.Backend):
         self.bucket = self.s3.Bucket(self.bucket_name)  # only set if bucket is thought to exist.
 
     def _put(self, local_source_path, remote_filename):
-        from boto3.s3.transfer import TransferConfig
-
         if not self.s3:
             self.reset_connection()
 
@@ -178,16 +193,24 @@ class S3Boto3Backend(duplicity.backend.Backend):
         key = self.key_prefix + remote_filename
 
         log.Info(f"Uploading {self.straight_url}/{remote_filename} to {storage_class} Storage")
-        self.s3.Object(self.bucket.name, key).upload_file(
-            local_source_path.uc_name,
-            Callback=tracker.progress_cb,
-            Config=transfer_config,
-            ExtraArgs=extra_args,
-        )
+        try:
+            self.s3.Object(self.bucket.name, key).upload_file(
+                local_source_path.uc_name,
+                Callback=tracker.progress_cb,
+                Config=transfer_config,
+                ExtraArgs=extra_args,
+            )
+        except S3UploadFailedError as e:
+            if boto3.__version__ > "1.36.0" or botocore.__version__ > "1.36.0":
+                log.FatalError(
+                    f"Failed to upload file {remote_filename}, got S3UploadFailedError\n"
+                    f"See https://gitlab.com/duplicity/duplicity/-/issues/870 for details.\n"
+                    f"Quick fix is: [sudo] pip3 install boto3<1.36.0 botocore<1.36.0"
+                )
+            else:
+                raise e
 
     def _get(self, remote_filename, local_path):
-        from botocore.exceptions import ClientError
-
         if not self.s3:
             self.reset_connection()
 
@@ -198,8 +221,9 @@ class S3Boto3Backend(duplicity.backend.Backend):
         except ClientError as ios:
             if ios.response["Error"]["Code"] == "InvalidObjectState":
                 log.FatalError(
-                    f"File {remote_filename} seems to be in a long term storage, "
-                    f"please use AWS Console/API to initiate restore.\nAPI-Error: {ios}"
+                    f"File {remote_filename} seems to be in a long term storage,"
+                    f"Please use AWS Console/API to initiate restore.\n"
+                    f"API-Error: {ios}"
                 )
             else:
                 raise ios
@@ -229,8 +253,6 @@ class S3Boto3Backend(duplicity.backend.Backend):
     def _query(self, remote_filename):
         if not self.s3:
             self.reset_connection()
-
-        import botocore
 
         remote_filename = os.fsdecode(remote_filename)
         key = self.key_prefix + remote_filename

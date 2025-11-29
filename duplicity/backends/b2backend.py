@@ -27,15 +27,17 @@ import os
 from urllib.parse import quote_plus
 
 import duplicity.backend
-from duplicity import config
-from duplicity import log
-from duplicity import progress
-from duplicity import util
-from duplicity import config
+from duplicity import (
+    config,
+    log,
+    progress,
+)
 from duplicity.errors import (
     BackendException,
     FatalBackendException,
 )
+
+global DownloadDestLocalFile, FileVersionInfoFactory
 
 
 class B2ProgressListener(object):
@@ -70,7 +72,6 @@ class B2Backend(duplicity.backend.Backend):
 
         try:  # figure out what version of b2sdk we have
             from b2sdk import __version__ as VERSION  # pylint: disable=import-error
-            import traceback
 
             v_split = VERSION.split(".")
             self.v_num = [int(x) for x in v_split]
@@ -84,6 +85,8 @@ class B2Backend(duplicity.backend.Backend):
                 NonExistentBucket,
             )  # pylint: disable=import-error
         except ImportError as e1:
+            import traceback
+
             log.Debug("".join(traceback.format_exception(None, e1, e1.__traceback__)))
             try:  # if public API v2 not found, try to use public API v1
                 from b2sdk.v1 import B2Api  # pylint: disable=import-error
@@ -166,7 +169,7 @@ class B2Backend(duplicity.backend.Backend):
         if self.v_num < [1, 11, 0]:
             self.bucket.download_file_by_name(
                 quote_plus(self.path + os.fsdecode(remote_filename), "/"),
-                DownloadDestLocalFile(local_path.name),
+                DownloadDestLocalFile(local_path.name),  # pylint: disable=used-before-assignment
             )
         else:
             df = self.bucket.download_file_by_name(quote_plus(self.path + os.fsdecode(remote_filename), "/"))

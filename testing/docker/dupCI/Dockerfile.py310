@@ -1,6 +1,6 @@
 # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
 #
-# Copyright 2019 Nils Tekampe,
+# Copyright 2019 Nils Tekampe
 # Copyright 2019 Kenneth Loafman
 # Copyright 2019 Aaron Whitehouse
 #
@@ -36,6 +36,7 @@ RUN apt update \
     && apt install -y \
         build-essential \
         git \
+        gpg \
         intltool \
         lftp \
         librsync-dev \

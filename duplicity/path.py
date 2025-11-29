@@ -106,7 +106,7 @@ class ROPath(object):
                 )
             except Exception as e:
                 log.Warn(
-                    _("Warning: %s invalid devnums (0x%X), treating as (0, 0).")
+                    _("WARNING: %s invalid devnums (0x%X), treating as (0, 0).")
                     % (os.fsdecode(self.get_relative_path()), self.stat.st_rdev)
                 )
                 self.devnums = (0, 0)
@@ -177,12 +177,12 @@ class ROPath(object):
         """Return contents of associated fileobj in string"""
         fin = self.open("rb")
         buf = fin.read()
-        assert not fin.close()
+        assert not fin.close(), "fin failed to close"
         return buf
 
     def setfileobj(self, fileobj):
         """Set file object returned by open()"""
-        assert not self.fileobj
+        assert not self.fileobj, "fileobj is already set"
         self.fileobj = fileobj
         self.opened = None
 
@@ -232,7 +232,7 @@ class ROPath(object):
 
         self.stat.st_mtime = int(tarinfo.mtime)
         if self.stat.st_mtime < 0:
-            log.Warn(_("Warning: %s has negative mtime, treating as 0.") % tarinfo.uc_name)
+            log.Warn(_("WARNING: %s has negative mtime, treating as 0.") % tarinfo.uc_name)
             self.stat.st_mtime = 0
         self.stat.st_size = tarinfo.size
 
@@ -292,7 +292,7 @@ class ROPath(object):
             ti.mode = self.mode
             ti.uid, ti.gid = self.stat.st_uid, self.stat.st_gid
             if self.stat.st_mtime < 0:
-                log.Warn(_("Warning: %s has negative mtime, treating as 0.") % (os.fsdecode(self.get_relative_path())))
+                log.Warn(_("WARNING: %s has negative mtime, treating as 0.") % (os.fsdecode(self.get_relative_path())))
                 ti.mtime = 0
             else:
                 ti.mtime = int(self.stat.st_mtime)
@@ -339,7 +339,7 @@ class ROPath(object):
             return self.symtext == other.symtext
         elif self.isdev():
             return self.perms_equal(other) and self.devnums == other.devnums
-        assert 0
+        assert 0, "Unhandled path type in ROPath.__eq__"
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -411,7 +411,7 @@ class ROPath(object):
                 log_diff(_("Device file %%s has numbers %s, expected %s") % (other.devnums, self.devnums))
                 return 0
             return 1
-        assert 0
+        assert 0, "Unhandled path type in ROPath.compare_verbose"
 
     def compare_data(self, other):
         """Compare data from two regular files, return true if same"""
@@ -419,8 +419,8 @@ class ROPath(object):
         f2 = other.open("rb")
 
         def close():
-            assert not f1.close()
-            assert not f2.close()
+            assert not f1.close(), "f1 failed to close"
+            assert not f2.close(), "f2 failed to close"
 
         while True:
             buf1 = f1.read(config.copy_blocksize)
@@ -472,7 +472,7 @@ class ROPath(object):
             other.setdata()
         else:
             # write results to fake stat object
-            assert isinstance(other, ROPath)
+            assert isinstance(other, ROPath), "'other' must be an ROPath instance"
             stat = StatResult()
             stat.st_uid, stat.st_gid = self.stat.st_uid, self.stat.st_gid
             stat.st_mtime = int(self.stat.st_mtime)
@@ -582,7 +582,7 @@ class Path(ROPath):
         Usually this is just the file data on disk, but can be
         replaced with arbitrary data using the setfileobj method.
         """
-        assert not self.opened
+        assert not self.opened, "Path is already marked as opened"
         if self.fileobj:
             result = self.fileobj
         else:
@@ -673,14 +673,14 @@ class Path(ROPath):
 
     def patch_with_attribs(self, diff_ropath):
         """Patch self with diff and then copy attributes over"""
-        assert self.isreg() and diff_ropath.isreg()
+        assert self.isreg() and diff_ropath.isreg(), "Both base and diff must be regular files for patching"
         temp_path = self.get_temp_in_same_dir()
         fbase = self.open("rb")
         fdiff = diff_ropath.open("rb")
         patch_fileobj = librsync.PatchedFile(fbase, fdiff)
         temp_path.writefileobj(patch_fileobj)
-        assert not fbase.close()
-        assert not fdiff.close()
+        assert not fbase.close(), "fbase failed to close"
+        assert not fdiff.close(), "fdiff failed to close"
         diff_ropath.copy_attribs(temp_path)
         temp_path.rename(self)
 
@@ -720,7 +720,7 @@ class Path(ROPath):
 
     def unquote(self, s):
         """Return unquoted version of string s, as quoted by above quote()"""
-        assert s[0] == s[-1] == '"'  # string must be quoted by above
+        assert s[0] == s[-1] == '"', "Input string must be enclosed in double quotes as produced by quote()"
         result = ""
         i = 1
         while i < len(s) - 1:
@@ -735,7 +735,7 @@ class Path(ROPath):
     def get_filename(self):
         """Return filename of last component"""
         components = self.name.split(b"/")
-        assert components and components[-1]
+        assert components and components[-1], "Path has no final component (empty filename)"
         return components[-1]
 
     def get_canonical(self):
@@ -774,7 +774,7 @@ class DupPath(Path):
         if parseresults:
             self.pr = parseresults
         else:
-            assert len(index) == 1
+            assert len(index) == 1, "DupPath requires a single-element index when parseresults is not provided"
             self.pr = file_naming.parse(index[0])
             assert self.pr, "must be a recognizable duplicity file"
 
@@ -787,10 +787,14 @@ class DupPath(Path):
         If encryption is specified but no gpg_profile, use
         config.default_profile.
         """
-        assert not self.opened and not self.fileobj
-        assert not (self.pr.encrypted and self.pr.compressed)
+        assert (
+            not self.opened and not self.fileobj
+        ), "filtered_open called but file is already opened or has a custom fileobj"
+        assert not (
+            self.pr.encrypted and self.pr.compressed
+        ), "A file cannot be both encrypted and compressed simultaneously"
         if gpg_profile:
-            assert self.pr.encrypted
+            assert self.pr.encrypted, "gpg_profile provided but file is not marked as encrypted"
 
         if self.pr.compressed:
             return gzip.GzipFile(self.name, mode)

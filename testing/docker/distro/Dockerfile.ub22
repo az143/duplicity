@@ -41,6 +41,8 @@ RUN apt update \
         librsync-dev \
         libffi-dev \
         libssl-dev \
+        libxml2-dev \
+        libxslt-dev \
         openssl \
         par2 \
         python3 \

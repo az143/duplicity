@@ -108,7 +108,7 @@ class ConcurrencyFailTest(FunctionalTestCase):
         "See https://gitlab.com/duplicity/duplicity/-/issues/820",
     )
     def test_out_of_order_volume(self):
-        self.make_largefiles()
+        self.make_largefiles(count=4)
         options = [
             "--num-ret=2",
             "--backend-ret=3",

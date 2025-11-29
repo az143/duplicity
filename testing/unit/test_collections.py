@@ -21,6 +21,7 @@
 
 
 import random
+import re
 import unittest
 
 import pytest
@@ -29,7 +30,9 @@ from duplicity import backend
 from duplicity import config
 from duplicity import dup_collections
 from duplicity import dup_time
+from duplicity import file_naming
 from duplicity import gpg
+from duplicity import manifest
 from duplicity import path
 from testing import _runtest_dir
 from . import UnitTestCase
@@ -51,6 +54,9 @@ remote_sigchain_filename_list = [
     b"duplicity-full-signatures.2002-08-17T16:17:01-07:00.sigtar.gpg",
     b"duplicity-new-signatures.2002-08-17T16:17:01-07:00.to.2002-08-18T00:04:30-07:00.sigtar.gpg",
     b"duplicity-new-signatures.2002-08-18T00:04:30-07:00.to.2002-08-20T00:00:00-07:00.sigtar.gpg",
+]
+remote_sigchain_filename_list2 = [
+    b"duplicity-full-signatures.2003-08-17T16:17:01-07:00.sigtar.gpg",
 ]
 
 local_sigchain_filename_list = [
@@ -81,6 +87,49 @@ filename_list2 = [
     b"Extra stuff to be ignored",
 ]
 
+filename_list3 = [
+    b"duplicity-full.2002-08-17T16:17:01-07:00.manifest.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol1.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol2.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol3.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol4.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol5.difftar.gpg",
+    b"duplicity-full.2002-08-17T16:17:01-07:00.vol6.difftar.gpg",
+]
+
+remove_older_than = [
+    b"duplicity-full.20251003T104900Z.vol1.difftar.gz",
+    b"duplicity-full.20251003T104922Z.vol1.difftar.gz",
+    b"duplicity-full-signatures.20251003T104900Z.sigtar.gz",
+    b"duplicity-full-signatures.20251003T104922Z.sigtar.gz",
+    b"duplicity-full.20251003T104900Z.manifest",
+    b"duplicity-full.20251003T104922Z.manifest",
+]
+
+partial_filename_list = []
+
+
+@pytest.fixture
+def mock_manifest(monkeypatch):
+    """
+    Monkeypatch dup_collections to return partial manifest
+    """
+
+    def partial_manifest(*args, **kwargs):
+        """
+        Make a partial manifest from partial_filename_list
+        """
+        mf = manifest.Manifest()
+        for fn in filename_list3:
+            pr = file_naming.parse(fn)
+            if pr.type == "full" and pr.volume_number:
+                vi = manifest.VolumeInfo()
+                vi.set_info(pr.volume_number, None, None, None, None)
+                mf.add_volume_info(vi)
+        return mf
+
+    monkeypatch.setattr(dup_collections.BackupSet, "get_manifest", partial_manifest)
+
 
 class CollectionTest(UnitTestCase):
     """Test collections"""
@@ -106,7 +155,7 @@ class CollectionTest(UnitTestCase):
         """Test basic backup chain construction"""
         random.shuffle(filename_list1)
         cs = dup_collections.CollectionsStatus(None, config.archive_dir_path)
-        chains, orphaned, incomplete = cs.get_backup_chains(filename_list1)
+        chains, orphaned, incomplete, missing_difftar_sets = cs.get_backup_chains(filename_list1)
         if len(chains) != 1 or len(orphaned) != 0:
             print(chains)
             print(orphaned)
@@ -117,7 +166,7 @@ class CollectionTest(UnitTestCase):
         assert chain.fullset.time == 1029626221
 
     def test_collections_status(self):
-        """Test CollectionStatus object's set_values()"""
+        """Test CollectionsStatus object's set_values()"""
 
         def check_cs(cs):
             """Check values of collections status"""
@@ -199,20 +248,37 @@ class CollectionTest(UnitTestCase):
         self.sigchain_fileobj_check_list(self.sigchain_fileobj_get(1))
         self.sigchain_fileobj_check_list(self.sigchain_fileobj_get(None))
 
-    def get_filelist2_cs(self):
-        """Return set CollectionsStatus object from filelist 2"""
-        # Set up /tmp/testfiles/output with files from filename_list2
-        for filename in filename_list2:
+    def get_filelist_cs(self, filelist, fill_archive=False):
+        """
+        Return set CollectionsStatus object from filelist
+        """
+        # Set up /tmp/testfiles/output with files from filelist
+
+        for filename in self.output_dir.listdir():
+            self.output_dir.append(filename).delete()
+        for filename in filelist:
             p = self.output_dir.append(filename)
             p.touch()
+
+        if fill_archive:
+            for filename in config.archive_dir_path.listdir():
+                config.archive_dir_path.append(filename).delete()
+            for filename in filelist:
+                if b"vol" in filename:
+                    # don't add volumes to archive/cache
+                    continue
+                p = config.archive_dir_path.append(filename)
+                p.touch()
 
         cs = dup_collections.CollectionsStatus(self.output_dir_backend, config.archive_dir_path)
         cs.set_values()
         return cs
 
     def test_get_extraneous(self):
-        """Test the listing of extraneous files"""
-        cs = self.get_filelist2_cs()
+        """
+        Test the listing of extraneous files
+        """
+        cs = self.get_filelist_cs(filename_list2)
         assert len(cs.orphaned_backup_sets) == 1, cs.orphaned_backup_sets
         assert len(cs.local_orphaned_sig_names) == 0, cs.local_orphaned_sig_names
         assert len(cs.remote_orphaned_sig_names) == 1, cs.remote_orphaned_sig_names
@@ -236,8 +302,10 @@ class CollectionTest(UnitTestCase):
         assert not errors, "\n" + "\n".join(errors)
 
     def test_get_olderthan(self):
-        """Test getting list of files older than a certain time"""
-        cs = self.get_filelist2_cs()
+        """
+        Test getting list of files older than a certain time
+        """
+        cs = self.get_filelist_cs(filename_list2)
         oldsets = cs.get_older_than(dup_time.genstrtotime("2002-05-01T16:17:01-07:00"))
         oldset_times = [s.get_time() for s in oldsets]
         right_times = [dup_time.genstrtotime("2001-01-01T16:17:01-07:00")]
@@ -250,6 +318,80 @@ class CollectionTest(UnitTestCase):
             oldset_times,
             right_times_required,
         ]
+
+    def test_get_olderthan_signatures(self):
+        cs = self.get_filelist_cs(remove_older_than, fill_archive=True)
+        first_backup_ts = dup_time.genstrtotime("2025-10-03T10:49:00")
+        second_backup_ts = dup_time.genstrtotime("2025-10-03T10:49:22")
+        newer_than_last_ts = dup_time.genstrtotime("2025-10-03T10:59:59")
+
+        # no older backups
+        oldsets = cs.get_signature_chains_older_than(first_backup_ts)
+        assert len(oldsets) == 0
+
+        # don't return signatures from latest backup
+        oldsets = cs.get_signature_chains_older_than(newer_than_last_ts)
+        assert len(oldsets) == 2, f"Expected 2 sets, got {len(oldsets)}"  # local and remote sig
+        assert all(
+            x.end_time == first_backup_ts for x in oldsets
+        ), f"Wrong sets, timestam doesn't match {first_backup_ts}"
+        assert len([x for x in oldsets if x.islocal() is True]) == 1, "There should be one local and one remote set"
+
+    @pytest.mark.usefixtures("mock_manifest")
+    def test_missing_first_volume(self):
+        """
+        Test missing first volume
+        """
+        global partial_filename_list
+        partial_filename_list = [f for f in filename_list3 if not re.search(b"full.*vol1", f)]
+        cs = self.get_filelist_cs(partial_filename_list)
+        assert len(cs.orphaned_backup_sets) == 0, cs.orphaned_backup_sets
+        assert len(cs.local_orphaned_sig_names) == 0, cs.local_orphaned_sig_names
+        assert len(cs.remote_orphaned_sig_names) == 0, cs.remote_orphaned_sig_names
+        assert len(cs.incomplete_backup_sets) == 0, cs.incomplete_backup_sets
+        assert cs.missing_difftar_sets[0].cs_missing == {1}
+
+    @pytest.mark.usefixtures("mock_manifest")
+    def test_missing_middle_volume(self):
+        """
+        Test missing last volume
+        """
+        global partial_filename_list
+        partial_filename_list = [f for f in filename_list3 if not re.search(b"full.*vol3", f)]
+        cs = self.get_filelist_cs(partial_filename_list)
+        assert len(cs.orphaned_backup_sets) == 0, cs.orphaned_backup_sets
+        assert len(cs.local_orphaned_sig_names) == 0, cs.local_orphaned_sig_names
+        assert len(cs.remote_orphaned_sig_names) == 0, cs.remote_orphaned_sig_names
+        assert len(cs.incomplete_backup_sets) == 0, cs.incomplete_backup_sets
+        assert cs.missing_difftar_sets[0].cs_missing == {3}
+
+    @pytest.mark.usefixtures("mock_manifest")
+    def test_missing_last_volume(self):
+        """
+        Test missing last volume
+        """
+        global partial_filename_list
+        partial_filename_list = [f for f in filename_list3 if not re.search(b"full.*vol6", f)]
+        cs = self.get_filelist_cs(partial_filename_list)
+        assert len(cs.orphaned_backup_sets) == 0, cs.orphaned_backup_sets
+        assert len(cs.local_orphaned_sig_names) == 0, cs.local_orphaned_sig_names
+        assert len(cs.remote_orphaned_sig_names) == 0, cs.remote_orphaned_sig_names
+        assert len(cs.incomplete_backup_sets) == 0, cs.incomplete_backup_sets
+        assert cs.missing_difftar_sets[0].cs_missing == {6}
+
+    @pytest.mark.usefixtures("mock_manifest")
+    def test_missing_multi_volume(self):
+        """
+        Test missing last volume
+        """
+        global partial_filename_list
+        partial_filename_list = [f for f in filename_list3 if not re.search(b"full.*vol[35]", f)]
+        cs = self.get_filelist_cs(partial_filename_list)
+        assert len(cs.orphaned_backup_sets) == 0, cs.orphaned_backup_sets
+        assert len(cs.local_orphaned_sig_names) == 0, cs.local_orphaned_sig_names
+        assert len(cs.remote_orphaned_sig_names) == 0, cs.remote_orphaned_sig_names
+        assert len(cs.incomplete_backup_sets) == 0, cs.incomplete_backup_sets
+        assert cs.missing_difftar_sets[0].cs_missing == {3, 5}
 
 
 if __name__ == "__main__":

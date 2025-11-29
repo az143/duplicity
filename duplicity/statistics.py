@@ -334,18 +334,18 @@ class StatsObj(object):
         """Write statistics string to given path"""
         fin = path.open("w")
         fin.write(self.get_stats_string())
-        assert not fin.close()
+        assert not fin.close(), "fin failed to close"
 
     def read_stats_from_path(self, path):
         """Set statistics from path, return self for convenience"""
         fp = path.open("r")
         self.set_stats_from_string(fp.read())
-        assert not fp.close()
+        assert not fp.close(), "fp failed to close"
         return self
 
     def stats_equal(self, s):
         """Return true if s has same statistics as self"""
-        assert isinstance(s, StatsObj)
+        assert isinstance(s, StatsObj), "Comparison target must be a StatsObj instance"
         for attr in self.stat_file_attrs:
             if self.get_stat(attr) != s.get_stat(attr):
                 return None

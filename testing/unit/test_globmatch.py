@@ -84,12 +84,7 @@ class TestGlobToRegex(UnitTestCase):
         self.assertEqual(glob_to_regex("[abc]el[^de][!fg]h"), "[abc]el[^de][^fg]h")
 
         # see https://bugs.python.org/issue29995 for details
-        if sys.version_info[:2] == (3, 6):
-            self.assertEqual(glob_to_regex("/usr/*/bin/"), "\\/usr\\/[^/]*\\/bin\\/")
-        elif sys.version_info[:2] >= (3, 7):
-            self.assertEqual(glob_to_regex("/usr/*/bin/"), "/usr/[^/]*/bin/")
-        else:
-            pass
+        self.assertEqual(glob_to_regex("/usr/*/bin/"), "/usr/[^/]*/bin/")
 
         self.assertEqual(glob_to_regex("[a.b/c]"), "[a.b/c]")
         self.assertEqual(glob_to_regex("[a*b-c]e[!]]"), "[a*b-c]e[^]]")

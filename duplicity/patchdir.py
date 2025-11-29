@@ -40,7 +40,7 @@ def Patch(base_path, difftar_fileobj):
     """Patch given base_path and file object containing delta"""
     diff_tarfile = dup_tarfile.TarFile("arbitrary", "r", difftar_fileobj)
     patch_diff_tarfile(base_path, diff_tarfile)
-    assert not difftar_fileobj.close()
+    assert not difftar_fileobj.close(), "difftar_fileobj failed to close"
 
 
 def Patch_from_iter(base_path, fileobj_iter, restrict_index=()):
@@ -98,7 +98,7 @@ def filter_path_iter(path_iter, index):
     prefix from the rest.
 
     """
-    assert isinstance(index, tuple) and index, index
+    assert isinstance(index, tuple) and index, "Index must be a non-empty tuple specifying the path prefix"
     l = len(index)
     for path in path_iter:
         if path.index[:l] == index:
@@ -264,13 +264,13 @@ class PathPatcher(ITRBranch):
     def start_process(self, index, basis_path, diff_ropath):
         """Start processing when diff_ropath is a directory"""
         if not (diff_ropath and diff_ropath.isdir()):
-            assert index == (), util.uindex(index)  # should only happen for first elem
+            assert index == (), f"Expected root index (), got {util.uindex(index)}"  # should only happen for first elem
             self.fast_process(index, basis_path, diff_ropath)
             return
 
         if not basis_path:
             basis_path = self.base_path.new_index(index)
-            assert not basis_path.exists()
+            assert not basis_path.exists(), "Basis path must not already exist when creating new directory for patching"
             basis_path.mkdir()  # Need place for later files to go into
         elif not basis_path.isdir():
             basis_path.delete()
@@ -309,7 +309,7 @@ class PathPatcher(ITRBranch):
                 basis_path.delete()
             diff_ropath.copy(basis_path)
         else:
-            assert diff_ropath.difftype == "diff", diff_ropath.difftype
+            assert diff_ropath.difftype == "diff", f"Expected difftype 'diff', got {diff_ropath.difftype}"
             basis_path.patch_with_attribs(diff_ropath)
 
 
@@ -333,7 +333,9 @@ class TarFile_FromFileobjs(object):
     def set_tarfile(self):
         """Set dup_tarfile from next file object, or raise StopIteration"""
         if self.current_fp:
-            assert not self.current_fp.close()
+            assert (
+                not self.current_fp.close()
+            ), "Closing current file pointer returned a truthy value indicating an error"
 
         while True:
             x = next(self.fileobj_iter)
@@ -356,7 +358,7 @@ class TarFile_FromFileobjs(object):
         try:
             return next(self.tar_iter)
         except StopIteration:
-            assert not self.dup_tarfile.close()
+            assert not self.dup_tarfile.close(), "self.dup_tarfile failed to close"
             self.set_tarfile()
             return next(self.tar_iter)
 
@@ -449,7 +451,7 @@ class IndexedTuple(object):
         return self.__cmp__(other) != -1
 
     def __cmp__(self, other):
-        assert isinstance(other, IndexedTuple)
+        assert isinstance(other, IndexedTuple), f"Comparison target must be IndexedTuple, got {type(other).__name__}"
         if self.index < other.index:
             return -1
         elif self.index == other.index:
@@ -503,7 +505,9 @@ def patch_seq2ropath(patch_seq):
     current_file = first.open("rb")
 
     for delta_ropath in patch_seq[1:]:
-        assert delta_ropath.difftype == "diff", delta_ropath.difftype
+        assert (
+            delta_ropath.difftype == "diff"
+        ), f"Expected difftype 'diff' in patch sequence, got {delta_ropath.difftype}"
         try:
             cur_file.fileno()
         except Exception as e:
@@ -517,7 +521,9 @@ def patch_seq2ropath(patch_seq):
             """
             tempfp = tempfile.TemporaryFile(dir=tempdir.default().dir())
             util.copyfileobj(current_file, tempfp)
-            assert not current_file.close()
+            assert (
+                not current_file.close()
+            ), "Closing temporary current_file returned a truthy value indicating an error"
             tempfp.seek(0)
             current_file = tempfp
         current_file = librsync.PatchedFile(current_file, delta_ropath.open("rb"))
@@ -599,7 +605,7 @@ class ROPath_IterWriter(ITRBranch):
         """Write ropath.  Only handles the directory case"""
         if not ropath.isdir():
             # Base may not be a directory, but rest should
-            assert ropath.index == (), ropath.index
+            assert ropath.index == (), f"{ropath.index} not empty"
             new_path = self.base_path.new_index(index)
             if ropath.exists():
                 if new_path.exists():
@@ -609,7 +615,7 @@ class ROPath_IterWriter(ITRBranch):
         self.dir_new_path = self.base_path.new_index(index)
         if self.dir_new_path.exists() and not config.force:
             # base may exist, but nothing else
-            assert index == (), index
+            assert index == (), f"{index} not empty"
         else:
             self.dir_new_path.mkdir()
         self.dir_diff_ropath = ropath

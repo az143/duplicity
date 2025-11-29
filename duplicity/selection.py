@@ -76,7 +76,7 @@ class Select(object):
 
     def __init__(self, path):
         """Initializer, called with Path of root directory"""
-        assert isinstance(path, Path), str(path)
+        assert isinstance(path, Path), f"'path' must be a Path instance, got {type(path).__name__}: {path}"
         self.selection_functions = []
         self.rootpath = path
         self.prefix = self.rootpath.uc_name
@@ -179,7 +179,7 @@ class Select(object):
 
         if not path.type:
             # base doesn't exist
-            log.Warn(_("Warning: base %s doesn't exist, continuing") % path.uc_name)
+            log.Warn(_("WARNING: base %s doesn't exist, continuing") % path.uc_name)
             return
         log.Debug(_("Selecting %s") % path.uc_name)
         yield path
@@ -241,7 +241,7 @@ class Select(object):
         elif result == 1:
             log.Debug("Selection:     + including file")
         else:
-            assert result == 2
+            assert result == 2, "Selection result must be 2 (scan) when not including or excluding"
             log.Debug("Selection:     ? scanning directory for matches")
 
         return result
@@ -333,7 +333,7 @@ class Select(object):
                     assert 0, f"Bad selection option {opt}"
         except GlobbingError as e:
             self.parse_catch_error(e)
-        assert filelists_index == len(filelists)
+        assert filelists_index == len(filelists), "Number of filelists consumed does not match provided list length"
         self.parse_last_excludes()
 
     def parse_catch_error(self, exc):
@@ -379,6 +379,7 @@ class Select(object):
         separator = config.null_separator and "\0" or "\n"
         filelist = {}
         absolute_path = None
+        is_root = self.rootpath.get_parent_dir() == self.rootpath
         for line in filelist_fp.read().split(separator):
             if not line:  # skip blanks
                 continue
@@ -387,7 +388,10 @@ class Select(object):
                 break
             while line:
                 dirname, basename = os.path.split(line)
-                path = os.path.join(self.rootpath.uc_name, dirname).rstrip(os.path.sep)
+                path = os.path.join(self.rootpath.uc_name, dirname)
+                # strip the trailing separator unless in root
+                if not is_root or len(dirname) > 0:
+                    path = path.rstrip(os.path.sep)
                 if path not in filelist:
                     filelist[path] = set()
                 if isinstance(basename, str):
@@ -510,7 +514,7 @@ class Select(object):
     def other_filesystems_get_sf(self, include):
         """Return selection function matching files on other filesystems"""
         # Internal. Used by ParseArgs and unit tests.
-        assert include == 0 or include == 1
+        assert include == 0 or include == 1, "'include' must be 0 (exclude) or 1 (include)"
         root_devloc = self.rootpath.getdevloc()
 
         def sel_func(path):
@@ -526,7 +530,7 @@ class Select(object):
     def regexp_get_sf(self, regexp_string, include, ignore_case=False):
         """Return selection function given by regexp_string"""
         # Internal. Used by ParseArgs and unit tests.
-        assert include == 0 or include == 1
+        assert include == 0 or include == 1, "'include' must be 0 (exclude) or 1 (include)"
 
         flags = 0
         if ignore_case:
@@ -576,8 +580,8 @@ class Select(object):
         """
 
         # Internal. Used by ParseArgs, filelist_general_get_sfs and unit tests.
-        assert include == 0 or include == 1
-        assert isinstance(pattern_str, str)
+        assert include == 0 or include == 1, "'include' must be 0 (exclude) or 1 (include)"
+        assert isinstance(pattern_str, str), "pattern_str must be a string"
 
         # legacy prefix applies *only* in globbing mode
         if mode == "globbing" and pattern_str.lower().startswith("ignorecase:"):
@@ -597,7 +601,7 @@ class Select(object):
     def present_get_sf(self, filename, include):
         """Return selection function given by existence of a file in a directory"""
         # Internal. Used by ParseArgs.
-        assert include == 0 or include == 1
+        assert include == 0 or include == 1, "'include' must be 0 (exclude) or 1 (include)"
 
         from duplicity.robust import check_common_error  # TODO: avoid circ. dep. issue
 

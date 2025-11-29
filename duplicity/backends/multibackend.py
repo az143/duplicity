@@ -288,14 +288,17 @@ class MultiBackend(duplicity.backend.Backend):
                     )
                     raise BackendException("failed to write")
 
-                # If we've looped around, and none of them passed, fail
-                if (self.__write_cursor == first) and not passed:
-                    log.Log(
-                        _("MultiBackend: failed to write %s. Tried all backing stores and none succeeded")
-                        % source_path,
-                        log.ERROR,
-                    )
-                    raise BackendException("failed to write")
+                if self.__write_cursor == first:
+                    if passed:
+                        break
+                    else:
+                        # If we've looped around, and none of them passed, fail
+                        log.Log(
+                            _("MultiBackend: failed to write %s. Tried all backing stores and none succeeded")
+                            % source_path,
+                            log.ERROR,
+                        )
+                        raise BackendException("failed to write")
 
     def _get(self, remote_filename, local_path):
         # since the backend operations will be retried, we can't
@@ -325,17 +328,18 @@ class MultiBackend(duplicity.backend.Backend):
     def _list(self):
         lists = []
         for s in self.__stores:
-            config.are_errors_fatal["list"] = (False, [])
-            l = s.list()
+            try:
+                l = s.list()
+            except BackendException as e:
+                l = []
+                last_exception = e
+            else:
+                last_exception = None
             log.Notice(_("MultiBackend: %s: %d files") % (s.backend.parsed_url.strip_auth(), len(l)))
-            if len(l) == 0 and duplicity.backend._last_exception:
+            if len(l) == 0 and last_exception:
                 log.Warn(
-                    _(
-                        f"Exception during list of {s.backend.parsed_url.strip_auth()}: "
-                        f"{util.uexc(duplicity.backend._last_exception)}"
-                    )
+                    _(f"Exception during list of {s.backend.parsed_url.strip_auth()}: " f"{util.uexc(last_exception)}")
                 )
-                duplicity.backend._last_exception = None
             lists.append(l)
         # combine the lists into a single flat list w/o duplicates via set:
         result = list({item for sublist in lists for item in sublist})

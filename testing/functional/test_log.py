@@ -70,7 +70,7 @@ class LogTest(FunctionalTestCase):
                 assert line.startswith(r". ")
             else:
                 lastline = True
-        assert lastline
+        assert lastline, f"{line=}"
 
 
 if __name__ == "__main__":

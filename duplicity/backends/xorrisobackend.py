@@ -254,7 +254,7 @@ class Xorriso:
         """
         Copy file to the ISO image. Does not commit the changes yet.
         """
-        assert isinstance(files, list)
+        assert isinstance(files, list), "should be a list of files"
 
         stdout, stderr = self.__send_cmd(
             "-cpr",
@@ -270,7 +270,7 @@ class Xorriso:
         """
         Remove a list of files from the image. Does not commit the changes yet.
         """
-        assert isinstance(files, list)
+        assert isinstance(files, list), "should be a list of files"
 
         if not files:
             return
@@ -285,9 +285,9 @@ class Xorriso:
         """
         Extract files from the ISO image.
         """
-        assert isinstance(files, list)
+        assert isinstance(files, list), "should be a list of files"
 
-        assert not os.path.exists(dest) or os.path.isfile(dest)
+        assert not os.path.exists(dest) or os.path.isfile(dest), "dest must be a directory"
 
         if len(files) == 0:
             return
@@ -365,7 +365,7 @@ class XorrisoBackend(duplicity.backend.Backend):
         self.xorriso = Xorriso(device=self.device, xorriso_path=xorriso_cmd, xorriso_args=self.xorriso_args)
 
     def _put(self, source_path, remote_filename):
-        assert not os.path.isdir(source_path.name.decode("utf8"))
+        assert not os.path.isdir(source_path.name.decode("utf8")), "source_path must be a file"
         source_path.setdata()
         source_size = source_path.getsize()
         progress.report_transfer(0, source_size)

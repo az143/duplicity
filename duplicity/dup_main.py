@@ -36,28 +36,32 @@ import platform
 import resource
 import sys
 import time
+from dataclasses import dataclass
 from textwrap import dedent
 from typing import Dict
 
-from duplicity import __version__
-from duplicity import backend
-from duplicity import backend_pool
-from duplicity import cli_main
-from duplicity import config
-from duplicity import diffdir
-from duplicity import dup_collections
-from duplicity import dup_temp
-from duplicity import dup_time
-from duplicity import file_naming
-from duplicity import gpg
-from duplicity import log
-from duplicity import manifest
-from duplicity import patchdir
-from duplicity import path
-from duplicity import progress
-from duplicity import tempdir
-from duplicity import util
+from duplicity import (
+    __version__,
+    backend,
+    backend_pool,
+    cli_main,
+    config,
+    diffdir,
+    dup_collections,
+    dup_temp,
+    dup_time,
+    file_naming,
+    gpg,
+    log,
+    manifest,
+    patchdir,
+    path,
+    progress,
+    tempdir,
+    util,
+)
 from duplicity.errors import BadVolumeException
+from duplicity.gpg import GPGError
 
 # If exit_val is not None, exit with given value at end.
 exit_val = None
@@ -139,7 +143,7 @@ def get_passphrase(n, action, for_signing=False):
         "list-current-files",
         "remove-all-but-n-full",
         "remove-all-inc-of-but-n-full",
-        "remove-old",
+        "remove-older-than",
     ]:
         return ""
 
@@ -376,7 +380,8 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
         transfer_success = False
         manifest_written = False
 
-    def collect_put_results(bytes_written: int, backend_pooler, command2vol_map: Dict[int, CommandMetaData]):
+    def collect_put_results(backend_pooler, command2vol_map: Dict[int, CommandMetaData]):
+        bytes_written = 0
         for result in backend_pooler.results_since_last_call():
             track_id = result.track_id
             size = result.result
@@ -392,6 +397,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
                 f"Transfer of {command2vol_map[track_id].path_obj.get_filename()} with id {track_id} and size "
                 f"{size} took {result.get_runtime()}"
             )
+        return bytes_written
 
     def write_manifest_in_sequence(mf, mf_file, command2vol_map: Dict[int, CommandMetaData]):
         """
@@ -488,7 +494,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             # if nothing changed, skip upload if configured.
             msg = _("Skipped volume upload, as effectivly nothing has changed")
             log.Progress(msg, diffdir.stats.SourceFileSize)
-            log.Notice(_(msg))
+            log.Notice(msg)
             config.skipped_inc = True
             tdp.delete()
             continue
@@ -499,7 +505,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
                 progress.report_transfer(0, tdp.getsize())
                 track_id = backend_pooler.command_throttled(backend.put_validated.__name__, args=(tdp, dest_filename))
                 command2vol_map[track_id] = CommandMetaData(vol_num, tdp, vi)
-                collect_put_results(bytes_written, backend_pooler, command2vol_map)
+                bytes_written += collect_put_results(backend_pooler, command2vol_map)
                 write_manifest_in_sequence(mf, man_outfp, command2vol_map)
             except (Exception, SystemExit) as e:
                 # ensure pool processes terminate clean
@@ -529,7 +535,7 @@ def write_multivol(backup_type, tarblock_iter, man_outfp, sig_outfp, backend):
             # wait for background commands, collect some stats and shutdown clean.
             log.Debug("Collecting remaining results from backend pool.")
             while True and backend_pooler:
-                collect_put_results(bytes_written, backend_pooler, command2vol_map)
+                bytes_written += collect_put_results(backend_pooler, command2vol_map)
                 write_manifest_in_sequence(mf, man_outfp, command2vol_map)
                 if backend_pooler.get_queue_length() == 0:
                     break
@@ -575,7 +581,7 @@ def get_man_fileobj(backup_type):
     @rtype: fileobj
     @return: fileobj opened for writing
     """
-    assert backup_type == "full" or backup_type == "inc"
+    assert backup_type == "full" or backup_type == "inc", f"backup_type must be 'full' or 'inc', got {backup_type!r}"
 
     part_man_filename = file_naming.get(backup_type, manifest=True, partial=True)
     perm_man_filename = file_naming.get(backup_type, manifest=True)
@@ -600,7 +606,7 @@ def get_sig_fileobj(sig_type):
     @rtype: fileobj
     @return: fileobj opened for writing
     """
-    assert sig_type in ["full-sig", "new-sig"]
+    assert sig_type in ["full-sig", "new-sig"], f"sig_type must be 'full-sig' or 'new-sig', got {sig_type!r}"
 
     part_sig_filename = file_naming.get(sig_type, gzipped=False, partial=True)
     perm_sig_filename = file_naming.get(sig_type, gzipped=True)
@@ -625,7 +631,7 @@ def get_stat_fileobj(stat_type):
     @rtype: fileobj
     @return: fileobj opened for writing
     """
-    assert stat_type in ["full-stat", "inc-stat"]
+    assert stat_type in ["full-stat", "inc-stat"], f"stat_type must be 'full-stat' or 'inc-stat', got {stat_type!r}"
 
     part_stat_filename = file_naming.get(stat_type, gzipped=False, partial=True)
     perm_stat_filename = file_naming.get(stat_type, gzipped=True)
@@ -641,7 +647,7 @@ def full_backup(col_stats):
     """
     Do full backup of directory to backend, using archive_dir_path
 
-    @type col_stats: CollectionStatus object
+    @type col_stats: CollectionsStatus object
     @param col_stats: collection status
 
     @rtype: void
@@ -683,7 +689,7 @@ def full_backup(col_stats):
             # Terminate the background thread now, if any
             progress.progress_thread.finished = True
             progress.progress_thread.join()
-            log.TransferProgress(
+            progress.TransferProgress(
                 100.0,
                 0,
                 progress.tracker.total_bytecount,
@@ -702,7 +708,7 @@ def check_sig_chain(col_stats):
     """
     Get last signature chain for inc backup, or None if none available
 
-    @type col_stats: CollectionStatus object
+    @type col_stats: CollectionsStatus object
     @param col_stats: collection status
     """
     if not col_stats.matched_chain_pair:
@@ -793,7 +799,7 @@ def incremental_backup(sig_chain, col_stats=None):
             # Terminate the background thread now, if any
             progress.progress_thread.finished = True
             progress.progress_thread.join()
-            log.TransferProgress(
+            progress.TransferProgress(
                 100.0,
                 0,
                 progress.tracker.total_bytecount,
@@ -814,7 +820,7 @@ def write_json_stat(stat_type, bytes_written, col_stats):
     @param stat_type: Name of the json_stat should be full-stat or inc-stat
     @type bytes_written: int
     @param bytes_written: no of bytes written, in this run
-    @type col_stats: CollectionStatus object
+    @type col_stats: CollectionsStatus object
     @param col_stats: collection status
     """
     if config.jsonstat:
@@ -836,7 +842,7 @@ def list_current(col_stats):
     """
     List the files current in the archive (examining signature only)
 
-    @type col_stats: CollectionStatus object
+    @type col_stats: CollectionsStatus object
     @param col_stats: collection status
 
     @rtype: void
@@ -856,7 +862,7 @@ def restore(col_stats):
     """
     Restore archive in config.backend to config.local_path
 
-    @type col_stats: CollectionStatus object
+    @type col_stats: CollectionsStatus object
     @param col_stats: collection status
 
     @rtype: void
@@ -880,7 +886,7 @@ def restore_get_patched_rop_iter(col_stats):
     """
     Return iterator of patched ROPaths of desired restore data
 
-    @type col_stats: CollectionStatus object
+    @type col_stats: CollectionsStatus object
     @param col_stats: collection status
     """
     if config.restore_path:
@@ -889,7 +895,10 @@ def restore_get_patched_rop_iter(col_stats):
         index = ()
     time = config.restore_time or dup_time.curtime
     backup_chain = col_stats.get_backup_chain_at_time(time)
-    assert backup_chain, col_stats.all_backup_chains
+    assert backup_chain, (
+        f"No backup chain found for restore time {dup_time.timetostring(time)}; "
+        f"available chains: {col_stats.all_backup_chains}"
+    )
     backup_setlist = backup_chain.get_sets_at_time(time)
     num_vols = 0
     for s in backup_setlist:
@@ -897,13 +906,17 @@ def restore_get_patched_rop_iter(col_stats):
     cur_vol = [0]
 
     def get_fileobj_iter(backup_set):
-        """Get file object iterator from backup_set contain given index"""
+        """
+        Get file object iterator from backup_set contain given index
+        """
         manifest = backup_set.get_manifest()
         volumes = manifest.get_containing_volumes(index)
         for vol_num in volumes:
             try:
                 fobj = restore_get_enc_fileobj(
-                    backup_set.backend, backup_set.volume_name_dict[vol_num], manifest.volume_info_dict[vol_num]
+                    backup_set.backend,
+                    backup_set.volume_name_dict[vol_num],
+                    manifest.volume_info_dict[vol_num],
                 )
                 if fobj is not None:
                     yield fobj
@@ -919,7 +932,18 @@ def restore_get_patched_rop_iter(col_stats):
             manifest = backup_set.get_manifest()
             volumes = manifest.get_containing_volumes(index)
             for vol_num in volumes:
-                file_names.append(backup_set.volume_name_dict[vol_num])
+                try:
+                    file_names.append(backup_set.volume_name_dict[vol_num])
+                except KeyError as e:
+                    if config.ignore_errors:
+                        log.Warn(f"difftar volume {vol_num} not found, ignoring per --ignore-errors.")
+                    else:
+                        log.FatalError(
+                            f"difftar volume {vol_num} not found in backup.\n"
+                            f"Please check your archive and try again.\n"
+                            f"Or use --ignore-errors to ignore this error.\n"
+                            f"Error: {e}"
+                        )
         if config.dry_run:
             log.Notice("Required volumes to restore:\n\t" + "\n\t".join(file_name.decode() for file_name in file_names))
             return None
@@ -964,7 +988,7 @@ def restore_get_enc_fileobj(backend, filename, volume_info):
         if config.ignore_errors:
             exc = BadVolumeException(f"Hash mismatch for: {os.fsdecode(filename)}")
             log.Warn(
-                _("IGNORED_ERROR: Warning: ignoring error as requested: %s: %s")
+                _("IGNORED_ERROR: WARNING: ignoring error as requested: %s: %s")
                 % (exc.__class__.__name__, util.uexc(exc))
             )
             # Do not try to actually read it as it is corrupted!
@@ -1022,7 +1046,7 @@ def verify(col_stats):
     """
     Verify files, logging differences
 
-    @type col_stats: CollectionStatus object
+    @type col_stats: CollectionsStatus object
     @param col_stats: collection status
 
     @rtype: void
@@ -1054,7 +1078,7 @@ def cleanup(col_stats):
     """
     Delete the extraneous files in the current backend
 
-    @type col_stats: CollectionStatus object
+    @type col_stats: CollectionsStatus object
     @param col_stats: collection status
 
     @rtype: void
@@ -1078,11 +1102,8 @@ def cleanup(col_stats):
                     pass
     else:
         log.Notice(
-            _("Found the following file(s) to delete:")
-            + "\n"
-            + filestr
-            + "\n"
-            + _("Run duplicity again with the --force option to actually delete.")
+            f"{_('Found the following file(s) to delete:')}\n{filestr}\n"
+            "Run duplicity again with the --force option to actually delete."
         )
 
 
@@ -1090,13 +1111,15 @@ def remove_all_but_n_full(col_stats):
     """
     Remove backup files older than the last n full backups.
 
-    @type col_stats: CollectionStatus object
+    @type col_stats: CollectionsStatus object
     @param col_stats: collection status
 
     @rtype: void
     @return: void
     """
-    assert config.keep_chains is not None
+    assert (
+        config.keep_chains is not None
+    ), "config.keep_chains (from --keep-chains) must be set before removing old backups"
 
     config.remove_time = col_stats.get_nth_last_full_backup_time(config.keep_chains)
 
@@ -1107,13 +1130,13 @@ def remove_old(col_stats):
     """
     Remove backup files older than config.remove_time from backend
 
-    @type col_stats: CollectionStatus object
+    @type col_stats: CollectionsStatus object
     @param col_stats: collection status
 
     @rtype: void
     @return: void
     """
-    assert config.remove_time is not None
+    assert config.remove_time is not None, "config.remove_time must be set before removing old backups"
 
     def set_times_str(setlist):
         """Return string listing times of sets in setlist"""
@@ -1210,7 +1233,7 @@ def sync_archive(col_stats):
         """
         if config.metadata_sync_mode == "full":
             return True
-        assert config.metadata_sync_mode == "partial"
+        assert config.metadata_sync_mode == "partial", "metadata_sync_mode must be 'partial' when not in full sync mode"
         parsed = file_naming.parse(filename)
         try:
             target_chain = col_stats.get_backup_chain_at_time(config.restore_time or dup_time.curtime)
@@ -1352,6 +1375,10 @@ def sync_archive(col_stats):
         tdp.setdata()
         tdp.move(config.archive_dir_path.append(loc_name))
 
+    # skip if remote access is not configured
+    if not config.check_remote:
+        return
+
     # get remote metafile list
     remlist = config.backend.list()
     remote_metafiles, ignored, rem_needpass = get_metafiles(remlist)
@@ -1421,17 +1448,16 @@ def check_last_manifest(col_stats):
     """
     Check consistency and hostname/directory of last manifest
 
-    @type col_stats: CollectionStatus object
+    @type col_stats: CollectionsStatus object
     @param col_stats: collection status
 
     @rtype: void
     @return: void
     """
-    assert col_stats.all_backup_chains
+    assert col_stats.all_backup_chains, "No backup chains found; cannot check last manifest without any chains present"
     last_backup_set = col_stats.all_backup_chains[-1].get_last()
     # check remote manifest only if we can decrypt it (see #1729796)
-    check_remote = not config.encryption or config.gpg_profile.passphrase
-    last_backup_set.check_manifests(check_remote=check_remote)
+    last_backup_set.check_manifests(check_remote=config.check_remote)
 
 
 def check_resources(action):
@@ -1507,6 +1533,7 @@ class Restart(object):
     """
 
     def __init__(self, last_backup):
+        self.time = None
         self.type = None
         self.start_time = None
         self.end_time = None
@@ -1577,29 +1604,23 @@ def main():
     Start/end here
     """
     # per bug https://bugs.launchpad.net/duplicity/+bug/931175
-    # duplicity crashes when PYTHONOPTIMIZE is set, so check
+    # duplicity crashes when python optimization is set, so check
     # and refuse to run if it is set.
-    if "PYTHONOPTIMIZE" in os.environ:
+    if sys.flags.optimize:
         log.FatalError(
             dedent(
                 _(
                     """\
-                PYTHONOPTIMIZE in the environment causes duplicity to fail to
-                recognize its own backups.  Please remove PYTHONOPTIMIZE from
-                the environment and rerun the backup.
+                    Setting python optimization causes duplicity to fail to
+                    recognize its own backups.  Please remove PYTHONOPTIMIZE
+                    from the environment or -O and -OO from the commandline,
+                    then rerun the backup.
 
-                See https://bugs.launchpad.net/duplicity/+bug/931175
-                """
+                    See https://bugs.launchpad.net/duplicity/+bug/931175
+                    """
                 )
             ),
             log.ErrorCode.pythonoptimize_set,
-        )
-
-    # TODO: remove when 3.8 is deprecated.
-    if sys.version_info[:2] == (3, 8) and not os.environ.get("SNAP", False):
-        log.Warn(
-            "Starting deprecation of python 3.8 support. Support for python 3.8. will finally removed with the "
-            "release of 3.14.  For details see https://devguide.python.org/versions/"
         )
 
     # if python is run setuid, it's only partway set,
@@ -1638,7 +1659,11 @@ def do_backup(action):
     check_resources(action)
 
     # get current collection status
-    col_stats = dup_collections.CollectionsStatus(config.backend, config.archive_dir_path).set_values()
+    col_stats = dup_collections.CollectionsStatus(
+        config.backend,
+        config.archive_dir_path,
+        first=True,
+    ).set_values()
 
     # check archive synch with remote, fix if needed
     if action not in [
@@ -1646,7 +1671,7 @@ def do_backup(action):
         "full",
         "remove-all-but-n-full",
         "remove-all-inc-of-but-n-full",
-        "remove-old",
+        "remove-older-than",
     ]:
         sync_archive(col_stats)
 
@@ -1677,7 +1702,10 @@ def do_backup(action):
                     # remove last partial backup and get new collection status
                     log.Notice(_(f"Cleaning up previous partial {action} backup set, restarting."))
                     last_backup.delete()
-                    col_stats = dup_collections.CollectionsStatus(config.backend, config.archive_dir_path).set_values()
+                    col_stats = dup_collections.CollectionsStatus(
+                        config.backend,
+                        config.archive_dir_path,
+                    ).set_values()
                     continue
             break
         break
@@ -1696,7 +1724,7 @@ def do_backup(action):
     ):
         log.Notice(_("Last full backup is too old, forcing full backup"))
         action = "full"
-    log.PrintCollectionStatus(col_stats)
+    dup_collections.PrintCollectionStatus(col_stats)
 
     # get the passphrase if we need to based on action/options
     config.gpg_profile.passphrase = get_passphrase(1, action)
@@ -1711,20 +1739,20 @@ def do_backup(action):
         if config.show_changes_in_set is not None:
             if not config.jsonstat:
                 # print classic stats
-                log.PrintCollectionChangesInSet(col_stats, config.show_changes_in_set, True)
+                dup_collections.PrintCollectionChangesInSet(col_stats, config.show_changes_in_set, True)
             else:
                 # print json stat
                 json_stat = col_stats.get_changes_in_set_json(config.show_changes_in_set)
                 log.Log(str(json_stat), 8, log.InfoCode.collection_status, None, True)
         elif not config.file_changed:
-            log.PrintCollectionStatus(col_stats, True)
+            dup_collections.PrintCollectionStatus(col_stats, True)
         else:
-            log.PrintCollectionFileChangedStatus(col_stats, config.file_changed, True)
+            dup_collections.PrintCollectionFileChangedStatus(col_stats, config.file_changed, True)
     elif action == "cleanup":
         cleanup(col_stats)
     elif action == "remove-older-than":
         remove_old(col_stats)
-    elif action == "remove-all-but-n-full" or action == "remove-all-inc-of-but-n-full":
+    elif action in ["remove-all-but-n-full", "remove-all-inc-of-but-n-full"]:
         remove_all_but_n_full(col_stats)
     elif action == "sync":
         sync_archive(col_stats)
@@ -1770,6 +1798,12 @@ def do_backup(action):
                         config.gpg_profile.passphrase = get_passphrase(1, action)
                         check_last_manifest(col_stats)  # not needed for full backups
                 incremental_backup(sig_chain, col_stats)
+
+        if action in ["full", "inc"] and not config.check_remote:
+            dup_collections.CollectionsStatus(
+                config.backend,
+                config.archive_dir_path,
+            ).set_values()
 
     config.backend.close()
     log.shutdown()

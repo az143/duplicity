@@ -76,14 +76,14 @@ def setcurtime(time_in_secs=None):
     """Sets the current time in curtime and curtimestr"""
     global curtime, curtimestr
     t = time_in_secs or int(time.time())
-    assert isinstance(t, int)
+    assert isinstance(t, int), "curtime must be an integer"
     curtime, curtimestr = t, timetostring(t)
 
 
 def setprevtime(time_in_secs):
     """Sets the previous time in prevtime and prevtimestr"""
     global prevtime, prevtimestr
-    assert isinstance(time_in_secs, int), prevtime
+    assert isinstance(time_in_secs, int), "prevtime must be an integer"
     prevtime, prevtimestr = time_in_secs, timetostring(time_in_secs)
 
 
@@ -111,12 +111,12 @@ def stringtotime(timestring):
             # old format for filename time
             year, month, day = list(map(int, date.split("-")))
             hour, minute, second = list(map(int, daytime.split(config.time_separator)))
-        assert 1900 < year < 2100, year
-        assert 1 <= month <= 12
-        assert 1 <= day <= 31
-        assert 0 <= hour <= 23
-        assert 0 <= minute <= 59
-        assert 0 <= second <= 61  # leap seconds
+        assert 1900 < year < 2100, f"year {year} out of supported range (1901..2099)"
+        assert 1 <= month <= 12, f"month {month} out of range (1..12)"
+        assert 1 <= day <= 31, f"day {day} out of range (1..31)"
+        assert 0 <= hour <= 23, f"hour {hour} out of range (0..23)"
+        assert 0 <= minute <= 59, f"minute {minute} out of range (0..59)"
+        assert 0 <= second <= 61, f"second {second} out of range (0..61, allowing leap seconds)"  # leap seconds
         # We want to return the time in units of seconds since the
         # epoch. Unfortunately the only functin that does this
         # works in terms of the current timezone and we have a
@@ -230,8 +230,8 @@ def gettzd(dstflag):
         return "Z"  # time is already in UTC
 
     hours, minutes = list(map(abs, divmod(offset, 60)))
-    assert 0 <= hours <= 23
-    assert 0 <= minutes <= 59
+    assert 0 <= hours <= 23, f"hours component {hours} out of range (0..23)"
+    assert 0 <= minutes <= 59, f"minutes component {minutes} out of range (0..59)"
     return f"{prefix}{int(hours):02}{config.time_separator}{int(minutes):02}"
 
 
@@ -239,8 +239,12 @@ def tzdtoseconds(tzd):
     """Given w3 compliant TZD, return how far ahead UTC is"""
     if tzd == "Z":
         return 0
-    assert len(tzd) == 6  # only accept forms like +08:00 for now
-    assert (tzd[0] == "-" or tzd[0] == "+") and tzd[3] == config.time_separator
+    assert (
+        len(tzd) == 6
+    ), "TZD must be 6 characters in the form ±HH:MM (e.g., +08:00)"  # only accept forms like +08:00 for now
+    assert (tzd[0] == "-" or tzd[0] == "+") and (
+        tzd[3] == config.time_separator
+    ), "TZD must start with +/- and include the correct time separator at position 3 (±HH:MM)"
     return -60 * (60 * int(tzd[:3]) + int(tzd[4:]))
 
 
@@ -248,10 +252,10 @@ def cmp(time1, time2):
     """Compare time1 and time2 and return -1, 0, or 1"""
     if isinstance(time1, (str, string)):
         time1 = stringtotime(time1)
-        assert time1 is not None
+        assert time1 is not None, "time1 string could not be parsed into a valid timestamp"
     if isinstance(time2, (str, str)):
         time2 = stringtotime(time2)
-        assert time2 is not None
+        assert time2 is not None, "time2 string could not be parsed into a valid timestamp"
 
     if time1 < time2:
         return -1

@@ -43,7 +43,7 @@ class BackendInstanceBase(UnitTestCase):
         os.makedirs(f"{_runtest_dir}/testfiles")
         self.backend = None
         self.local = path.Path(f"{_runtest_dir}/testfiles/local")
-        self.local.writefileobj(io.BytesIO(b"hello"))
+        self.local.writefileobj(io.BytesIO(7 * b"hello"))
 
     def tearDown(self):
         assert not os.system(f"rm -rf {_runtest_dir}/testfiles")

@@ -44,11 +44,11 @@ class DuplicityCommands:
     full = ["source_path", "target_url"]
     incremental = ["source_path", "target_url"]
     list_current_files = ["target_url"]
-    remove_older_than = ["remove_time", "target_url"]
     remove_all_but_n_full = ["count", "target_url"]
     remove_all_inc_of_but_n_full = ["count", "target_url"]
-    restore = ["source_url", "target_dir"]
-    verify = ["source_url", "target_dir"]
+    remove_older_than = ["remove_time", "target_url"]
+    restore = ["source_url", "target_path"]
+    verify = ["source_url", "target_path"]
 
 
 @dataclass(order=True)
@@ -63,9 +63,9 @@ class CommandAliases:
     full = ["fb"]
     incremental = ["incr", "inc", "ib"]
     list_current_files = ["ls"]
-    remove_older_than = ["ro"]
     remove_all_but_n_full = ["ra"]
     remove_all_inc_of_but_n_full = ["ri"]
+    remove_older_than = ["ro"]
     restore = ["rb"]
     verify = ["vb"]
 
@@ -465,6 +465,7 @@ OptionKwargs = dict(
     ),
     metadata_sync_mode=dict(
         choices=("full", "partial"),
+        dest="metadata_sync_mode",
         help="Only sync required metadata not all",
         default=dflt(config.metadata_sync_mode),
     ),
@@ -484,6 +485,12 @@ OptionKwargs = dict(
         dest="backup_name",
         help="Custom backup name instead of hash",
         default=dflt(config.backup_name),
+    ),
+    no_check_remote=dict(
+        action="store_false",
+        dest="check_remote",
+        help="If supplied do not check remote metadata",
+        default=dflt(config.check_remote),
     ),
     no_compression=dict(
         action="store_false",
@@ -960,13 +967,13 @@ trans = {
     "source_path": _("source_path"),
     # TRANSL: Used in usage help to represent a URL files will be coming
     # FROM. Example:
-    # duplicity [restore] [options] source_url target_dir
+    # duplicity [restore] [options] source_url target_path
     "source_url": _("source_url"),
     # TRANSL: Used in usage help to represent the name of a single file
     # directory or a Unix-style path to a directory. where files will be
     # going TO. Example:
-    # duplicity [restore] [options] source_url target_dir
-    "target_dir": _("target_dir"),
+    # duplicity [restore] [options] source_url target_path
+    "target_path": _("target_path"),
     # TRANSL: Used in usage help to represent a URL files will be going TO.
     # Example:
     # duplicity [full|incremental] [options] source_path target_url

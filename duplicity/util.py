@@ -26,20 +26,21 @@ Miscellaneous utilities.
 import atexit
 import csv
 import errno
-import time
-
-import fasteners
-import multiprocessing
 import json
+import multiprocessing
 import os
 import socket
 import sys
 import traceback
 from io import StringIO
 
-from duplicity import config
-from duplicity import log
-from duplicity import dup_tarfile
+import fasteners
+
+from duplicity import (
+    config,
+    dup_tarfile,
+    log,
+)
 
 
 def exception_traceback(limit=50):
@@ -53,7 +54,7 @@ def exception_traceback(limit=50):
     lines.extend(traceback.format_exception_only(type, value))
 
     msg = "Traceback (innermost last):\n"
-    msg = msg + "%-20s %s" % (str.join("", lines[:-1]), lines[-1])
+    msg = msg + f"{str.join('', lines[:-1]):20} {lines[-1]}"
 
     return msg
 
@@ -107,7 +108,7 @@ def maybe_ignore_errors(fn):
         return fn()
     except Exception as e:
         if config.ignore_errors:
-            log.Warn(_("IGNORED_ERROR: Warning: ignoring error as requested: %s: %s") % (e.__class__.__name__, uexc(e)))
+            log.Warn(_("IGNORED_ERROR: WARNING: ignoring error as requested: %s: %s") % (e.__class__.__name__, uexc(e)))
             return None
         else:
             raise
@@ -345,12 +346,12 @@ def start_debugger():
         # ignition
         try:
             pydevd_pycharm.settrace(
-                debug_host,
+                host=debug_host,
                 port=debug_port,
                 suspend=False,
-                stdoutToServer=True,
-                stderrToServer=True,
-                # patch_multiprocessing=True,
+                stdout_to_server=True,
+                stderr_to_server=True,
+                patch_multiprocessing=True,
             )
             log.Info(f"Connection {debug_host}:{debug_port} accepted for debug.")
         except ConnectionRefusedError as e:

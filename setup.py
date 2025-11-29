@@ -20,13 +20,11 @@
 # along with duplicity; if not, write to the Free Software Foundation,
 # Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-import os
 import glob
-import re
+import os
 import shutil
 import subprocess
 import sys
-import time
 import warnings
 
 warnings.filterwarnings("ignore", message="setup.py install is deprecated")
@@ -34,16 +32,17 @@ warnings.filterwarnings("ignore", message="easy_install command is deprecated")
 warnings.filterwarnings("ignore", message="pyproject.toml does not contain a tool.setuptools_scm section")
 warnings.filterwarnings("ignore", message="Configuring installation scheme with distutils config files")
 
-from setuptools import setup, Extension, Command
+from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 
 # check that we can function here
-if not ((3, 8) <= sys.version_info[:2]):
-    print("Sorry, duplicity requires version 3.8 thru 3.13 of Python.", file=sys.stderr)
+if os.environ.get("PYTEST_VERSION") is not None:
+    pass
+elif not ((3, 9) <= sys.version_info[:2] <= (3, 14)):
+    print("Sorry, duplicity requires version 3.9 thru 3.14 of Python.", file=sys.stderr)
     sys.exit(1)
 
-Version: str = "3.0.5.1"
-reldate: str = time.strftime("%B %d, %Y", time.gmtime(int(os.environ.get("SOURCE_DATE_EPOCH", time.time()))))
+Version: str = "3.0.6.2"
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
 ext_modules = list()
@@ -173,112 +172,8 @@ class BuildExtCommand(build_ext):
         build_ext.run(self)
 
 
-class SetVersionCommand(Command):
-    """
-    Mod the versioned files and add correct version and reldate
-    """
-
-    description: str = "Version source based env var DUP_VERSION"
-
-    user_options: list = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        global Version
-
-        if not (Version := os.environ.get("DUP_VERSION", False).strip("\"'")):
-            print("DUP_VERSION not set in environment.\nSet DUP_VERSION and try again")
-            sys.exit(1)
-
-        if self.dry_run:
-            print("Dry run, no changes will be made.")
-
-        # .TH DUPLICITY 1 "$reldate" "Version $version" "User Manuals" \"  -*- nroff -*-
-        self.version_source(
-            r"""\.TH\ DUPLICITY\ 1\ "(?P<reldate>[^"]*)"\ "Version\ (?P<version>[^"]*)"\ "User\ Manuals"\ \\"\ """
-            r"""\ \-\*\-\ nroff\ \-\*\-""",
-            r"""\.TH\ DUPLICITY\ 1\ "(?P<reldate>[^"]*)"\ "Version\ (?P<version>[^"]*)"\ "User\ Manuals"\ \\"\ """
-            r"""\ \-\*\-\ nroff\ \-\*\-""",
-            os.path.join("man", "duplicity.1"),
-        )
-
-        # __version__ = "$version"
-        self.version_source(
-            r'__version__: str = "(?P<version>[^"]*)"',
-            r'__reldate__: str = "(?P<reldate>[^"]*)"',
-            os.path.join("duplicity", "__init__.py"),
-        )
-
-        # version: $version
-        self.version_source(
-            r"version: (?P<version>.*)\n",
-            None,
-            os.path.join("snap", "snapcraft.yaml"),
-        )
-
-        # Version: str = "$version"
-        self.version_source(
-            r'Version: str = "(?P<version>[^\"]*)"',
-            None,
-            os.path.join(".", "setup.py"),
-        )
-
-        # version = "$version"
-        self.version_source(
-            r'version = "(?P<version>[^\"]*)"',
-            None,
-            os.path.join(".", "pyproject.toml"),
-        )
-
-    def version_source(self, version_patt: str, reldate_patt: str, pathname: str):
-        """
-        Copy source to dest, substituting current version with Version
-        current release date with today's date, i.e. December 28, 2008.
-        """
-        with open(pathname, "rt") as fd:
-            buffer = fd.read()
-
-        # process version
-        if version_patt:
-            if m := re.search(version_patt, buffer):
-                version_sub = re.escape(m.group("version"))
-                newbuffer = re.sub(version_sub, Version, buffer)
-                if newbuffer == buffer:
-                    print(f"ERROR: version unchanged in {pathname}.", file=sys.stderr)
-                else:
-                    buffer = newbuffer
-                    if self.verbose:
-                        print(f"Substituted '{version_sub}' with '{Version}' in {pathname}.")
-            else:
-                print(f"ERROR: {version_patt} not found in {pathname}.", file=sys.stderr)
-                sys.exit(1)
-
-        # process reldate
-        if reldate_patt:
-            if m := re.search(reldate_patt, buffer):
-                reldate_sub = re.escape(m.group("reldate"))
-                newbuffer = re.sub(reldate_sub, reldate, buffer)
-                if newbuffer == buffer:
-                    print(f"ERROR: reldate unchanged in {pathname}.", file=sys.stderr)
-                else:
-                    buffer = newbuffer
-                    if self.verbose:
-                        print(f"Substituted '{reldate_sub}' with '{reldate}' in {pathname}.")
-            else:
-                print(f"ERROR: {reldate_patt} not found in {pathname}.", file=sys.stderr)
-                sys.exit(1)
-
-        if not self.dry_run:
-            with open(pathname, "w") as fd:
-                fd.write(buffer)
-
-
 setup(
+    version=Version,
     packages=[
         "duplicity",
         "duplicity.backends",
@@ -293,7 +188,6 @@ setup(
     include_package_data=True,
     cmdclass={
         "build_ext": BuildExtCommand,
-        "setversion": SetVersionCommand,
     },
 )
 

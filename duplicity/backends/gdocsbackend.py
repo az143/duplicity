@@ -112,7 +112,7 @@ class GDocsBackend(duplicity.backend.Backend):
                 f"Failed to initialize upload of file '{source_path.get_filename()}' "
                 f"to remote folder '{self.folder.title.text}'"
             )
-        assert not file.close()
+        assert not file.close(), "file failed to close"
 
     def _get(self, remote_filename, local_path):
         entries = self._fetch_entries(

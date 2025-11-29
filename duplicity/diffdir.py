@@ -111,7 +111,7 @@ def get_delta_path(new_path, sig_path, sigTarFile=None):
     Return new delta_path which, when read, writes sig to sig_fileobj,
     if sigTarFile is not None
     """
-    assert new_path
+    assert new_path, "new_path must not be None or falsy when computing delta"
     if sigTarFile:
         ti = new_path.get_tarinfo()
         index = new_path.index
@@ -502,7 +502,7 @@ class TarBlockIter(object):
         """
         Turn next value of input_iter into a TarBlock
         """
-        assert not self.process_waiting
+        assert not self.process_waiting, "process_waiting should be False before starting a new process"
         raise NotImplementedError("'process' not implemented.")
 
     def process_continued(self):
@@ -512,7 +512,7 @@ class TarBlockIter(object):
         If processing val above would produce more than one TarBlock,
         get the rest of them by calling process_continue.
         """
-        assert self.process_waiting
+        assert self.process_waiting, "process_continued called without a waiting process to continue"
         raise NotImplementedError("'process_continues' not implemented.")
 
     def __next__(self):
@@ -662,7 +662,7 @@ class DeltaTarBlockIter(TarBlockIter):
             if not delta_ropath.type:
                 add_prefix(ti, r"deleted")
             else:
-                assert delta_ropath.difftype == "snapshot"
+                assert delta_ropath.difftype == "snapshot", "Expected snapshot difftype for fileless delta_ropath"
                 add_prefix(ti, r"snapshot")
             return self.tarinfo2tarblock(index, ti)
 
@@ -707,7 +707,7 @@ class DeltaTarBlockIter(TarBlockIter):
         """
         Return next volume in multivol diff or snapshot
         """
-        assert self.process_waiting
+        assert self.process_waiting, "No multivolume process is waiting; cannot continue"
         ropath = self.process_ropath
         ti, index = ropath.get_tarinfo(), ropath.index
         ti.name = f"{self.process_prefix}/{int(self.process_next_vol_number)}"
@@ -738,7 +738,7 @@ def write_block_iter(block_iter, out_obj):
     for block in block_iter:
         fp.write(block.data)
     fp.write(block_iter.get_footer())
-    assert not fp.close()
+    assert not fp.close(), "fp failed to close"
     if isinstance(out_obj, Path):
         out_obj.setdata()
 

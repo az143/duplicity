@@ -25,9 +25,9 @@ Main for parse command line, check for consistency, and set config
 import copy
 import inspect
 import sys
-from textwrap import dedent, wrap
+from textwrap import dedent
 
-# TODO: Remove duplicity.argparse311 when py38 goes EOL
+# TODO: Remove duplicity.argparse311 when py310 xgoes EOL
 from duplicity import argparse311 as argparse
 from duplicity import backend
 from duplicity import config
@@ -299,11 +299,32 @@ def process_command_line(cmdline_list):
         config.backend = None
 
     # determine full clean local path
-    local_path = config.source_path or config.target_dir
-    if local_path:
-        config.local_path = path.Path(path.Path(local_path).get_canonical())
-    else:
-        config.local_path = None
+    local_pathname = config.source_path or config.target_path
+    if config.action in ["full", "inc", "restore", "verify"]:
+        local_path = path.Path(path.Path(local_pathname).get_canonical())
+        if config.action == "restore":
+            if (local_path.exists() and not local_path.isemptydir()) or (
+                os.getcwd() == os.path.realpath(local_path.name).decode()
+            ):
+                log.FatalError(
+                    _(f"Restore '{local_path.uc_name}' is not empty or is current_dir.\nWill not overwrite."),
+                    log.ErrorCode.restore_path_exists,
+                )
+        elif config.action == "verify":
+            if not local_path.exists():
+                log.FatalError(
+                    _(f"Verify directory {local_path.uc_name} does not exist"),
+                    log.ErrorCode.verify_dir_doesnt_exist,
+                )
+        else:
+            assert config.action in ("full", "inc"), "action must be full or inc"
+            if not local_path.exists():
+                log.FatalError(
+                    _(f"Backup source directory {local_path.uc_name} does not exist."),
+                    log.ErrorCode.backup_dir_doesnt_exist,
+                )
+
+        config.local_path = local_path
 
     # generate backup name and set up archive dir
     if config.backup_name is None:

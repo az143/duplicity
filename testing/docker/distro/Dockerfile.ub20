@@ -41,6 +41,8 @@ RUN apt update \
         librsync-dev \
         libffi-dev \
         libssl-dev \
+        libxml2-dev \
+        libxslt-dev \
         openssl \
         par2 \
         python3 \
@@ -57,9 +59,9 @@ COPY requirements.txt ./
 
 RUN <<EOF
 set -e
-# install requirements
-# don't muck about with venv setup in isolated environ
-python3 -m pip config set global.break-system-packages true
+# install python3.9, make default, and install requirements
+apt install -y python3.9 python3.9-dev python3.9-venv
+update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
 python3 -m pip install -U -r requirements.dev
 python3 -m pip install -U -r requirements.txt
 

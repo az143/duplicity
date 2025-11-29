@@ -36,6 +36,7 @@ RUN apt update \
     && apt install -y \
         build-essential \
         git \
+        gpg \
         intltool \
         lftp \
         librsync-dev \

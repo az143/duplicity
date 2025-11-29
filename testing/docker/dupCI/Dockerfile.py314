@@ -1,0 +1,89 @@
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+#
+# Copyright 2019 Nils Tekampe
+# Copyright 2019 Kenneth Loafman
+# Copyright 2019 Aaron Whitehouse
+#
+# This file is part of duplicity.
+#
+# Duplicity is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
+#
+# Duplicity is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with duplicity; if not, write to the Free Software Foundation,
+# Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+FROM python:3.14-rc
+
+# Set locale to prevent UTF-8 errors
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
+
+# Set to non-interactive so no tzdata prompt
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Installing some pre-requisites and some
+# packages needed for testing duplicity
+RUN apt update \
+    && apt upgrade -y \
+    && apt install -y \
+        build-essential \
+        git \
+        gpg \
+        intltool \
+        lftp \
+        librsync-dev \
+        libffi-dev \
+        libssl-dev \
+        openssl \
+        par2 \
+        rclone \
+        rdiff \
+        tzdata
+
+WORKDIR /root/
+COPY requirements.dev ./
+COPY requirements.txt ./
+
+RUN <<EOF
+set -e
+# install requirements
+python3 -m pip install --upgrade pip setuptools
+python3 -m pip install -r requirements.dev
+python3 -m pip install -r requirements.txt
+
+# cleanup the noise left over
+echo "Cleaning up"
+rm -rf /root/.cache/pip
+rm -rf /root/requirements.*
+rm -rf /var/lib/apt/lists/*
+EOF
+
+COPY gnupg/ /root/.gnupg/
+RUN <<EOF
+set -e
+# fixup /root/.bashrc
+cat <<CAT >> /root/.bashrc
+# added by dupCI
+alias ll='ls -l'
+alias la='ls -A'
+CAT
+cat <<CAT >> /root/.bash_profile
+# added by dupCI
+gpg-agent --daemon --enable-ssh-support --verbose
+GPG_TTY=$(tty)
+export GPG_TTY
+CAT
+chmod -R 700 /root/.gnupg
+EOF
+
+ENV DOCKER_GNUPGHOME=/root/.gnupg
+
+WORKDIR /root/duplicity/

@@ -108,7 +108,7 @@ class FunctionalTestCase(DuplicityTestCase):
             if self._setsid_w:
                 cmd_list.extend(["-w"])
 
-        cmd_list.extend([f"python{sys.version_info.major}.{sys.version_info.minor}"])
+        cmd_list.extend([sys.executable, "-W", "ignore", "-u"])
 
         if os.environ.get("RUN_COVERAGE", None):
             cmd_list.extend(["-m", "coverage", "run", "--source=duplicity", "-p"])
@@ -153,7 +153,6 @@ class FunctionalTestCase(DuplicityTestCase):
             ["-f", "-c", cmdline],
             timeout=timeout,
             env=dup_env,  # type: ignore
-            encoding=config.fsencoding,
         )
 
         for passphrase in passphrase_input:
