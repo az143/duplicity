@@ -10,8 +10,6 @@ pytest-cov
 
 #### documentation libraries #####
 
-gitchangelog
 myst-parser
-pystache
 sphinx
 sphinx-rtd-theme

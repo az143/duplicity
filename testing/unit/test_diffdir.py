@@ -51,8 +51,9 @@ class DDTest(UnitTestCase):
         """Test producing tar signature of various file types"""
         select = selection.Select(Path(f"{_runtest_dir}/testfiles/various_file_types"))
         select.set_iter()
-        sigtar = diffdir.SigTarBlockIter(select)
-        diffdir.write_block_iter(sigtar, f"{_runtest_dir}/testfiles/output/sigtar")
+        with open(f"{_runtest_dir}/testfiles/output/sigtar", "wb") as sigtar_fp:
+            for _ in diffdir.DirFull_WriteSig(select, sigtar_fp):
+                pass
 
         i = 0
         for tarinfo in dup_tarfile.TarFile(f"{_runtest_dir}/testfiles/output/sigtar", "r"):
@@ -63,8 +64,9 @@ class DDTest(UnitTestCase):
         """Given directory name, make sure can tell when nothing changes"""
         select = selection.Select(Path(dirname))
         select.set_iter()
-        sigtar = diffdir.SigTarBlockIter(select)
-        diffdir.write_block_iter(sigtar, f"{_runtest_dir}/testfiles/output/sigtar")
+        with open(f"{_runtest_dir}/testfiles/output/sigtar", "wb") as sigtar_fp:
+            for _ in diffdir.DirFull_WriteSig(select, sigtar_fp):
+                pass
 
         sigtar_fp = open(f"{_runtest_dir}/testfiles/output/sigtar", "rb")
         select2 = selection.Select(Path(dirname))
@@ -88,8 +90,9 @@ class DDTest(UnitTestCase):
 
         select = selection.Select(Path(f"{_runtest_dir}/testfiles/various_file_types"))
         select.set_iter()
-        sigtar = diffdir.SigTarBlockIter(select)
-        diffdir.write_block_iter(sigtar, f"{_runtest_dir}/testfiles/output/sigtar")
+        with open(f"{_runtest_dir}/testfiles/output/sigtar", "wb") as sigtar_fp:
+            for _ in diffdir.DirFull_WriteSig(select, sigtar_fp):
+                pass
 
         sigtar_fp = open(f"{_runtest_dir}/testfiles/output/sigtar", "rb")
         select2 = selection.Select(Path(f"{_runtest_dir}/testfiles/various_file_types"))
@@ -109,10 +112,10 @@ class DDTest(UnitTestCase):
     def test_diff(self):
         """Test making a diff"""
         sel1 = selection.Select(Path(f"{_runtest_dir}/testfiles/dir1"))
-        diffdir.write_block_iter(
-            diffdir.SigTarBlockIter(sel1.set_iter()),
-            f"{_runtest_dir}/testfiles/output/dir1.sigtar",
-        )
+        sel1.set_iter()
+        with open(f"{_runtest_dir}/testfiles/output/dir1.sigtar", "wb") as sigtar_fp:
+            for _ in diffdir.DirFull_WriteSig(sel1, sigtar_fp):
+                pass
 
         sigtar_fp = open(f"{_runtest_dir}/testfiles/output/dir1.sigtar", "rb")
         sel2 = selection.Select(Path(f"{_runtest_dir}/testfiles/dir2"))
@@ -137,10 +140,10 @@ class DDTest(UnitTestCase):
         """Another diff test - this one involves multivol support
         (requires rdiff to be installed to pass)"""
         sel1 = selection.Select(Path(f"{_runtest_dir}/testfiles/dir2"))
-        diffdir.write_block_iter(
-            diffdir.SigTarBlockIter(sel1.set_iter()),
-            f"{_runtest_dir}/testfiles/output/dir2.sigtar",
-        )
+        sel1.set_iter()
+        with open(f"{_runtest_dir}/testfiles/output/dir2.sigtar", "wb") as sigtar_fp:
+            for _ in diffdir.DirFull_WriteSig(sel1, sigtar_fp):
+                pass
 
         sigtar_fp = open(f"{_runtest_dir}/testfiles/output/dir2.sigtar", "rb")
         sel2 = selection.Select(Path(f"{_runtest_dir}/testfiles/dir3"))
@@ -178,7 +181,9 @@ class DDTest(UnitTestCase):
 
         cur_dir = Path(f"{_runtest_dir}/testfiles/dir1")
         get_sel = lambda cur_dir: selection.Select(cur_dir).set_iter()
-        diffdir.write_block_iter(diffdir.SigTarBlockIter(get_sel(cur_dir)), cur_full_sigs)
+        with cur_full_sigs.open("wb") as sigtar_fp:
+            for _ in diffdir.DirFull_WriteSig(get_sel(cur_dir), sigtar_fp):
+                pass
 
         sigstack = [cur_full_sigs]
         for dirname in ["dir2", "dir3", "dir4"]:
@@ -208,7 +213,9 @@ class DDTest(UnitTestCase):
             assert not os.system(f"cmp {delta1.uc_name} {delta2.uc_name}")
 
             # Write old-style signature to cur_full_sigs
-            diffdir.write_block_iter(diffdir.SigTarBlockIter(get_sel(cur_dir)), cur_full_sigs)
+            with cur_full_sigs.open("wb") as sigtar_fp:
+                for _ in diffdir.DirFull_WriteSig(get_sel(cur_dir), sigtar_fp):
+                    pass
 
     def test_combine_path_iters(self):
         """Test diffdir.combine_path_iters"""

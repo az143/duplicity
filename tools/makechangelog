@@ -29,7 +29,36 @@ fi
 VERSION=`./setup.py --version`
 echo "$0 of ${VERSION}"
 
-gitchangelog > CHANGELOG.md
+# which sed to use?
+if [ $(uname -s) == "Darwin" ]; then
+    SED="gsed"
+else
+    SED="sed"
+fi
+
+echo "Generate CHANGELOG.md"
+git config set changelog.format "  * %h: %s"
+git config set core.editor "emacs"
+git changelog -a -p -t "(Unreleased)" > CHANGELOG.md
+
+# some filters to make things less noisy.
+echo "Apply some filters"
+cat <<END > /tmp/cruft
+/update changelog/ID
+/prep for/ID
+/version for lp/ID
+/crowdin update/ID
+/bump version/ID
+/change version/ID
+/run po\/update.pot/ID
+/!minor\s*/ID
+/:test|doc:/ID
+s/:\s*- /: /g
+s/:\s*\* /: /g
+s/\s+/ /g
+s/^(.*):\s*(ch.|fix|new):(dev|usr|pkg|test|doc):\s*(.*)/\1:\2: \4/ig
+END
+$SED --in-place --regexp-extended --file /tmp/cruft CHANGELOG.md
 
 # find out if anything has changed
 CNT=`git status --porcelain | tee /dev/stderr | wc -l`

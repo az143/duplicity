@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+#
+# Copyright 2025 Kenneth Loafman
+#
+# This file is part of duplicity.
+#
+# Duplicity is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation; either version 2 of the License, or (at your
+# option) any later version.
+#
+# Duplicity is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with duplicity; if not, write to the Free Software Foundation,
+# Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+#
+# Module to check and delete tags that do not match our standards
+#
+
+import re
+import sys
+from subprocess import run
+
+
+tag_regex = re.compile(r"^rel.\d+\.\d+\.\d+(?:\.\d+)?(?:(?:a|b|rc)\d+)?(?:\.dev\d+)?$")
+
+
+def check_tags():
+
+    p = run(
+        f"git branch --show-current".split(),
+        capture_output=True,
+        check=True,
+    )
+    branch = p.stdout.decode().strip()
+
+    print(f"Checking tags on branch {branch}")
+
+    p = run(
+        "git tag --list".split(),
+        capture_output=True,
+        check=True,
+    )
+
+    checked = 0
+    removed = 0
+    for tag in p.stdout.decode().splitlines():
+        checked += 1
+        m = re.match(tag_regex, tag)
+        if not m:
+            print(f"Deleting tag {tag} from branch {branch}")
+            run(f"git tag -d {tag}".split(), check=True)
+            removed += 1
+    print(f"Checked {checked} tags, removed {removed}")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 1:
+        print("Usage: check_tags")
+        sys.exit(1)
+    check_tags()

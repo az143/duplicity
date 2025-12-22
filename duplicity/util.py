@@ -35,6 +35,7 @@ import traceback
 from io import StringIO
 
 import fasteners
+import pexpect
 
 from duplicity import (
     config,
@@ -202,8 +203,33 @@ def release_lockfile():
             pass
 
 
+def key_needs_passphrase(key):
+    """
+    Check if a key needs a passphrase.
+    """
+    try:
+        child = pexpect.spawn("gpg", f"--pinentry-mode=loopback --dry-run --passwd {key}".split())
+    except Exception:
+        log.FatalError(f"Exception spawning gpg while checking if passphrase needed for key: {key}")
+
+    try:
+        got = child.expect(["passphrase.*:", pexpect.EOF])
+    except Exception:
+        log.FatalError(f"Exception while checking if passphrase needed for key: {key}: {str(child)}")
+
+    if got == 0:
+        log.Debug(f"Key {key} needs passphrase")
+        child.close()
+        return True
+    elif got == 1:
+        log.Debug(f"Key {key} does not need passphrase")
+        return False
+    return None
+
+
 def copyfileobj(infp, outfp, byte_count=-1):
-    """Copy byte_count bytes from infp to outfp, or all if byte_count < 0
+    """
+    Copy byte_count bytes from infp to outfp, or all if byte_count < 0
 
     Returns the number of bytes actually written (may be less than
     byte_count if find eof.  Does not close either fileobj.

@@ -36,61 +36,6 @@ class PatchDirException(Exception):
     pass
 
 
-def Patch(base_path, difftar_fileobj):
-    """Patch given base_path and file object containing delta"""
-    diff_tarfile = dup_tarfile.TarFile("arbitrary", "r", difftar_fileobj)
-    patch_diff_tarfile(base_path, diff_tarfile)
-    assert not difftar_fileobj.close(), "difftar_fileobj failed to close"
-
-
-def Patch_from_iter(base_path, fileobj_iter, restrict_index=()):
-    """Patch given base_path and iterator of delta file objects"""
-    diff_tarfile = TarFile_FromFileobjs(fileobj_iter)
-    patch_diff_tarfile(base_path, diff_tarfile, restrict_index)
-
-
-def patch_diff_tarfile(base_path, diff_tarfile, restrict_index=()):
-    """Patch given Path object using delta dup_tarfile (as in dup_tarfile.TarFile)
-
-    If restrict_index is set, ignore any deltas in diff_tarfile that
-    don't start with restrict_index.
-
-    """
-    if base_path.exists():
-        path_iter = selection.Select(base_path).set_iter()
-    else:
-        path_iter = empty_iter()  # probably untarring full backup
-
-    diff_path_iter = difftar2path_iter(diff_tarfile)
-    if restrict_index:
-        diff_path_iter = filter_path_iter(diff_path_iter, restrict_index)
-    collated = diffdir.collate2iters(path_iter, diff_path_iter)
-
-    ITR = IterTreeReducer(PathPatcher, [base_path])
-    for basis_path, diff_ropath in collated:
-        if basis_path:
-            log.Info(
-                _("Patching %s") % (os.fsdecode(basis_path.get_relative_path())),
-                log.InfoCode.patch_file_patching,
-                util.escape(basis_path.get_relative_path()),
-            )
-            ITR(basis_path.index, basis_path, diff_ropath)
-        else:
-            log.Info(
-                _("Patching %s") % (os.fsdecode(diff_ropath.get_relative_path())),
-                log.InfoCode.patch_file_patching,
-                util.escape(diff_ropath.get_relative_path()),
-            )
-            ITR(diff_ropath.index, basis_path, diff_ropath)
-    ITR.Finish()
-    base_path.setdata()
-
-
-def empty_iter():
-    if 0:
-        yield 1  # this never happens, but fools into generator treatment
-
-
 def filter_path_iter(path_iter, index):
     """Rewrite path elements of path_iter so they start with index
 
@@ -252,67 +197,6 @@ class Multivol_Filelike(object):
         self.at_end = True
 
 
-class PathPatcher(ITRBranch):
-    """Used by DirPatch, process the given basis and diff"""
-
-    def __init__(self, base_path):
-        """Set base_path, Path of root of tree"""
-        self.dir_basis_path = None
-        self.base_path = base_path
-        self.dir_diff_ropath = None
-
-    def start_process(self, index, basis_path, diff_ropath):
-        """Start processing when diff_ropath is a directory"""
-        if not (diff_ropath and diff_ropath.isdir()):
-            assert index == (), f"Expected root index (), got {util.uindex(index)}"  # should only happen for first elem
-            self.fast_process(index, basis_path, diff_ropath)
-            return
-
-        if not basis_path:
-            basis_path = self.base_path.new_index(index)
-            assert not basis_path.exists(), "Basis path must not already exist when creating new directory for patching"
-            basis_path.mkdir()  # Need place for later files to go into
-        elif not basis_path.isdir():
-            basis_path.delete()
-            basis_path.mkdir()
-        self.dir_basis_path = basis_path
-        self.dir_diff_ropath = diff_ropath
-
-    def end_process(self):
-        """Copy directory permissions when leaving tree"""
-        if self.dir_diff_ropath:
-            self.dir_diff_ropath.copy_attribs(self.dir_basis_path)
-
-    def can_fast_process(self, index, basis_path, diff_ropath):  # pylint: disable=unused-argument
-        """No need to recurse if diff_ropath isn't a directory"""
-        return not (diff_ropath and diff_ropath.isdir())
-
-    def fast_process(self, index, basis_path, diff_ropath):
-        """For use when neither is a directory"""
-        if not diff_ropath:
-            return  # no change
-        elif not basis_path:
-            if diff_ropath.difftype == "deleted":
-                pass  # already deleted
-            else:
-                # just copy snapshot over
-                diff_ropath.copy(self.base_path.new_index(index))
-        elif diff_ropath.difftype == "deleted":
-            if basis_path.isdir():
-                basis_path.deltree()
-            else:
-                basis_path.delete()
-        elif not basis_path.isreg() or (basis_path.isreg() and diff_ropath.difftype == "snapshot"):
-            if basis_path.isdir():
-                basis_path.deltree()
-            else:
-                basis_path.delete()
-            diff_ropath.copy(basis_path)
-        else:
-            assert diff_ropath.difftype == "diff", f"Expected difftype 'diff', got {diff_ropath.difftype}"
-            basis_path.patch_with_attribs(diff_ropath)
-
-
 class TarFile_FromFileobjs(object):
     """Like a dup_tarfile.TarFile iterator, but read from multiple fileobjs"""
 
@@ -337,14 +221,7 @@ class TarFile_FromFileobjs(object):
                 not self.current_fp.close()
             ), "Closing current file pointer returned a truthy value indicating an error"
 
-        while True:
-            x = next(self.fileobj_iter)
-            if isinstance(x, errors.BadVolumeException):
-                # continue with the next volume
-                continue
-            else:
-                self.current_fp = x
-                break
+        self.current_fp = next(self.fileobj_iter)
 
         self.dup_tarfile = util.make_tarfile("r", self.current_fp)
         self.tar_iter = iter(self.dup_tarfile)
@@ -419,56 +296,6 @@ def collate_iters(iter_list):
             yield tuple(yieldval)
 
     return yield_tuples(iter_num, overflow, elems)
-
-
-class IndexedTuple(object):
-    """Like a tuple, but has .index (used previously by collate_iters)"""
-
-    def __init__(self, index, sequence):
-        self.index = index
-        self.data = tuple(sequence)
-
-    def __len__(self):
-        return len(self.data)
-
-    def __getitem__(self, key):
-        """This only works for numerical keys (easier this way)"""
-        return self.data[key]
-
-    def __lt__(self, other):
-        return self.__cmp__(other) == -1
-
-    def __le__(self, other):
-        return self.__cmp__(other) != 1
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __gt__(self, other):
-        return self.__cmp__(other) == 1
-
-    def __ge__(self, other):
-        return self.__cmp__(other) != -1
-
-    def __cmp__(self, other):
-        assert isinstance(other, IndexedTuple), f"Comparison target must be IndexedTuple, got {type(other).__name__}"
-        if self.index < other.index:
-            return -1
-        elif self.index == other.index:
-            return 0
-        else:
-            return 1
-
-    def __eq__(self, other):
-        if isinstance(other, IndexedTuple):
-            return self.index == other.index and self.data == other.data
-        elif isinstance(other, tuple):
-            return self.data == other
-        else:
-            return False
-
-    def __str__(self):
-        return f"({', '.join(map(str, self.data))}).{self.index}"
 
 
 def normalize_ps(patch_sequence):

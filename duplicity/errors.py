@@ -102,7 +102,3 @@ class TemporaryLoadException(BackendException):
     """
 
     pass
-
-
-class BadVolumeException(DuplicityError):
-    pass

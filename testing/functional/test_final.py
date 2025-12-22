@@ -213,9 +213,14 @@ class FinalTest(FunctionalTestCase):
 
     def test_piped_password(self):
         """Make sure that prompting for a password works"""
+        self.set_environ("FTP_PASSWORD", None)
         self.set_environ("PASSPHRASE", None)
+        self.set_environ("SIGN_PASSPHRASE", None)
+        self.set_environ("TESTDEBUG", None)
         self.backup(
-            "full", f"{_runtest_dir}/testfiles/empty_dir", passphrase_input=[self.sign_passphrase, self.sign_passphrase]
+            "full",
+            f"{_runtest_dir}/testfiles/empty_dir",
+            passphrase_input=[self.sign_passphrase, self.sign_passphrase],
         )
         self.restore(passphrase_input=[self.sign_passphrase])
 

@@ -133,7 +133,7 @@ class InfoCode(object):
     diff_file_changed = 5
     diff_file_deleted = 6
     patch_file_writing = 7
-    patch_file_patching = 8
+    # patch_file_patching = 8 # 8 isn't used anymore.
     # file_list = 9 # 9 isn't used anymore.  It corresponds to an older syntax for listing files
     file_list = 10
     synchronous_upload_begin = 11

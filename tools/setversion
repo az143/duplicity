@@ -121,6 +121,6 @@ def version_source(version_patt: str, reldate_patt: str, pathname: str, new_vers
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: setversion.py <new_version>")
+        print("Usage: setversion <new_version>")
         sys.exit(1)
     set_version(sys.argv[1])

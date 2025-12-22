@@ -126,6 +126,44 @@ class RegressionTest(FunctionalTestCase):
             ]
         )
 
+    def test_issue908(self):
+        """
+        Test issue 908 - gpg: public key decryption failed: No passphrase given (3.0.6.2)
+        """
+
+        # make sure we test with a clean cache and clean output
+        self.set_environ("FTP_PASSWORD", None)
+        self.set_environ("PASSPHRASE", None)
+        self.set_environ("SIGN_PASSPHRASE", None)
+        self.set_environ("TESTDEBUG", None)
+        shutil.rmtree(f"{_runtest_dir}/testfiles/cache/issue908", ignore_errors=True)
+        shutil.rmtree(f"{_runtest_dir}/testfiles/output", ignore_errors=True)
+
+        # do initial full backup with passphrase
+        self.backup(
+            "full",
+            f"{_runtest_dir}/testfiles/various_file_types",
+            options=["--name=issue908", f"--encrypt-key={self.encrypt_key1}"],
+        )
+
+        # make sure inc has somthing to do
+        os.unlink(f"{_runtest_dir}/testfiles/various_file_types/executable")
+
+        # do incremental backup
+        self.backup(
+            "inc",
+            f"{_runtest_dir}/testfiles/various_file_types",
+            options=["--name=issue908", f"--encrypt-key={self.encrypt_key1}"],
+            passphrase_input=[self.sign_passphrase],
+        )
+
+        # do verify
+        self.verify(
+            f"{_runtest_dir}/testfiles/various_file_types",
+            options=["--name=issue908", f"--encrypt-key={self.encrypt_key1}"],
+            passphrase_input=[self.sign_passphrase],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -46,13 +46,6 @@ class DiffDirException(Exception):
     pass
 
 
-def DirSig(path_iter):
-    """
-    Alias for SigTarBlockIter below
-    """
-    return SigTarBlockIter(path_iter)
-
-
 def DirFull(path_iter):
     """
     Return a tarblock full backup of items in path_iter
@@ -610,36 +603,12 @@ class DummyBlockIter(TarBlockIter):
         return self.tarinfo2tarblock(index, ti)
 
 
-class SigTarBlockIter(TarBlockIter):
-    """
-    TarBlockIter that yields blocks of a signature tar from path_iter
-    """
-
-    def process(self, path):
-        """
-        Return associated signature TarBlock from path
-        """
-        ti = path.get_tarinfo()
-        if path.isreg():
-            sfp = librsync.SigFile(path.open("rb"), get_block_size(path.getsize()))
-            sigbuf = sfp.read()
-            sfp.close()
-            ti.name = b"signature/" + b"/".join(path.index)
-            ti.name = os.fsdecode(ti.name)
-            return self.tarinfo2tarblock(path.index, ti, sigbuf)
-        else:
-            ti.name = b"snapshot/" + b"/".join(path.index)
-            ti.name = os.fsdecode(ti.name)
-            return self.tarinfo2tarblock(path.index, ti)
-
-
 class DeltaTarBlockIter(TarBlockIter):
     """
     TarBlockIter that yields parts of a deltatar file
 
-    Unlike SigTarBlockIter, the argument to __init__ is a
-    delta_path_iter, so the delta information has already been
-    calculated.
+    The argument to __init__ is a delta_path_iter, so the delta information
+    must be calculated by the caller.
     """
 
     def process(self, delta_ropath):

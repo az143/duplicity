@@ -125,23 +125,6 @@ class LikeFile(object):
         self.closed = 1
 
 
-class SigFile(LikeFile):
-    """File-like object which incrementally generates a librsync signature"""
-
-    def __init__(self, infile, blocksize=_librsync.RS_DEFAULT_BLOCK_LEN):
-        """SigFile initializer - takes basis file
-
-        basis file only needs to have read() and close() methods.  It
-        will be closed when we come to the end of the signature.
-
-        """
-        LikeFile.__init__(self, infile)
-        try:
-            self.maker = _librsync.new_sigmaker(blocksize)
-        except _librsync.librsyncError as e:
-            raise librsyncError(str(e))
-
-
 class DeltaFile(LikeFile):
     """File-like object which incrementally generates a librsync delta"""
 
@@ -204,8 +187,7 @@ class PatchedFile(LikeFile):
 class SigGenerator(object):
     """Calculate signature.
 
-    Input and output is same as SigFile, but the interface is like md5
-    module, not filelike object
+    Interface is like md5 module
 
     """
 

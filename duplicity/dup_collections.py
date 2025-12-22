@@ -324,8 +324,10 @@ class BackupSet(object):
     def get_remote_file(self, remote_file):
         try:
             remote_file_buffer = self.backend.get_data(remote_file)
-        except GPGError as message:
-            log.Error(_(f"Error processing remote file ({os.fsdecode(remote_file)}): {util.uexc(message)}"))
+        except GPGError as e:
+            log.FatalError(
+                _(f"Error processing remote file ({os.fsdecode(remote_file)}):\n{util.exception_traceback()}")
+            )
         log.Info(_(f"Processing remote file {os.fsdecode(remote_file)} ({len(remote_file_buffer)})"))
         return remote_file_buffer
 

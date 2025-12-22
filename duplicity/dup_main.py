@@ -30,7 +30,7 @@
 # any suggestions.
 
 
-from dataclasses import dataclass
+import copy
 import os
 import platform
 import resource
@@ -60,11 +60,18 @@ from duplicity import (
     tempdir,
     util,
 )
-from duplicity.errors import BadVolumeException
-from duplicity.gpg import GPGError
 
 # If exit_val is not None, exit with given value at end.
 exit_val = None
+
+# actions that skip archive_sync
+skips_sync_archive = [
+    "collection-status",
+    "full",
+    "remove-all-but-n-full",
+    "remove-all-inc-of-but-n-full",
+    "remove-older-than",
+]
 
 
 def getpass_safe(message):
@@ -73,7 +80,6 @@ def getpass_safe(message):
     return getpass.getpass(message)
 
 
-# TODO: Simplify and refactor: https://gitlab.com/duplicity/duplicity/-/merge_requests/288#note_2406527475
 def get_passphrase(n, action, for_signing=False):
     """
     Check to make sure passphrase is indeed needed, then get
@@ -126,47 +132,39 @@ def get_passphrase(n, action, for_signing=False):
         log.Notice(_("Reuse configured SIGN_PASSPHRASE as PASSPHRASE"))
         return os.environ["SIGN_PASSPHRASE"]
 
-    # Next, verify we need to ask the user
-
-    # Assumptions:
-    #   - encrypt-key has no passphrase
-    #   - sign-key requires passphrase
-    #   - gpg-agent supplies all, no user interaction
-
-    # no passphrase if --no-encryption or --use-agent
-    if not config.encryption or config.use_agent:
-        return ""
-
-    # these commands don't need a password
-    elif action in [
-        "collection-status",
-        "list-current-files",
-        "remove-all-but-n-full",
-        "remove-all-inc-of-but-n-full",
-        "remove-older-than",
-    ]:
-        return ""
-
-    # for a full, inc, verify, we don't need a password if
-    # there is no sign_key and there are recipients
-    elif (
-        action in ("full", "inc", "verify")
-        and (config.gpg_profile.recipients or config.gpg_profile.hidden_recipients)
-        and (not config.gpg_profile.sign_key or (not config.restart and not for_signing))
-    ):
-        return ""
-
-    elif (
-        (config.gpg_profile.recipients or config.gpg_profile.hidden_recipients)
-        and config.metadata_sync_mode == "partial"
-        and action in ["full"]
-    ):
-        log.Info(_("Skipping passphrase input for full backup with encryption keys."))
-        return ""
-
-    # Finally, ask the user for the passphrase
+    # Not in the environment, check if encryption passphrase is needed
+    asymmetric = False
+    need_passphrase = False
+    profile = config.gpg_profile
+    encrypt_keys = profile.recipients + profile.hidden_recipients
+    if profile.sign_key:
+        encrypt_keys.append(profile.sign_key)
+    if encrypt_keys:
+        asymmetric = True
+        for key in encrypt_keys:
+            if util.key_needs_passphrase(key):
+                log.Notice(f"Key {key} needs passphrase.")
+                need_passphrase = True
+                break
+        else:
+            log.Notice("No encryption keys need passphrase.")
     else:
-        log.Info(_("PASSPHRASE variable not set, asking user."))
+        symmetric = True
+        need_passphrase = True
+        log.Notice("No encryption keys configured.")
+
+    skips = copy.copy(skips_sync_archive)
+    skips.remove("full")
+    if (action == "full" and asymmetric) or config.restart or action in skips:
+        log.Notice(f"Skipping passphrase request for action {action}")
+        return ""
+
+    elif asymmetric and not need_passphrase:
+        log.Notice(_("Skipping because no encryption key passphrase is needed."))
+        return ""
+
+    else:
+        log.Notice(_("No environment variables are set, asking user."))
         use_cache = True
         while True:
             # ask the user to enter a new passphrase to avoid an infinite loop
@@ -197,7 +195,9 @@ def get_passphrase(n, action, for_signing=False):
 
             if not pass1 == pass2:
                 log.Log(
-                    _("First and second passphrases do not match!  Please try again."), log.WARNING, force_print=True
+                    _("First and second passphrases do not match!  Please try again."),
+                    log.WARNING,
+                    force_print=True,
                 )
                 use_cache = False
                 continue
@@ -912,16 +912,13 @@ def restore_get_patched_rop_iter(col_stats):
         manifest = backup_set.get_manifest()
         volumes = manifest.get_containing_volumes(index)
         for vol_num in volumes:
-            try:
-                fobj = restore_get_enc_fileobj(
-                    backup_set.backend,
-                    backup_set.volume_name_dict[vol_num],
-                    manifest.volume_info_dict[vol_num],
-                )
-                if fobj is not None:
-                    yield fobj
-            except BadVolumeException as e:
-                yield e
+            fobj = restore_get_enc_fileobj(
+                backup_set.backend,
+                backup_set.volume_name_dict[vol_num],
+                manifest.volume_info_dict[vol_num],
+            )
+            if fobj is not None:
+                yield fobj
 
             cur_vol[0] += 1
             log.Progress(_("Processed volume %d of %d") % (cur_vol[0], num_vols), cur_vol[0], num_vols)
@@ -986,11 +983,8 @@ def restore_get_enc_fileobj(backend, filename, volume_info):
             log.Error(error_msg, code=log.ErrorCode.mismatched_hash)
     else:
         if config.ignore_errors:
-            exc = BadVolumeException(f"Hash mismatch for: {os.fsdecode(filename)}")
-            log.Warn(
-                _("IGNORED_ERROR: WARNING: ignoring error as requested: %s: %s")
-                % (exc.__class__.__name__, util.uexc(exc))
-            )
+            msg = f"Hash mismatch for: {os.fsdecode(filename)}"
+            log.Warn(_("IGNORED_ERROR: WARNING: ignoring error as requested: %s: %s") % ("BadVolumeException", msg))
             # Do not try to actually read it as it is corrupted!
             return None
         else:
@@ -1666,13 +1660,7 @@ def do_backup(action):
     ).set_values()
 
     # check archive synch with remote, fix if needed
-    if action not in [
-        "collection-status",
-        "full",
-        "remove-all-but-n-full",
-        "remove-all-inc-of-but-n-full",
-        "remove-older-than",
-    ]:
+    if action not in skips_sync_archive:
         sync_archive(col_stats)
 
     while True:
@@ -1799,7 +1787,7 @@ def do_backup(action):
                         check_last_manifest(col_stats)  # not needed for full backups
                 incremental_backup(sig_chain, col_stats)
 
-        if action in ["full", "inc"] and not config.check_remote:
+        if action in ["full", "inc"] and config.check_remote:
             dup_collections.CollectionsStatus(
                 config.backend,
                 config.archive_dir_path,

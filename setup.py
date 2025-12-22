@@ -42,7 +42,7 @@ elif not ((3, 9) <= sys.version_info[:2] <= (3, 14)):
     print("Sorry, duplicity requires version 3.9 thru 3.14 of Python.", file=sys.stderr)
     sys.exit(1)
 
-Version: str = "3.0.6.2"
+Version: str = "3.0.6.3"
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
 ext_modules = list()
