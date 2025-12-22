@@ -1,3 +1,23 @@
+duplicity (3.0.6.3-1) unstable; urgency=medium
+
+  this version changes the handling of remote manifests:
+  since version 3.0.6 duplicity by default downloads and decrypts all
+  remote manifests before backing anything up.
+
+  this breaks any setup that uses asymmetric encryption 
+  if the private key is not present when duplicity runs.
+  (ie. --encrypt-key is set, --sign-key is not used.)
+
+  (symptom: duplicity first tells you that
+  "Local and Remote metadata are synchronized, no sync needed."
+  and then immediatley fails with an "Error processing remote file"
+  and "decryption failed: secret key not available")
+
+  to restore functionality for this scenario you will need
+  to use the new option --no-check-remote.
+
+ -- Alexander Zangerl <az@debian.org>  Mon, 22 Dec 2025 15:14:57 +1000
+
 duplicity (3.0.3.2-1) unstable; urgency=medium
 
   this build does not include any python libraries beyond the absolute
