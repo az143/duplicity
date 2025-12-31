@@ -1,3 +1,11 @@
+duplicity (3.0.6.3-2) unstable; urgency=high
+
+  * pulled and reworked upstream's patch for various
+    passphrase-related regressions. some of that logic is still
+    exceptionally dodgy. (closes: #1124322)
+
+ -- Alexander Zangerl <az@debian.org>  Wed, 31 Dec 2025 13:52:00 +1000
+
 duplicity (3.0.6.3-1) unstable; urgency=medium
 
   * new upstream release
