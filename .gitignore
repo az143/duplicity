@@ -27,7 +27,6 @@ docs/testing.*
 duplicity.egg-info/
 htmlcov
 mprofile_*.dat
-patches
 po/duplicity.pot-e
 report.xml
 testfiles/

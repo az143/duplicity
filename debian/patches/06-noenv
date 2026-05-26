@@ -43,7 +43,7 @@
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
- # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+ # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
  #
  # Copyright 2002 Ben Escoto
 --- a/testing/overrides/bin/ncftpget
@@ -59,7 +59,7 @@
 @@ -1,4 +1,4 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
- # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+ # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
  #
  # duplicity -- Encrypted bandwidth efficient backup
 --- a/testing/manual/backendtest.py
@@ -68,7 +68,7 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
  
- # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+ # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
  #
 --- a/testing/manual/roottest.py
 +++ b/testing/manual/roottest.py
@@ -76,7 +76,7 @@
 -#!/usr/bin/env python3
 +#!/usr/bin/python3
  
- # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+ # -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
  #
 --- a/testing/manual/test-concurrency-performance-stats.py
 +++ b/testing/manual/test-concurrency-performance-stats.py

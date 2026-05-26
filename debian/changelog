@@ -1,8 +1,10 @@
-duplicity (3.0.8~dev5-1) UNRELEASED; urgency=medium
+duplicity (3.0.8~dev5-1) unstable; urgency=medium
 
-  * New upstream release.
+  * new upstream pre-release.
+  * adjusted fsf contact details in debian/copyright 
+  * removed runtime dependency on python3-setuptools (closes: #1125494)
 
- -- Alexander Zangerl <az@debian.org>  Tue, 26 May 2026 17:06:07 +1000
+ -- Alexander Zangerl <az@debian.org>  Tue, 26 May 2026 17:19:39 +1000
 
 duplicity (3.0.6.3-2) unstable; urgency=high
 

@@ -6,8 +6,6 @@ Subject: typos
  man/duplicity.1 | 10 +++++-----
  1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/man/duplicity.1 b/man/duplicity.1
-index 78acb17..fc57842 100644
 --- a/man/duplicity.1
 +++ b/man/duplicity.1
 @@ -373,8 +373,8 @@ Alternatively you might choose
@@ -21,7 +19,7 @@ index 78acb17..fc57842 100644
  The intended end-result is a faster backup, because the local
  CPU and your bandwidth can be more consistently utilized. Use of this
  option implies additional need for disk space in the temporary storage
-@@ -724,10 +724,10 @@ section for more information.
+@@ -723,10 +723,10 @@ section for more information.
  .TP
  .BI --jsonstat
  Record statistic data similar to the default stats printed at the end of a
@@ -34,7 +32,7 @@ index 78acb17..fc57842 100644
  "jsonstat" as extension.
  .B collection-status --show-changes-in-set <index> --jsonstat
  adds data collected in the backup job and switch the output format to json.
-@@ -1826,7 +1826,7 @@ If the pattern starts with "ignorecase:" (case insensitive), then
+@@ -1833,7 +1833,7 @@ If the pattern starts with "ignorecase:"
  this prefix will be removed and any character in the string can be
  replaced with an upper- or lowercase version of itself. This prefix is a
  legacy feature supported for shell globbing selection conditions only,

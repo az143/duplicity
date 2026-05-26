@@ -2,7 +2,7 @@ Description: silence lintian warnings re manpage line breaks
 Author: Alexander Zangerl <az@debian.org>
 --- a/man/duplicity.1
 +++ b/man/duplicity.1
-@@ -1419,7 +1419,7 @@ file://[relative|/absolute]/local/path
+@@ -1426,7 +1426,7 @@ file://[relative|/absolute]/local/path
  
  .TP
  .BR "FISH" " (Files transferred over Shell protocol) over ssh"
@@ -11,7 +11,7 @@ Author: Alexander Zangerl <az@debian.org>
  
  .TP
  .B "FTP"
-@@ -1564,7 +1564,7 @@ below.
+@@ -1571,7 +1571,7 @@ below.
  .BR "SCP/SFTP" " Secure Copy Protocol/SSH File Transfer Protocol"
  scp://.. or
  .br
@@ -20,7 +20,7 @@ Author: Alexander Zangerl <az@debian.org>
  
  .BR "defaults" " are paramiko+scp:// and paramiko+sftp://"
  .br
-@@ -2917,7 +2917,7 @@ error message.
+@@ -2924,7 +2924,7 @@ error message.
  
  .SH OPERATION AND DATA FORMATS
  This section describes duplicity's basic operation and the format of
