@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2013 J.P. Krauss
 #
@@ -38,10 +38,8 @@ class HubicBackend(PyraxBackend):
         try:
             import pyrax
         except ImportError as e:
-            raise BackendException(
-                f"""Hubic backend requires the pyrax library available from Rackspace.
-Exception: {str(e)}"""
-            )
+            raise BackendException(f"""Hubic backend requires the pyrax library available from Rackspace.
+Exception: {str(e)}""")
 
         # Inform Pyrax that we're talking to Hubic
         pyrax.set_setting("identity_type", "duplicity.backends.pyrax_identity.hubic.HubicIdentity")

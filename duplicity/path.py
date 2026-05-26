@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -39,7 +39,6 @@ from duplicity import config
 from duplicity import dup_time
 from duplicity import file_naming
 from duplicity import gpg
-from duplicity import librsync
 from duplicity import dup_tarfile
 from duplicity.lazy import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
@@ -623,13 +622,8 @@ class Path(ROPath):
 
     def deltree(self):
         """Remove self by recursively deleting files under it"""
-        from duplicity import selection  # TODO: avoid circ. dep. issue
-
         log.Debug(_("Deleting tree %s") % self.uc_name)
-        itr = IterTreeReducer(PathDeleter, [])
-        for path in selection.Select(self).set_iter():
-            itr(path.index, path)
-        itr.Finish()
+        shutil.rmtree(self.name)
         self.setdata()
 
     def get_parent_dir(self):
@@ -670,19 +664,6 @@ class Path(ROPath):
         """Change permissions of the path"""
         os.chmod(self.name, mode)
         self.setdata()
-
-    def patch_with_attribs(self, diff_ropath):
-        """Patch self with diff and then copy attributes over"""
-        assert self.isreg() and diff_ropath.isreg(), "Both base and diff must be regular files for patching"
-        temp_path = self.get_temp_in_same_dir()
-        fbase = self.open("rb")
-        fdiff = diff_ropath.open("rb")
-        patch_fileobj = librsync.PatchedFile(fbase, fdiff)
-        temp_path.writefileobj(patch_fileobj)
-        assert not fbase.close(), "fbase failed to close"
-        assert not fdiff.close(), "fdiff failed to close"
-        diff_ropath.copy_attribs(temp_path)
-        temp_path.rename(self)
 
     def get_temp_in_same_dir(self):
         """Return temp non existent path in same directory as self"""
@@ -807,19 +788,3 @@ class DupPath(Path):
                 return gpg.GPGFile(True, self, gpg_profile)
         else:
             return self.open(mode)
-
-
-class PathDeleter(ITRBranch):
-    """Delete a directory.  Called by Path.deltree"""
-
-    def start_process(self, index, path):  # pylint: disable=unused-argument
-        self.path = path
-
-    def end_process(self):
-        self.path.delete()
-
-    def can_fast_process(self, index, path):  # pylint: disable=unused-argument
-        return not path.isdir()
-
-    def fast_process(self, index, path):  # pylint: disable=unused-argument
-        path.delete()

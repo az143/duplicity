@@ -1,3 +1,9 @@
+duplicity (3.0.8~dev5-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+
+ -- Alexander Zangerl <az@debian.org>  Tue, 26 May 2026 17:06:07 +1000
+
 duplicity (3.0.6.3-2) unstable; urgency=high
 
   * pulled and reworked upstream's patch for various

@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -25,19 +25,16 @@ import inspect
 import json
 import logging
 import os
-from random import random
 import re
 import sys
 import time
+from random import random
 
 import duplicity.backend
-from duplicity import (
-    log,
-    path,
-    progress,
-)
+from duplicity import log
+from duplicity import path
+from duplicity import progress
 from duplicity.errors import BackendException
-from testing import _runtest_dir
 
 
 class BackendErrors:
@@ -66,6 +63,8 @@ class _TestBackend(duplicity.backend.Backend):
 
     def __init__(self, parsed_url):
         super().__init__(parsed_url)
+        from testing import _runtest_dir
+
         log._logger.addHandler(logging.FileHandler(f"{_runtest_dir}/testbackend.log"))
         log.Warn("TestBackend is not made for production use!")
         # The URL form "file:MyFile" is not a valid duplicity target.

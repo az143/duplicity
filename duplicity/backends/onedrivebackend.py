@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 # vim:tabstop=4:shiftwidth=4:expandtab
 #
 # Copyright 2014 Google Inc.
@@ -33,7 +33,6 @@ from duplicity import config
 from duplicity import log
 from duplicity import util
 from duplicity.errors import BackendException
-
 
 # For documentation on the API, see
 # The previous Live SDK API required the use of opaque folder IDs to navigate paths, but the Microsoft Graph
@@ -93,7 +92,7 @@ class OneDriveBackend(duplicity.backend.Backend):
     def _list(self):
         accum = []
         # Strip last slash, because graph can give a 404 in some cases with it
-        next_url = self.API_URI + self.directory_onedrive_path.rstrip("/") + ":/children"
+        next_url = f"{self.API_URI}{self.directory_onedrive_path.rstrip('/')}:/children"
         while True:
             response = self.http_client.get(next_url, timeout=config.timeout)
             if response.status_code == 404:
@@ -115,7 +114,7 @@ class OneDriveBackend(duplicity.backend.Backend):
         remote_filename = remote_filename.decode("UTF-8")
         with local_path.open("wb") as f:
             response = self.http_client.get(
-                self.API_URI + self.directory_onedrive_path + remote_filename + ":/content",
+                f"{self.API_URI}{self.directory_onedrive_path}{remote_filename}:/content",
                 stream=True,
                 timeout=config.timeout,
             )
@@ -133,7 +132,7 @@ class OneDriveBackend(duplicity.backend.Backend):
         remote_filename = remote_filename.decode("UTF-8")
         source_size = os.path.getsize(source_path.name)
         start = time.time()
-        response = self.http_client.get(self.API_URI + self.drive_root + "?$select=quota", timeout=config.timeout)
+        response = self.http_client.get(f"{self.API_URI}{self.drive_root}?$select=quota", timeout=config.timeout)
         response.raise_for_status()
         if "quota" in response.json():
             available = response.json()["quota"].get("remaining", None)
@@ -150,7 +149,7 @@ class OneDriveBackend(duplicity.backend.Backend):
 
         with source_path.open() as source_file:
             start = time.time()
-            url = self.API_URI + self.directory_onedrive_path + remote_filename + ":/createUploadSession"
+            url = f"{self.API_URI}{self.directory_onedrive_path}{remote_filename}:/createUploadSession"
 
             response = self.http_client.post(url, timeout=config.timeout)
             response.raise_for_status()
@@ -310,7 +309,7 @@ class DefaultOAuth2Session(OneDriveOAuth2Session):
         # refreshed successfully, which will happen under the covers). In case
         # this request fails, the provided token was too old (i.e. expired),
         # and we need to get a new token.
-        user_info_response = self.session.get(api_uri + "me", timeout=config.timeout)
+        user_info_response = self.session.get(f"{api_uri}me", timeout=config.timeout)
         if user_info_response.status_code != 200:
             token = None
 
@@ -336,7 +335,7 @@ class DefaultOAuth2Session(OneDriveOAuth2Session):
                 timeout=config.timeout,
             )
 
-            user_info_response = self.session.get(api_uri + "me", timeout=config.timeout)
+            user_info_response = self.session.get(f"{api_uri}me", timeout=config.timeout)
             user_info_response.raise_for_status()
 
             try:

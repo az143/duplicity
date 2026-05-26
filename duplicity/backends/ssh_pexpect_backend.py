@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -49,14 +49,12 @@ class SSHPExpectBackend(duplicity.backend.Backend):
             raise
 
         if pexpect.__version__ < "4.5.0":
-            log.FatalError(
-                f"""
+            log.FatalError(f"""
                 The version of pexpect, '{pexexpect.__version__}`, is too old.  We need version 4.5.0 or above to run.
                 See https://gitlab.com/duplicity/duplicity/-/issues/125 for the gory details.
 
                 Use "python3 -m pip install pexpect" to install the latest version.
-                """
-            )
+                """)
 
         self.retry_delay = 10
 

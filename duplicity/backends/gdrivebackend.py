@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2015 Yigal Asnis
 # Copyright 2021 Jindrich Makovicka
@@ -38,11 +38,9 @@ class GDriveBackend(duplicity.backend.Backend):
             from googleapiclient.discovery import build
             from google.oauth2.service_account import Credentials
         except ImportError as e:
-            raise BackendException(
-                f"""GDrive backend requires Google API client installation.
+            raise BackendException(f"""GDrive backend requires Google API client installation.
 Please read the manpage for setup details.
-Exception: {str(e)}"""
-            )
+Exception: {str(e)}""")
 
         # Note Google has 2 drive methods, `Shared(previously Team) Drives` and `My Drive`
         #   both can be shared but require different addressing

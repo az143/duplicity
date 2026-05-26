@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -34,10 +34,11 @@ from duplicity import cli_util
 from duplicity import progress
 from duplicity import statistics
 from duplicity import dup_tarfile
+from duplicity import librsync
 from duplicity import util
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin
 
-# A StatsObj will be written to this from DirDelta and DirDelta_WriteSig.
+# A StatsObj will be written to this from DirDelta_WriteSig.
 stats = None
 tracker = None
 
@@ -55,7 +56,7 @@ def DirFull(path_iter):
     will be easy to split up the tar and make the volumes the same
     sizes).
     """
-    return DirDelta(path_iter, io.StringIO(""))
+    return DirDelta_WriteSig(path_iter, io.StringIO(""), None)
 
 
 def DirFull_WriteSig(path_iter, sig_outfp):
@@ -63,26 +64,6 @@ def DirFull_WriteSig(path_iter, sig_outfp):
     Return full backup like above, but also write signature to sig_outfp
     """
     return DirDelta_WriteSig(path_iter, io.StringIO(""), sig_outfp)
-
-
-def DirDelta(path_iter, dirsig_fileobj_list):
-    """
-    Produce tarblock diff given dirsig_fileobj_list and pathiter
-
-    dirsig_fileobj_list should either be a tar fileobj or a list of
-    those, sorted so the most recent is last.
-    """
-    global stats
-    stats = statistics.StatsDeltaProcess()
-    if isinstance(dirsig_fileobj_list, list):
-        sig_iter = combine_path_iters([sigtar2path_iter(x) for x in dirsig_fileobj_list])
-    else:
-        sig_iter = sigtar2path_iter(dirsig_fileobj_list)
-    delta_iter = get_delta_iter(path_iter, sig_iter)
-    if config.dry_run or (config.progress and not progress.tracker.has_collected_evidence()):
-        return DummyBlockIter(delta_iter)
-    else:
-        return DeltaTarBlockIter(delta_iter)
 
 
 def delta_iter_error_handler(exc, new_path, sig_path, sig_tar=None):  # pylint: disable=unused-argument

@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # duplicity -- Encrypted bandwidth efficient backup
 #
@@ -132,39 +132,47 @@ def get_passphrase(n, action, for_signing=False):
         log.Notice(_("Reuse configured SIGN_PASSPHRASE as PASSPHRASE"))
         return os.environ["SIGN_PASSPHRASE"]
 
-    # Not in the environment, check if encryption passphrase is needed
-    asymmetric = False
-    need_passphrase = False
-    profile = config.gpg_profile
-    encrypt_keys = profile.recipients + profile.hidden_recipients
-    if profile.sign_key:
-        encrypt_keys.append(profile.sign_key)
-    if encrypt_keys:
-        asymmetric = True
-        for key in encrypt_keys:
-            if util.key_needs_passphrase(key):
-                log.Notice(f"Key {key} needs passphrase.")
-                need_passphrase = True
-                break
-        else:
-            log.Notice("No encryption keys need passphrase.")
-    else:
-        symmetric = True
-        need_passphrase = True
-        log.Notice("No encryption keys configured.")
+    # Next, verify we need to ask the user
 
-    skips = copy.copy(skips_sync_archive)
-    skips.remove("full")
-    if (action == "full" and asymmetric) or config.restart or action in skips:
-        log.Notice(f"Skipping passphrase request for action {action}")
+    # Assumptions:
+    #   - encrypt-key has no passphrase
+    #   - sign-key requires passphrase
+    #   - gpg-agent supplies all, no user interaction
+
+    # no passphrase if --no-encryption or --use-agent
+    if not config.encryption or config.use_agent:
         return ""
 
-    elif asymmetric and not need_passphrase:
-        log.Notice(_("Skipping because no encryption key passphrase is needed."))
+    # these commands don't need a password
+    elif action in [
+        "collection-status",
+        "list-current-files",
+        "remove-all-but-n-full",
+        "remove-all-inc-of-but-n-full",
+        "remove-older-than",
+    ]:
         return ""
 
+    # for a full, inc, verify, we don't need a password if
+    # there is no sign_key and there are recipients
+    elif (
+        action in ("full", "inc", "verify")
+        and (config.gpg_profile.recipients or config.gpg_profile.hidden_recipients)
+        and (not config.gpg_profile.sign_key or (not config.restart and not for_signing))
+    ):
+        return ""
+
+    elif (
+        (config.gpg_profile.recipients or config.gpg_profile.hidden_recipients)
+        and config.metadata_sync_mode == "partial"
+        and action in ["full"]
+    ):
+        log.Info(_("Skipping passphrase input for full backup with encryption keys."))
+        return ""
+
+    # Finally, ask the user for the passphrase
     else:
-        log.Notice(_("No environment variables are set, asking user."))
+        log.Info(_("PASSPHRASE variable not set, asking user."))
         use_cache = True
         while True:
             # ask the user to enter a new passphrase to avoid an infinite loop
@@ -758,7 +766,7 @@ def incremental_backup(sig_chain, col_stats=None):
     if config.progress:
         progress.tracker = progress.ProgressTracker()
         # Fake a backup to compute total of moving bytes
-        tarblock_iter = diffdir.DirDelta(config.select, sig_chain.get_fileobjs())
+        tarblock_iter = diffdir.DirDelta_WriteSig(config.select, sig_chain.get_fileobjs(), None)
         dummy_backup(tarblock_iter)
         # Store computed stats to compute progress later
         progress.tracker.set_evidence(diffdir.stats, False)
@@ -768,7 +776,7 @@ def incremental_backup(sig_chain, col_stats=None):
         progress.progress_thread = progress.LogProgressThread()
 
     if config.dry_run:
-        tarblock_iter = diffdir.DirDelta(config.select, sig_chain.get_fileobjs())
+        tarblock_iter = diffdir.DirDelta_WriteSig(config.select, sig_chain.get_fileobjs(), None)
         bytes_written = dummy_backup(tarblock_iter)
     else:
         new_sig_outfp = get_sig_fileobj("new-sig")
@@ -1602,18 +1610,14 @@ def main():
     # and refuse to run if it is set.
     if sys.flags.optimize:
         log.FatalError(
-            dedent(
-                _(
-                    """\
+            dedent(_("""\
                     Setting python optimization causes duplicity to fail to
                     recognize its own backups.  Please remove PYTHONOPTIMIZE
                     from the environment or -O and -OO from the commandline,
                     then rerun the backup.
 
                     See https://bugs.launchpad.net/duplicity/+bug/931175
-                    """
-                )
-            ),
+                    """)),
             log.ErrorCode.pythonoptimize_set,
         )
 
@@ -1700,6 +1704,7 @@ def do_backup(action):
 
     # OK, now we have a stable collection
     last_full_time = col_stats.get_last_full_backup_time()
+    last_chain = col_stats.get_last_backup_chain()
     if last_full_time > 0:
         log.Notice(f"{_('Last full backup date:')} {dup_time.timetopretty(last_full_time)}")
     else:
@@ -1711,6 +1716,15 @@ def do_backup(action):
         and last_full_time < dup_time.curtime - config.full_if_older_than
     ):
         log.Notice(_("Last full backup is too old, forcing full backup"))
+        action = "full"
+    if (
+        not config.restart
+        and action in ["inc"]
+        and config.full_if_n_inc is not None
+        and last_chain is not None
+        and len(last_chain.incset_list) >= config.full_if_n_inc
+    ):
+        log.Notice(_("Latest chain has too many incrementals, forcing full backup"))
         action = "full"
     dup_collections.PrintCollectionStatus(col_stats)
 
@@ -1787,11 +1801,11 @@ def do_backup(action):
                         check_last_manifest(col_stats)  # not needed for full backups
                 incremental_backup(sig_chain, col_stats)
 
-        if action in ["full", "inc"] and config.check_remote:
-            dup_collections.CollectionsStatus(
-                config.backend,
-                config.archive_dir_path,
-            ).set_values()
+        # if action in ["full", "inc"] and config.check_remote:
+        #     dup_collections.CollectionsStatus(
+        #         config.backend,
+        #         config.archive_dir_path,
+        #     ).set_values()
 
     config.backend.close()
     log.shutdown()

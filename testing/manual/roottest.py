@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -83,7 +83,7 @@ class RootTest(unittest.TestCase):
             diffdir.write_block_iter(diffdir.DirSig(selection.Select(seq_path).set_iter()), sig)
 
             diffdir.write_block_iter(
-                diffdir.DirDelta(selection.Select(new_path).set_iter(), sig.open("rb")),
+                diffdir.DirDelta_WriteSig(selection.Select(new_path).set_iter(), sig.open("rb"), None),
                 diff,
             )
 
@@ -105,7 +105,7 @@ class RootTest(unittest.TestCase):
         diff = Path("/tmp/testfiles/output/diff.tar")
 
         diffdir.write_block_iter(diffdir.DirSig(self.get_sel(seq_path)), sig)
-        deltablock = diffdir.DirDelta(self.get_sel(new_path), sig.open("rb"))
+        deltablock = diffdir.DirDelta_WriteSig(self.get_sel(new_path), sig.open("rb"), None)
         diffdir.write_block_iter(deltablock, diff)
 
         patchdir.Patch(seq_path, diff.open("rb"))

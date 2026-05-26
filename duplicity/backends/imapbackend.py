@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -168,7 +168,7 @@ class ImapBackend(duplicity.backend.Backend):
         while allowedTimeout > 0:
             try:
                 self.conn.select(config.imap_mailbox)
-                (result, flist) = self.conn.search(None, "Subject", remote_filename)
+                result, flist = self.conn.search(None, "Subject", remote_filename)
                 if result != "OK":
                     raise Exception(flist[0])
 
@@ -176,7 +176,7 @@ class ImapBackend(duplicity.backend.Backend):
                 if flist[0] == "":
                     raise Exception("no mail with subject %s")
 
-                (result, flist) = self.conn.fetch(flist[0], "(RFC822)")
+                result, flist = self.conn.fetch(flist[0], "(RFC822)")
 
                 if result != "OK":
                     raise Exception(flist[0])
@@ -211,7 +211,7 @@ class ImapBackend(duplicity.backend.Backend):
 
     def _list(self):
         ret = []
-        (result, flist) = self.conn.select(config.imap_mailbox)
+        result, flist = self.conn.select(config.imap_mailbox)
         if result != "OK":
             raise BackendException(flist[0])
 
@@ -219,14 +219,14 @@ class ImapBackend(duplicity.backend.Backend):
         # address
 
         # Search returns an error if you haven't selected an IMAP folder.
-        (result, flist) = self.conn.search(None, "FROM", self.remote_dir)
+        result, flist = self.conn.search(None, "FROM", self.remote_dir)
         if result != "OK":
             raise Exception(flist[0])
         if flist[0] == b"":
             return ret
         nums = flist[0].strip().split(b" ")
         set = b"%s:%s" % (nums[0], nums[-1])  # pylint: disable=redefined-builtin
-        (result, flist) = self.conn.fetch(set, "(BODY[HEADER])")
+        result, flist = self.conn.fetch(set, "(BODY[HEADER])")
         if result != "OK":
             raise Exception(flist[0])
 
@@ -247,7 +247,7 @@ class ImapBackend(duplicity.backend.Backend):
         return ret
 
     def imapf(self, fun, *args):
-        (ret, flist) = fun(*args)
+        ret, flist = fun(*args)
         if ret != "OK":
             raise Exception(flist[0])
         return flist

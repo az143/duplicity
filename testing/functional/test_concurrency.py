@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -35,7 +35,6 @@ from . import (
     FunctionalTestCase,
 )
 
-
 # os.environ['PYDEVD'] = "vscode"
 
 
@@ -58,7 +57,6 @@ class ConcurrencyFailTest(FunctionalTestCase):
     def setUp(self):
         super().setUp()
 
-    @pytest.mark.slow
     def test_put_fail_volume(self):
         """
         _testbackend won't put a certain volume
@@ -80,7 +78,6 @@ class ConcurrencyFailTest(FunctionalTestCase):
             timeout=60,
         )
 
-    @pytest.mark.slow
     def test_put_fail_sys_exit(self):
         """
         _testbackend exit on volume
@@ -102,7 +99,6 @@ class ConcurrencyFailTest(FunctionalTestCase):
             timeout=60,
         )
 
-    @pytest.mark.slow
     @unittest.skipIf(
         platform.machine() in ["ppc64el", "ppc64le"],
         "See https://gitlab.com/duplicity/duplicity/-/issues/820",
@@ -127,7 +123,6 @@ class ConcurrencyFailTest(FunctionalTestCase):
             except CmdError as e:  # Backup muse fail with an exit code != 0
                 self.assertEqual(e.exit_status, 0, f"Backup must not fail, because out of order execution. {e}")
 
-    @pytest.mark.slow
     def test_wrong_size(self):
         self.make_largefiles()
         options = [
@@ -152,7 +147,6 @@ class ConcurrencyFailTest(FunctionalTestCase):
                     f"Backup must not fail, because out of order execution. {e}",
                 )
 
-    @pytest.mark.slow
     @unittest.skipIf(
         platform.machine() in ["ppc64el", "ppc64le"],
         "Skip on ppc64el or ppc64le machines",

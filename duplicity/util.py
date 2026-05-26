@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -27,11 +27,13 @@ import atexit
 import csv
 import errno
 import json
+import locale
 import multiprocessing
 import os
 import socket
 import sys
 import traceback
+from contextlib import contextmanager
 from io import StringIO
 
 import fasteners
@@ -201,30 +203,6 @@ def release_lockfile():
         except Exception as e:
             log.Error(f"Could not release lockfile: {str(e)}")
             pass
-
-
-def key_needs_passphrase(key):
-    """
-    Check if a key needs a passphrase.
-    """
-    try:
-        child = pexpect.spawn("gpg", f"--pinentry-mode=loopback --dry-run --passwd {key}".split())
-    except Exception:
-        log.FatalError(f"Exception spawning gpg while checking if passphrase needed for key: {key}")
-
-    try:
-        got = child.expect(["passphrase.*:", pexpect.EOF])
-    except Exception:
-        log.FatalError(f"Exception while checking if passphrase needed for key: {key}: {str(child)}")
-
-    if got == 0:
-        log.Debug(f"Key {key} needs passphrase")
-        child.close()
-        return True
-    elif got == 1:
-        log.Debug(f"Key {key} does not need passphrase")
-        return False
-    return None
 
 
 def copyfileobj(infp, outfp, byte_count=-1):

@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -25,6 +25,7 @@ import tempfile
 from duplicity import diffdir
 from duplicity import dup_tarfile
 from duplicity import errors
+from duplicity import librsync
 from duplicity import selection
 from duplicity import tempdir
 from duplicity.path import *  # pylint: disable=unused-wildcard-import,redefined-builtin

@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -72,7 +72,6 @@ class FinalTest(FunctionalTestCase):
         path1, path2 = path.Path(filename1), path.Path(filename2)
         assert path1.compare_recursive(path2, verbose=1)
 
-    @pytest.mark.slow
     def test_basic_cycle(self, backup_options=None, restore_options=None, dirlist=None, testfiles=None):
         """Run backup/restore test on basic directories"""
         if backup_options is None:
@@ -105,14 +104,12 @@ class FinalTest(FunctionalTestCase):
                 options=restore_options,
             )
 
-    @pytest.mark.slow
     def test_asym_cycle(self):
         """Like test_basic_cycle but use asymmetric encryption and signing"""
         backup_options = ["--encrypt-key", self.encrypt_key1, "--sign-key", self.sign_key]
         restore_options = ["--encrypt-key", self.encrypt_key1, "--sign-key", self.sign_key]
         self.test_basic_cycle(backup_options=backup_options, restore_options=restore_options)
 
-    @pytest.mark.slow
     def test_asym_with_hidden_recipient_cycle(self):
         """Like test_basic_cycle but use asymmetric encryption (hiding key id) and signing"""
         backup_options = ["--hidden-encrypt-key", self.encrypt_key1, "--sign-key", self.sign_key]
@@ -128,7 +125,6 @@ class FinalTest(FunctionalTestCase):
         self.backup("full", f"{_runtest_dir}/testfiles/empty_dir")
         self.backup("inc", f"{_runtest_dir}/testfiles/empty_dir")
 
-    @pytest.mark.slow
     def test_long_filenames(self):
         """Test backing up a directory with long filenames in it"""
         # Note that some versions of ecryptfs (at least through Ubuntu 11.10)
@@ -186,7 +182,6 @@ class FinalTest(FunctionalTestCase):
         self.backup("inc", f"{_runtest_dir}/testfiles/empty_dir", options=["--allow-source-mismatch"])
         self.assertRaises(CmdError, self.restore, "this_file_does_not_exist")
 
-    @pytest.mark.slow
     def test_remove_older_than(self):
         """Test removing old backup chains"""
         first_chain = self.backup(
@@ -224,7 +219,6 @@ class FinalTest(FunctionalTestCase):
         )
         self.restore(passphrase_input=[self.sign_passphrase])
 
-    @pytest.mark.slow
     def test_jsonstat(self):
         """Test cycle with json stats enabled"""
         backup_options = ["--jsonstat"]
@@ -258,16 +252,13 @@ class FinalTest(FunctionalTestCase):
             testfiles=testfiles,
         )
 
-    @pytest.mark.slow
     def test_skip_if_no_change(self):
         self.run_with_no_change(backup_options=["--skip-if-no-change"])
 
-    @pytest.mark.slow
     def test_concurrency(self):
         backup_options = ["--concurrency=2"]
         self.test_basic_cycle(backup_options=backup_options)
 
-    @pytest.mark.slow
     def test_concurrency_and_skip_if_no_change(self):
         backup_options = ["--concurrency=2", "--skip-if-no-change"]
         self.run_with_no_change(backup_options=backup_options)

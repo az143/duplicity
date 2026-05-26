@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2013 J.P. Krauss
 #
@@ -37,10 +37,8 @@ class PyraxBackend(duplicity.backend.Backend):
         try:
             import pyrax
         except ImportError as e:
-            raise BackendException(
-                f"""Pyrax backend requires the pyrax library available from Rackspace.
-Exception: {str(e)}"""
-            )
+            raise BackendException(f"""Pyrax backend requires the pyrax library available from Rackspace.
+Exception: {str(e)}""")
 
         # Inform Pyrax that we're talking to Rackspace
         # per Jesus Monzon (gsusmonzon)

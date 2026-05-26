@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -60,7 +60,7 @@ class RsyncBackend(duplicity.backend.Backend):
             del os.environ["RSYNC_RSH"]
         if self.over_rsyncd():
             # its a module path
-            (path, port) = self.get_rsync_path()
+            path, port = self.get_rsync_path()
             self.url_string = f"{host}::{path.lstrip('/:')}"
             if port:
                 port = f" --port={port}"

@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2013 jno
 # Copyright 2016 Dmitry Nezhevenko
@@ -120,11 +120,9 @@ class DPBXBackend(duplicity.backend.Backend):
             )
             from dropbox.oauth import DropboxOAuth2FlowNoRedirect
         except ImportError as e:
-            raise BackendException(
-                f"""This backend requires the dropbox package version 6.9.0
+            raise BackendException(f"""This backend requires the dropbox package version 6.9.0
 To install use "sudo pip install dropbox==6.9.0"
-Exception: {str(e)}"""
-            )
+Exception: {str(e)}""")
 
         self.api_account = None
         self.api_client = None

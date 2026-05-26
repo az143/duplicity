@@ -77,12 +77,6 @@ code:
         - pytest testing/test_code.py
     allow_failure: true
 
-py39:
-    <<: *test-template
-    image: python:3.9
-    script:
-        - pytest testing/unit testing/functional
-
 py310:
     <<: *test-template
     image: python:3.10
@@ -116,7 +110,7 @@ py314:
 pages:
     stage: deploy
     when: manual
-    image: ubuntu:20.04
+    image: ubuntu:22.04
     before_script:
         # Set locale to prevent UTF-8 errors
         - export LANG=C.UTF-8

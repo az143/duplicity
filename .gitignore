@@ -1,4 +1,3 @@
-.pc
 *.egg
 *.log
 *.pyc
@@ -28,6 +27,7 @@ docs/testing.*
 duplicity.egg-info/
 htmlcov
 mprofile_*.dat
+patches
 po/duplicity.pot-e
 report.xml
 testfiles/
@@ -36,11 +36,3 @@ testing/gnupg/.gpg-v21-migrated
 testing/gnupg/random_seed
 venv*/
 wheelhouse/
-
-.pybuild
-debian/.debhelper
-debian/files
-debian/debhelper-build-stamp
-debian/duplicity.*.debhelper
-debian/duplicity.substvars
-debian/duplicity

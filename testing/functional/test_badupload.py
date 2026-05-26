@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -45,7 +45,6 @@ class BadUploadTestBackend(FunctionalTestCase):
         self.make_largefiles()
         self.backup_with_failure("full", f"{_runtest_dir}/testfiles/largefiles", failure, condition, cmderror)
 
-    @pytest.mark.slow
     def test_skip_volume_silent(self):
         """
         _testbackend won't put a certain volume
@@ -59,7 +58,6 @@ class BadUploadTestBackend(FunctionalTestCase):
             # PYDEVD="vscode"
         )
 
-    @pytest.mark.slow
     def test_put_fail_volume1(self):
         """
         _testbackend throw exception on put of singel volume
@@ -72,7 +70,6 @@ class BadUploadTestBackend(FunctionalTestCase):
             log.ErrorCode.backend_error,
         )
 
-    @pytest.mark.slow
     def test_put_fail_volume2(self):
         """
         _testbackend throw exception on put of volume2 of serverals

@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -104,13 +104,11 @@ class SSHParamikoBackend(duplicity.backend.Backend):
                 if hasattr(key, "fingerprint"):
                     fingerprints += f"\n  {key.fingerprint}"
                 keyname = key.get_name().upper()
-                question = dedent(
-                    """
+                question = dedent("""
                     The authenticity of host '{hostname}' can't be established.
                     {keyname} fingerprint is
                     {fingerprints}.
-                    Are you sure you want to continue connecting (yes/no)? """
-                ).format(**locals())
+                    Are you sure you want to continue connecting (yes/no)? """).format(**locals())
                 while True:
                     sys.stdout.write(question)
                     choice = input().lower()

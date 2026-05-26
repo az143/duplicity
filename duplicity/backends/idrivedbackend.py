@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2021 Menno Smits
 #
@@ -30,7 +30,6 @@ import duplicity.backend
 from duplicity import config
 from duplicity import log
 from duplicity.errors import BackendException
-
 
 #
 #   This backend works with the IDrive  "dedup implementation". V0.1

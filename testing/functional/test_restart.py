@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -53,7 +53,6 @@ class RestartTest(FunctionalTestCase):
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
         self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
-    @pytest.mark.slow
     def test_multiple_checkpoint_restart(self):
         """
         Test multiple Checkpoint/Restart
@@ -88,6 +87,7 @@ class RestartTest(FunctionalTestCase):
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
         self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
+    @unittest.skipIf(os.path.exists("/.dockerenv"), "Won't work on docker")
     def test_restart_encrypt_without_password(self):
         """
         Test that we can successfully restart a encrypt-key-only backup without
@@ -156,7 +156,6 @@ class RestartTest(FunctionalTestCase):
         self.backup("full", f"{_runtest_dir}/testfiles/largefiles")
         self.verify(f"{_runtest_dir}/testfiles/largefiles")
 
-    @pytest.mark.slow
     def test_restart_incremental(self):
         """
         Test restarting an incremental backup

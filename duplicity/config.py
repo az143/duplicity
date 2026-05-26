@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -157,6 +157,10 @@ jsonstat = False
 # If set, forces a full backup if the last full backup is older than
 # the time specified
 full_if_older_than = None
+
+# If set, forces a full backup if the latest chain has N or more
+# incremental backups
+full_if_n_inc = None
 
 # If set the incremental backup will be skipped if not DeltaEntries are detected
 skip_if_no_change = False

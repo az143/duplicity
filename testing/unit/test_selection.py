@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -887,13 +887,11 @@ class ParseArgsTest(UnitTestCase):
                 ("1", "2", "1"),
                 ("1", "2", "2"),
             ],
-            [
-                """
+            ["""
 **[3-5]
 + testfiles/select/1
 **
-"""
-            ],
+"""],
         )
         self.ParseTest(
             [("--include-filelist", "file")],
@@ -931,12 +929,10 @@ class ParseArgsTest(UnitTestCase):
                 ("3", "3"),
                 ("3", "3", "2"),
             ],
-            [
-                """
+            ["""
 testfiles/select**/2
 - **
-"""
-            ],
+"""],
         )
 
     def test_glob2(self):

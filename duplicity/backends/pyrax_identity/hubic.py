@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright (c) 2014 Gu1
 # Licensed under the MIT license
@@ -24,10 +24,8 @@ try:
     )
     import pyrax.exceptions as exc
 except ImportError as e:
-    raise BackendException(
-        f"""Hubic backend requires the pyrax library available from Rackspace.
-Exception: {str(e)}"""
-    )
+    raise BackendException(f"""Hubic backend requires the pyrax library available from Rackspace.
+Exception: {str(e)}""")
 
 OAUTH_ENDPOINT = "https://api.hubic.com/oauth/"
 API_ENDPOINT = "https://api.hubic.com/1.0/"

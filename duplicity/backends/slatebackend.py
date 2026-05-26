@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2021 Syeam Bin Abdullah
 #
@@ -40,10 +40,8 @@ class SlateBackend(duplicity.backend.Backend):
         duplicity.backend.Backend.__init__(self, parsed_url)
         log.Debug("loading slate backend...")
         if "SLATE_API_KEY" not in os.environ.keys():
-            raise BackendException(
-                """You must set an environment variable SLATE_API_KEY
-                as the value of your slate API key"""
-            )
+            raise BackendException("""You must set an environment variable SLATE_API_KEY
+                as the value of your slate API key""")
         else:
             self.key = os.environ["SLATE_API_KEY"]
 

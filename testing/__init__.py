@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2012 Canonical Ltd
 #
@@ -28,12 +28,10 @@ import time
 import unittest
 from importlib import reload
 
-from duplicity import (
-    backend,
-    config,
-    log,
-    util,
-)
+from duplicity import backend
+from duplicity import config
+from duplicity import log
+from duplicity import util
 
 gettext.install("duplicity", names=["ngettext"])
 

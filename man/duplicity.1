@@ -1,4 +1,4 @@
-.TH DUPLICITY 1 "December 05, 2025" "Version 3.0.6.3" "User Manuals" \"  -*- nroff -*-
+.TH DUPLICITY 1 "May 12, 2026" "Version 3.0.8.dev5" "User Manuals" \"  -*- nroff -*-
 .\" disable justification (adjust text to left margin only)
 .\" command line examples stay readable through that
 .ad l
@@ -498,23 +498,6 @@ See the
 section for more information.
 
 .TP
-.BI "--files-from " filename
-Read a list of files to backup from filename rather than searching the entire
-backup source directory. Operation is otherwise normal, just on the specified
-subset of the backup source directory.
-
-Files must be specified one per line and relative to the backup source
-directory. Any absolute paths will raise an error. All characters per line are
-significant and treated as part of the path, including leading and trailing
-whitespace. Lines are separated by newlines or nulls, depending on whether the
-.B "--null-separator"
-switch was given.
-
-It is not necessary to include the parent directory of listed files, their
-inclusion is implied. However, the content of any explicitly listed directories
-is not implied. All required files must be listed when this option is used.
-
-.TP
 .BI "--file-prefix " prefix
 .PD 0
 .TP
@@ -535,12 +518,21 @@ See also
 .B "A NOTE ON FILENAME PREFIXES"
 
 .TP
-.BI "--path-to-restore " path
-This option may be given in restore mode, causing only
-.I path
-to be restored instead of the entire contents of the backup archive.
-.I path
-should be given relative to the root of the directory backed up.
+.BI "--files-from " filename
+Read a list of files to backup from filename rather than searching the entire
+backup source directory. Operation is otherwise normal, just on the specified
+subset of the backup source directory.
+
+Files must be specified one per line and relative to the backup source
+directory. Any absolute paths will raise an error. All characters per line are
+significant and treated as part of the path, including leading and trailing
+whitespace. Lines are separated by newlines or nulls, depending on whether the
+.B "--null-separator"
+switch was given.
+
+It is not necessary to include the parent directory of listed files, their
+inclusion is implied. However, the content of any explicitly listed directories
+is not implied. All required files must be listed when this option is used.
 
 .TP
 .BI --filter-globbing
@@ -573,15 +565,6 @@ See the
 section for more information.
 
 .TP
-.BI "--full-if-older-than " time
-Perform a full backup if an incremental backup is requested, but the
-latest full backup in the collection is older than the given
-.IR time .
-See the
-.B TIME FORMATS
-section for more information.
-
-.TP
 .BI --force
 Proceed even if data loss might result.  Duplicity will let the user
 know when this option is required.
@@ -595,6 +578,22 @@ out.
 .TP
 .BI --ftp-regular
 Use regular (PORT) data connections.
+
+.TP
+.BI "--full-if-older-than " time
+Perform a full backup if an incremental backup is requested, but the
+latest full backup in the collection is older than the given
+.IR time .
+See the
+.B TIME FORMATS
+section for more information.
+
+.TP
+.BI "--full-if-n-inc " number
+Perform a full backup if an incremental backup is requested, but the
+latest backup chain already has
+.I number
+or more incremental backups.
 
 .TP
 .BI --gio
@@ -861,6 +860,14 @@ for Par2 recovery files (default 10%).
 .TP
 .BI "--par2-volumes " number
 Number of Par2 volumes to create (default 1).
+
+.TP
+.BI "--path-to-restore " path
+This option may be given in restore mode, causing only
+.I path
+to be restored instead of the entire contents of the backup archive.
+.I path
+should be given relative to the root of the directory backed up.
 
 .TP
 .BI --progress

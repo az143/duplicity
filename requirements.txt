@@ -17,10 +17,10 @@ gdata-python3
 google-api-python-client
 google-auth-oauthlib
 httplib2
-pysocks # optional httplib2 dep, needed for proxy support
+pysocks  # optional httplib2 dep, needed for proxy support
 jottalib
 keyring
-lxml<=5.4.0  # newer vers do not build on Ubuntu < 24.04
+lxml
 mediafire
 megatools
 paramiko

@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -581,3 +581,13 @@ class CommandlineTest(UnitTestCase):
         cline = shlex.split("backup --full-if-older-than 1746403200 foo/bar file://target_url")
         cli_main.process_command_line(cline)
         self.assertEqual(config.full_if_older_than, dup_time.curtime - 1746403200)
+
+        # Issue 916 - --full-if-n-inc -- explicit
+        cline = shlex.split("backup --full-if-n-inc 5 foo/bar file://target_url")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.full_if_n_inc, 5)
+
+        # Issue 916 - --full-if-n-inc -- implied
+        cline = shlex.split("--full-if-n-inc 10 foo/bar file://target_url")
+        cli_main.process_command_line(cline)
+        self.assertEqual(config.full_if_n_inc, 10)

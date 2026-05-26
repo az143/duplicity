@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2025 Kenneth Loafman
 #
@@ -126,6 +126,7 @@ class RegressionTest(FunctionalTestCase):
             ]
         )
 
+    @unittest.skipIf(os.path.exists("/.dockerenv"), "Won't work on docker")
     def test_issue908(self):
         """
         Test issue 908 - gpg: public key decryption failed: No passphrase given (3.0.6.2)

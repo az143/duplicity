@@ -1,8 +1,9 @@
 
  ##### testing libraries #####
 
-black>=25.1.0
+black >26, <27
 coverage
+flynt
 pycodestyle
 pylint
 pytest
@@ -12,4 +13,4 @@ pytest-cov
 
 myst-parser
 sphinx
-sphinx-rtd-theme
+sphinx-rtd-dark-mode

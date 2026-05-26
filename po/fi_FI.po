@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: duplicity\n"
 "Report-Msgid-Bugs-To: Kenneth Loafman <kenneth@loafman.com>\n"
-"POT-Creation-Date: 2025-11-02 06:12-0600\n"
-"PO-Revision-Date: 2025-11-02 13:17\n"
+"POT-Creation-Date: 2026-05-12 11:38-0500\n"
+"PO-Revision-Date: 2026-05-12 16:54\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -117,9 +117,9 @@ msgstr "sijaintia koskevat argumentit"
 #. Used in usage help. (Should be consistent with the "Options:"
 #. header.) Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/argparse311.py:1671 ../duplicity/cli_data.py:364
-#: ../duplicity/cli_data.py:542 ../duplicity/cli_data.py:596
-#: ../duplicity/cli_data.py:731 ../duplicity/cli_data.py:931
+#: ../duplicity/argparse311.py:1671 ../duplicity/cli_data.py:370
+#: ../duplicity/cli_data.py:548 ../duplicity/cli_data.py:602
+#: ../duplicity/cli_data.py:737 ../duplicity/cli_data.py:937
 msgid "options"
 msgstr "asetukset"
 
@@ -245,7 +245,7 @@ msgstr "Tiedostoa %s ei löydy paikallisesti taustaosan saamisen jälkeen"
 msgid "%s Remote filesize %d for %s does not match local size %d"
 msgstr ""
 
-#: ../duplicity/backends/_testbackend.py:219
+#: ../duplicity/backends/_testbackend.py:218
 #, python-format
 msgid "Unexpected exception while validate %s."
 msgstr ""
@@ -347,7 +347,7 @@ msgstr "Monitaustaohjelma: yhdistetty luettelo: %s"
 msgid "MultiBackend: failed to delete %s. Tried all backing stores and none succeeded"
 msgstr "MultiBackend: %spoisto epäonnistui. Kaikki varmuuskopiot yritetään eikä mitään onnistuttu"
 
-#: ../duplicity/backends/onedrivebackend.py:88
+#: ../duplicity/backends/onedrivebackend.py:87
 #, python-format
 msgid "Attempt of initialize_oauth2_session Nr. %s failed. %s: %s"
 msgstr "Yritys initialize_oauth2_session Nr. %s epäonnistui. %s: %s"
@@ -386,84 +386,84 @@ msgstr "WebDAV luo yhteys '%s'"
 msgid "WebDAV Unknown URI scheme: %s"
 msgstr "WebDAV Tuntematon URI-järjestelmä: %s"
 
-#: ../duplicity/backends/webdavbackend.py:230
+#: ../duplicity/backends/webdavbackend.py:232
 #, python-format
 msgid "WebDAV %s %s request with headers: %s "
 msgstr "WebDAV %s %s pyyntö otsikoilla: %s "
 
-#: ../duplicity/backends/webdavbackend.py:231
-#: ../duplicity/backends/webdavbackend.py:254
+#: ../duplicity/backends/webdavbackend.py:233
+#: ../duplicity/backends/webdavbackend.py:257
 #, python-format
 msgid "WebDAV data length: %s "
 msgstr "WebDAV tietojen pituus: %s "
 
-#: ../duplicity/backends/webdavbackend.py:234
+#: ../duplicity/backends/webdavbackend.py:236
 #, python-format
 msgid "WebDAV response status %s with reason '%s'."
 msgstr "WebDAV vastaus tila %s syyllä '%s'."
 
-#: ../duplicity/backends/webdavbackend.py:240
+#: ../duplicity/backends/webdavbackend.py:242
 #, python-format
 msgid "WebDAV redirect to: %s "
 msgstr "WebDAV uudelleenohjaus: %s "
 
-#: ../duplicity/backends/webdavbackend.py:242
+#: ../duplicity/backends/webdavbackend.py:244
 msgid "WebDAV redirected 10 times. Giving up."
 msgstr "WebDAV ohjasi 10 kertaa."
 
-#: ../duplicity/backends/webdavbackend.py:247
+#: ../duplicity/backends/webdavbackend.py:249
 msgid "WebDAV missing location header in redirect response."
 msgstr "WebDAV puuttuu sijainti otsikko uudelleenohjaus vastaus."
 
-#: ../duplicity/backends/webdavbackend.py:252
+#: ../duplicity/backends/webdavbackend.py:255
 msgid "WebDAV retry request with authentification headers."
 msgstr "WebDAV pyyntö uudelleen autentikointi otsikot."
 
-#: ../duplicity/backends/webdavbackend.py:253
+#: ../duplicity/backends/webdavbackend.py:256
 #, python-format
 msgid "WebDAV %s %s request2 with headers: %s "
 msgstr "WebDAV %s %s pyyntö2 otsikoilla: %s "
 
-#: ../duplicity/backends/webdavbackend.py:257
+#: ../duplicity/backends/webdavbackend.py:260
 #, python-format
 msgid "WebDAV response2 status %s with reason '%s'."
 msgstr "WebDAV vastaus 2 tila %s syyllä '%s'."
 
-#: ../duplicity/backends/webdavbackend.py:276
+#: ../duplicity/backends/webdavbackend.py:277
 msgid "python-kerberos needed to use kerberos                           authorization, falling back to basic auth."
 msgstr "python-kerberos tarvitaan käyttää kerberos valtuutus, jotka palautuvat perus auth."
 
-#: ../duplicity/backends/webdavbackend.py:284
+#: ../duplicity/backends/webdavbackend.py:281
 #, python-format
 msgid "Kerberos authorization failed: %s.                          Falling back to basic auth."
 msgstr "Kerberosin valtuutus epäonnistui: %s. Falling back to basic auth."
 
-#: ../duplicity/backends/webdavbackend.py:385
+#: ../duplicity/backends/webdavbackend.py:379
 #, python-format
 msgid "Creating missing directory %s"
 msgstr "Luodaan puuttuvaa hakemistoa %s"
 
-#: ../duplicity/backends/webdavbackend.py:389
+#: ../duplicity/backends/webdavbackend.py:383
 #, python-format
 msgid "WebDAV MKCOL %s failed: %s %s"
 msgstr "WebDAV MKCOL %s epäonnistui: %s %s"
 
-#: ../duplicity/backends/webdavbackend.py:401
+#: ../duplicity/backends/webdavbackend.py:395
 #, python-format
 msgid "WebDAV path decoding and translation: %s -> %s"
 msgstr "WebDAV polun dekoodaus ja käännös: %s -> %s"
 
-#: ../duplicity/backends/webdavbackend.py:437
+#: ../duplicity/backends/webdavbackend.py:431
 #, python-format
 msgid "WebDAV GET Bad status code %s reason %s."
 msgstr "WebDAV GET Virheellinen tilakoodi %s syy %s."
 
-#: ../duplicity/backends/webdavbackend.py:458
+#: ../duplicity/backends/webdavbackend.py:452
 #, python-format
 msgid "WebDAV PUT Bad status code %s reason %s."
 msgstr "WebDAV PUT Virheellinen tilakoodi %s syy %s."
 
-#: ../duplicity/backends/webdavbackend.py:477
+#: ../duplicity/backends/webdavbackend.py:471
 #, python-format
 msgid "WebDAV DEL Bad status code %s reason %s."
 msgstr "WebDAV DEL Bad status code %s reason %s."
@@ -472,9 +472,9 @@ msgstr "WebDAV DEL Bad status code %s reason %s."
 #. --archive-dir <path>
 #: ../duplicity/cli_data.py:103 ../duplicity/cli_data.py:173
 #: ../duplicity/cli_data.py:207 ../duplicity/cli_data.py:255
-#: ../duplicity/cli_data.py:358 ../duplicity/cli_data.py:387
-#: ../duplicity/cli_data.py:565 ../duplicity/cli_data.py:757
-#: ../duplicity/cli_data.py:940
+#: ../duplicity/cli_data.py:364 ../duplicity/cli_data.py:393
+#: ../duplicity/cli_data.py:571 ../duplicity/cli_data.py:763
+#: ../duplicity/cli_data.py:946
 msgid "path"
 msgstr "polku"
 
@@ -487,27 +487,28 @@ msgstr ""
 #. --num-retries <number>
 #: ../duplicity/cli_data.py:121 ../duplicity/cli_data.py:127
 #: ../duplicity/cli_data.py:135 ../duplicity/cli_data.py:163
-#: ../duplicity/cli_data.py:179 ../duplicity/cli_data.py:457
-#: ../duplicity/cli_data.py:478 ../duplicity/cli_data.py:531
-#: ../duplicity/cli_data.py:553 ../duplicity/cli_data.py:559
-#: ../duplicity/cli_data.py:577 ../duplicity/cli_data.py:648
-#: ../duplicity/cli_data.py:656 ../duplicity/cli_data.py:708
-#: ../duplicity/cli_data.py:794 ../duplicity/cli_data.py:927
+#: ../duplicity/cli_data.py:179 ../duplicity/cli_data.py:358
+#: ../duplicity/cli_data.py:463 ../duplicity/cli_data.py:484
+#: ../duplicity/cli_data.py:537 ../duplicity/cli_data.py:559
+#: ../duplicity/cli_data.py:565 ../duplicity/cli_data.py:583
+#: ../duplicity/cli_data.py:654 ../duplicity/cli_data.py:662
+#: ../duplicity/cli_data.py:714 ../duplicity/cli_data.py:800
+#: ../duplicity/cli_data.py:933
 msgid "number"
 msgstr "numero"
 
 #. Used in usage help. Example:
 #. --timeout <seconds>
-#: ../duplicity/cli_data.py:147 ../duplicity/cli_data.py:764
-#: ../duplicity/cli_data.py:953
+#: ../duplicity/cli_data.py:147 ../duplicity/cli_data.py:770
+#: ../duplicity/cli_data.py:959
 msgid "seconds"
 msgstr "sekuntia"
 
 #. Used in usage help to represent an ID for a GnuPG key. Example:
 #. --encrypt-key <gpg_key_id>
 #: ../duplicity/cli_data.py:195 ../duplicity/cli_data.py:201
-#: ../duplicity/cli_data.py:381 ../duplicity/cli_data.py:715
-#: ../duplicity/cli_data.py:919
+#: ../duplicity/cli_data.py:387 ../duplicity/cli_data.py:721
+#: ../duplicity/cli_data.py:925
 msgid "gpg-key-id"
 msgstr "gpg-key-id"
 
@@ -515,16 +516,16 @@ msgstr "gpg-key-id"
 #. matching one or more files, as described in the documentation.
 #. Example:
 #. --exclude <shell_pattern>
-#: ../duplicity/cli_data.py:212 ../duplicity/cli_data.py:409
-#: ../duplicity/cli_data.py:958
+#: ../duplicity/cli_data.py:212 ../duplicity/cli_data.py:415
+#: ../duplicity/cli_data.py:964
 msgid "shell_pattern"
 msgstr "shell_kuvio"
 
 #. Used in usage help to represent the name of a file. Example:
 #. --log-file <filename>
 #: ../duplicity/cli_data.py:224 ../duplicity/cli_data.py:230
-#: ../duplicity/cli_data.py:291 ../duplicity/cli_data.py:415
-#: ../duplicity/cli_data.py:916
+#: ../duplicity/cli_data.py:291 ../duplicity/cli_data.py:421
+#: ../duplicity/cli_data.py:922
 msgid "filename"
 msgstr "tiedostonimi"
 
@@ -532,159 +533,159 @@ msgstr "tiedostonimi"
 #. point in time, as described in the documentation. Example:
 #. duplicity remove-older-than time [options] target_url
 #: ../duplicity/cli_data.py:236 ../duplicity/cli_data.py:352
-#: ../duplicity/cli_data.py:590 ../duplicity/cli_data.py:984
+#: ../duplicity/cli_data.py:596 ../duplicity/cli_data.py:990
 msgid "time"
 msgstr "aika"
 
-#: ../duplicity/cli_data.py:249 ../duplicity/cli_data.py:421
+#: ../duplicity/cli_data.py:249 ../duplicity/cli_data.py:427
 msgid "regex"
 msgstr "regex"
 
-#: ../duplicity/cli_data.py:404
+#: ../duplicity/cli_data.py:410
 msgid "imap_mailbox"
 msgstr "imap_mailbox"
 
-#: ../duplicity/cli_data.py:429
+#: ../duplicity/cli_data.py:435
 msgid "If set, an extra file with statistics in json format will be stored with each backup. It includes the statistics printed out on stdout by default. With 'collection-status' it returs these stats."
 msgstr "Jos asetettu, ylimääräinen tiedosto, jossa on tilastot json muodossa, tallennetaan jokaisen varmuuskopion kanssa. Se sisältää tilastot, jotka on painettu oletusarvoisesti. Kokoelman tilalla se palauttaa nämä tilastot."
 
-#: ../duplicity/cli_data.py:437
+#: ../duplicity/cli_data.py:443
 msgid "file_descriptor"
 msgstr "file_descriptor"
 
-#: ../duplicity/cli_data.py:444
+#: ../duplicity/cli_data.py:450
 msgid "log_filename"
 msgstr "log_tiedostonimi"
 
-#: ../duplicity/cli_data.py:484
+#: ../duplicity/cli_data.py:490
 msgid "backup name"
 msgstr "varmuuskopion nimi"
 
-#: ../duplicity/cli_data.py:607
+#: ../duplicity/cli_data.py:613
 msgid "s3_endpoint_url"
 msgstr "s3_endpoint_url"
 
-#: ../duplicity/cli_data.py:675
+#: ../duplicity/cli_data.py:681
 msgid "s3_kms_key_id"
 msgstr "s3_kms_key_id"
 
-#: ../duplicity/cli_data.py:681
+#: ../duplicity/cli_data.py:687
 msgid "s3_kms_grant"
 msgstr "s3_kms_grant"
 
-#: ../duplicity/cli_data.py:687
+#: ../duplicity/cli_data.py:693
 msgid "s3_region_name"
 msgstr "s3_region_name"
 
-#: ../duplicity/cli_data.py:693
+#: ../duplicity/cli_data.py:699
 msgid "policy"
 msgstr "politiikka"
 
 #. noun
-#: ../duplicity/cli_data.py:698 ../duplicity/cli_data.py:703
-#: ../duplicity/cli_data.py:905
+#: ../duplicity/cli_data.py:704 ../duplicity/cli_data.py:709
+#: ../duplicity/cli_data.py:911
 msgid "command"
 msgstr "komento"
 
-#: ../duplicity/cli_data.py:743
+#: ../duplicity/cli_data.py:749
 msgid "pem formatted bundle of certificate authorities"
 msgstr "varmenneviranomaisten pem muotoinen nippu"
 
-#: ../duplicity/cli_data.py:748
+#: ../duplicity/cli_data.py:754
 msgid "path to a folder with certificate authority files"
 msgstr "polku kansioon, jossa on varmenteen auktoriteettitiedostot"
 
 #. abbreviation for "character" (noun)
-#: ../duplicity/cli_data.py:770 ../duplicity/cli_data.py:903
+#: ../duplicity/cli_data.py:776 ../duplicity/cli_data.py:909
 msgid "char"
 msgstr "merkki"
 
-#: ../duplicity/cli_data.py:783
+#: ../duplicity/cli_data.py:789
 msgid "verb"
 msgstr "verbi"
 
-#: ../duplicity/cli_data.py:801
+#: ../duplicity/cli_data.py:807
 msgid "extra headers for Webdav, like 'Cookie,name=value'"
 msgstr "ylimääräisiä otsikoita Webdav, kuten 'Cookie,name=value'"
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other_host[:port]//absolute_path
-#: ../duplicity/cli_data.py:894
+#: ../duplicity/cli_data.py:900
 msgid "absolute_path"
 msgstr "absoluut_polku"
 
 #. Used in usage help. Example:
 #. tahoe://alias/some_dir
-#: ../duplicity/cli_data.py:897
+#: ../duplicity/cli_data.py:903
 msgid "alias"
 msgstr "alias"
 
 #. Used in help to represent a "bucket name" for Amazon Web
 #. Services' Simple Storage Service (S3). Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/cli_data.py:901
+#: ../duplicity/cli_data.py:907
 msgid "bucket_name"
 msgstr "ämpäri"
 
 #. Used in usage help to represent the name of a container in
 #. Amazon Web Services' Cloudfront. Example:
 #. cf+http://container_name
-#: ../duplicity/cli_data.py:909
+#: ../duplicity/cli_data.py:915
 msgid "container_name"
 msgstr "kontin nimi"
 
 #. noun
-#: ../duplicity/cli_data.py:911
+#: ../duplicity/cli_data.py:917
 msgid "count"
 msgstr "määrä"
 
 #. Used in usage help to represent the name of a file directory
-#: ../duplicity/cli_data.py:913
+#: ../duplicity/cli_data.py:919
 msgid "directory"
 msgstr "kansio"
 
 #. Used in usage help, e.g. to represent the name of a code
 #. module. Example:
 #. rsync://user[:password]@other.host[:port]::/module/some_dir
-#: ../duplicity/cli_data.py:923
+#: ../duplicity/cli_data.py:929
 msgid "module"
 msgstr "moduuli"
 
 #. Used in usage help to represent an internet hostname. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:934
+#: ../duplicity/cli_data.py:940
 msgid "other.host"
 msgstr "muu.isäntä"
 
 #. Used in usage help. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:937
+#: ../duplicity/cli_data.py:943
 msgid "password"
 msgstr "salasana"
 
 #. Used in usage help to represent a TCP port number. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:943
+#: ../duplicity/cli_data.py:949
 msgid "port"
 msgstr "portti"
 
 #. Used in usage help. This represents a string to be used as a
 #. prefix to names for backup files created by Duplicity. Example:
 #. s3://other.host/bucket_name[/prefix]
-#: ../duplicity/cli_data.py:947
+#: ../duplicity/cli_data.py:953
 msgid "prefix"
 msgstr "etuliite"
 
 #. Used in usage help to represent a Unix-style path name. Example:
 #. rsync://user[:password]@other.host[:port]/relative_path
-#: ../duplicity/cli_data.py:950
+#: ../duplicity/cli_data.py:956
 msgid "relative_path"
 msgstr "relative_polku"
 
 #. Used in usage help to represent the name of a single file
 #. directory or a Unix-style path to a directory. Example:
 #. file:///some_dir
-#: ../duplicity/cli_data.py:962
+#: ../duplicity/cli_data.py:968
 msgid "some_dir"
 msgstr "jo_dir"
 
@@ -692,14 +693,14 @@ msgstr "jo_dir"
 #. directory or a Unix-style path to a directory where files will be
 #. coming FROM. Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:967
+#: ../duplicity/cli_data.py:973
 msgid "source_path"
 msgstr "source_path"
 
 #. Used in usage help to represent a URL files will be coming
 #. FROM. Example:
 #. duplicity [restore] [options] source_url target_path
-#: ../duplicity/cli_data.py:971
+#: ../duplicity/cli_data.py:977
 msgid "source_url"
 msgstr "source_url"
 
@@ -707,42 +708,42 @@ msgstr "source_url"
 #. directory or a Unix-style path to a directory. where files will be
 #. going TO. Example:
 #. duplicity [restore] [options] source_url target_path
-#: ../duplicity/cli_data.py:976
+#: ../duplicity/cli_data.py:982
 msgid "target_path"
 msgstr ""
 
 #. Used in usage help to represent a URL files will be going TO.
 #. Example:
 #. duplicity [full|incremental] [options] source_path target_url
-#: ../duplicity/cli_data.py:980
+#: ../duplicity/cli_data.py:986
 msgid "target_url"
 msgstr "target_url"
 
 #. Used in usage help to represent a user name (i.e. login).
 #. Example:
 #. ftp://user[:password]@other.host[:port]/some_dir
-#: ../duplicity/cli_data.py:988
+#: ../duplicity/cli_data.py:994
 msgid "user"
 msgstr "käyttäjä"
 
 #. account id for b2. Example: b2://account_id@bucket/
-#: ../duplicity/cli_data.py:990
+#: ../duplicity/cli_data.py:996
 msgid "account_id"
 msgstr "tili_tunnus"
 
 #. application_key for b2.
 #. Example: b2://account_id:application_key@bucket/
-#: ../duplicity/cli_data.py:993
+#: ../duplicity/cli_data.py:999
 msgid "application_key"
 msgstr "sovellus_avain"
 
 #. remote name for rclone.
 #. Example: rclone://remote:/some_dir
-#: ../duplicity/cli_data.py:996 ../duplicity/dup_collections.py:603
+#: ../duplicity/cli_data.py:1002 ../duplicity/dup_collections.py:605
 msgid "remote"
 msgstr "etäinen"
 
-#: ../duplicity/cli_data.py:1000
+#: ../duplicity/cli_data.py:1005
 msgid "Backends and their URL formats:"
 msgstr "Backends ja niiden URL muodot:"
 
@@ -764,547 +765,547 @@ msgid "Running in 'ignore errors' mode due to --ignore-errors.\n"
 msgstr "Käynnissä 'Ohita virheet' -tilassa, joka johtuu --ignore-virheistä.\n"
 "Harkitse uudelleen, jos tämä ei ollut tarkoitettu"
 
-#: ../duplicity/cli_util.py:281
+#: ../duplicity/cli_util.py:275
 msgid "Verbosity must be one of: digit [0-9], character [ewnid],\n"
 "or word ['error', 'warning', 'notice', 'info', 'debug'].\n"
 "The default is 3 (Notice).  It is strongly recommended\n"
 "that verbosity level is set at 2 (Warning) or higher."
 msgstr ""
 
-#: ../duplicity/diffdir.py:105 ../duplicity/diffdir.py:404
+#: ../duplicity/diffdir.py:79 ../duplicity/diffdir.py:378
 #, python-format
 msgid "Error %s getting delta for %s"
 msgstr ""
 
-#: ../duplicity/diffdir.py:119
+#: ../duplicity/diffdir.py:93
 #, python-format
 msgid "Getting delta of %s and %s"
 msgstr "Haetaan %s ja %s deltaa"
 
-#: ../duplicity/diffdir.py:163
+#: ../duplicity/diffdir.py:137
 #, python-format
 msgid "A %s"
 msgstr "A %s"
 
-#: ../duplicity/diffdir.py:171
+#: ../duplicity/diffdir.py:145
 #, python-format
 msgid "M %s"
 msgstr "M %s"
 
-#: ../duplicity/diffdir.py:194
+#: ../duplicity/diffdir.py:168
 #, python-format
 msgid "Comparing %s and %s"
 msgstr "Vertailu %s ja %s"
 
-#: ../duplicity/diffdir.py:207
+#: ../duplicity/diffdir.py:181
 #, python-format
 msgid "D %s"
 msgstr "D %s"
 
-#: ../duplicity/dup_collections.py:230 ../duplicity/dup_collections.py:239
+#: ../duplicity/dup_collections.py:231 ../duplicity/dup_collections.py:240
 #, python-format
 msgid "BackupSet.delete: missing %s"
 msgstr "VarmuuskupSet.delete: puuttuu %s"
 
-#: ../duplicity/dup_collections.py:265
+#: ../duplicity/dup_collections.py:266
 msgid "Fatal Error: No manifests found for most recent backup"
 msgstr "Vakava virhe: Viimeisimmän varmuuskopion ilmentymiä ei löytynyt"
 
-#: ../duplicity/dup_collections.py:278
+#: ../duplicity/dup_collections.py:279
 msgid "Fatal Error: Remote manifest does not match local one.  Either the remote backup set or the local archive directory has been corrupted."
 msgstr "Vakava virhe: Etämanifesti ei vastaa paikallista versiota. Joko etävarmuuskopio tai paikallinen arkistokansio on vioittunut."
 
-#: ../duplicity/dup_collections.py:286
+#: ../duplicity/dup_collections.py:287
 #, python-format
 msgid "Error processing remote manifest (%s): %s"
 msgstr "Virhe käsiteltäessä etämanifestia (%s): %s"
 
-#: ../duplicity/dup_collections.py:295
+#: ../duplicity/dup_collections.py:296
 msgid "Fatal Error: Neither remote nor local manifest is readable."
 msgstr "Vakava virhe: Kauko- tai paikallismanifestia ei ole luettavissa."
 
-#: ../duplicity/dup_collections.py:347
+#: ../duplicity/dup_collections.py:349
 msgid "No jsonstat file found, return empty."
 msgstr ""
 
-#: ../duplicity/dup_collections.py:442
+#: ../duplicity/dup_collections.py:444
 msgid "Preferring Backupset over previous one!"
 msgstr "Viittaava varmuuskopiointi edelliseen varmuuskopioon!"
 
-#: ../duplicity/dup_collections.py:446
+#: ../duplicity/dup_collections.py:448
 #, python-format
 msgid "Ignoring incremental Backupset (start_time: %s; needed: %s)"
 msgstr "Ohitetaan lisävarmuuskopio (aloitusaika: %s; tarvitaan: %s)"
 
-#: ../duplicity/dup_collections.py:455
+#: ../duplicity/dup_collections.py:457
 #, python-format
 msgid "Added incremental Backupset (start_time: %s / end_time: %s)"
 msgstr "Lisätty varmistus (start_time: %s / end_time: %s)"
 
-#: ../duplicity/dup_collections.py:528
+#: ../duplicity/dup_collections.py:530
 msgid "Chain start time: "
 msgstr "Ketjun alkamisaika: "
 
-#: ../duplicity/dup_collections.py:529
+#: ../duplicity/dup_collections.py:531
 msgid "Chain end time: "
 msgstr "Ketjun päättymisaika: "
 
-#: ../duplicity/dup_collections.py:530
+#: ../duplicity/dup_collections.py:532
 #, python-format
 msgid "Number of contained backup sets: %d"
 msgstr "Varmuuskopiointien määrä: %d"
 
-#: ../duplicity/dup_collections.py:531
+#: ../duplicity/dup_collections.py:533
 #, python-format
 msgid "Total number of contained volumes: %d"
 msgstr "Tarjottujen volyymien kokonaismäärä: %d"
 
-#: ../duplicity/dup_collections.py:532 ../duplicity/dup_collections.py:1406
+#: ../duplicity/dup_collections.py:534 ../duplicity/dup_collections.py:1409
 msgid "Type of backup set:"
 msgstr "Varmuuskopion tyyppi:"
 
-#: ../duplicity/dup_collections.py:532 ../duplicity/dup_collections.py:1406
+#: ../duplicity/dup_collections.py:534 ../duplicity/dup_collections.py:1409
 msgid "Time:"
 msgstr "Aika:"
 
-#: ../duplicity/dup_collections.py:532
+#: ../duplicity/dup_collections.py:534
 msgid "Num volumes:"
 msgstr "Numin tilavuudet:"
 
-#: ../duplicity/dup_collections.py:537 ../duplicity/dup_collections.py:1413
+#: ../duplicity/dup_collections.py:539 ../duplicity/dup_collections.py:1416
 msgid "Full"
 msgstr "Täysi"
 
-#: ../duplicity/dup_collections.py:540 ../duplicity/dup_collections.py:1415
+#: ../duplicity/dup_collections.py:542 ../duplicity/dup_collections.py:1418
 msgid "Incremental"
 msgstr "Inkretaalinen"
 
-#: ../duplicity/dup_collections.py:601
+#: ../duplicity/dup_collections.py:603
 msgid "local"
 msgstr "paikallinen"
 
-#: ../duplicity/dup_collections.py:766
+#: ../duplicity/dup_collections.py:768
 msgid "Collection Status"
 msgstr "Kokoelman Tila"
 
-#: ../duplicity/dup_collections.py:768
+#: ../duplicity/dup_collections.py:770
 #, python-format
 msgid "Connecting with backend: %s"
 msgstr "Yhdistetään taustaosaan: %s"
 
-#: ../duplicity/dup_collections.py:769
+#: ../duplicity/dup_collections.py:771
 #, python-format
 msgid "Archive dir: %s"
 msgstr "Arkistoi dir: %s"
 
-#: ../duplicity/dup_collections.py:772
+#: ../duplicity/dup_collections.py:774
 #, python-format
 msgid "Found %d secondary backup chain(s)."
 msgstr "Löytyi %d toissijaista varmuuskopioketjua."
 
-#: ../duplicity/dup_collections.py:774
+#: ../duplicity/dup_collections.py:776
 #, python-format
 msgid "Secondary chain %d of %d:"
 msgstr "Toissijainen ketju %d %d:"
 
-#: ../duplicity/dup_collections.py:779
+#: ../duplicity/dup_collections.py:781
 msgid "Found primary backup chain with matching signature chain:"
 msgstr "Löytyi ensisijainen varmuuskopio ketju täsmäävällä allekirjoitusketjulla:"
 
-#: ../duplicity/dup_collections.py:782
+#: ../duplicity/dup_collections.py:784
 msgid "No backup chains with active signatures found"
 msgstr "Varmuuskopioketjuja aktiivisilla allekirjoituksilla ei löytynyt"
 
-#: ../duplicity/dup_collections.py:785
+#: ../duplicity/dup_collections.py:787
 #, python-format
 msgid "Also found %d backup set(s) not part of any chain,"
 msgstr "Löytyi myös %d varmuuskopio sarjoja, jotka eivät kuulu mihinkään ketjuun,"
 
-#: ../duplicity/dup_collections.py:786
+#: ../duplicity/dup_collections.py:788
 #, python-format
 msgid "and %d incomplete backup set(s)."
 msgstr "ja %d puutteellinen varmuuskopiointi(t)."
 
 #. "cleanup" is a hard-coded command, so do not translate it
-#: ../duplicity/dup_collections.py:788
+#: ../duplicity/dup_collections.py:790
 msgid "These may be deleted by running duplicity with the \"cleanup\" command."
 msgstr "Nämä voidaan poistaa suorittamalla päällekkäisyyksiä \"puhdistus\" komennon kanssa."
 
-#: ../duplicity/dup_collections.py:790
+#: ../duplicity/dup_collections.py:792
 msgid "No orphaned or incomplete backup sets found."
 msgstr "Orvoja tai epätäydellisiä varmuuskopioita ei löytynyt."
 
-#: ../duplicity/dup_collections.py:806
+#: ../duplicity/dup_collections.py:808
 #, python-format
 msgid "%d file(s) exist in cache"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:813
+#: ../duplicity/dup_collections.py:815
 #, python-format
 msgid "%d file(s) exists on backend"
 msgstr "%d tiedostoa on olemassa taustaosassa"
 
-#: ../duplicity/dup_collections.py:868
+#: ../duplicity/dup_collections.py:870
 msgid "WARNING. discarding last backup set, because of missing signature file."
 msgstr ""
 
-#: ../duplicity/dup_collections.py:917
+#: ../duplicity/dup_collections.py:919
 msgid "WARNING. found the following local orphaned signature file(s):"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:925
+#: ../duplicity/dup_collections.py:927
 msgid "WARNING. found the following remote orphaned signature file(s):"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:933
+#: ../duplicity/dup_collections.py:935
 msgid "WARNING. found signatures but no corresponding backup files"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:939
+#: ../duplicity/dup_collections.py:941
 msgid "WARNING. found the following orphaned backup file(s):"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:948
+#: ../duplicity/dup_collections.py:950
 msgid "WARNING. found missing difftar(s) in backup sets, possibly left from aborted session:\n"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:979
+#: ../duplicity/dup_collections.py:981
 #, python-format
 msgid "Extracting backup chains from list of files: %s"
 msgstr "Puretaan varmuuskopioketjut tiedostoluettelosta: %s"
 
-#: ../duplicity/dup_collections.py:990
+#: ../duplicity/dup_collections.py:992
 #, python-format
 msgid "File %s is part of known set"
 msgstr "Tiedosto %s on osa tunnettua joukkoa"
 
-#: ../duplicity/dup_collections.py:993
+#: ../duplicity/dup_collections.py:995
 #, python-format
 msgid "File %s is not part of a known set; creating new set"
 msgstr "Tiedosto %s ei ole osa tunnettua sarjaa, luodaan uusi sarja"
 
-#: ../duplicity/dup_collections.py:998
+#: ../duplicity/dup_collections.py:1000
 #, python-format
 msgid "Ignoring file (rejected by backup set) '%s'"
 msgstr "Ohitetaan tiedosto (varmuuskopio hylättiin) '%s'"
 
-#: ../duplicity/dup_collections.py:1015
+#: ../duplicity/dup_collections.py:1017
 #, python-format
 msgid "Found backup chain %s"
 msgstr "Löytyi varmuuskopio ketju %s"
 
-#: ../duplicity/dup_collections.py:1020
+#: ../duplicity/dup_collections.py:1022
 #, python-format
 msgid "Added set %s to pre-existing chain %s"
 msgstr "Lisätty %s jo olemassa olevaan ketjuun %s"
 
-#: ../duplicity/dup_collections.py:1023
+#: ../duplicity/dup_collections.py:1025
 #, python-format
 msgid "Found orphaned set %s"
 msgstr "Löytyi orvoksi asetettu %s"
 
-#: ../duplicity/dup_collections.py:1179
+#: ../duplicity/dup_collections.py:1182
 #, python-format
 msgid "No signature chain for the requested time. Using oldest available chain, starting at time %s."
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1404
+#: ../duplicity/dup_collections.py:1407
 #, python-format
 msgid "File: %s"
 msgstr "Tiedosto: %s"
 
-#: ../duplicity/dup_collections.py:1405
+#: ../duplicity/dup_collections.py:1408
 #, python-format
 msgid "Total number of backup: %d"
 msgstr ""
 
-#: ../duplicity/dup_collections.py:1406 ../duplicity/dup_collections.py:1442
+#: ../duplicity/dup_collections.py:1409 ../duplicity/dup_collections.py:1445
 msgid "Type of file change:"
 msgstr "Tiedoston muutoksen tyyppi:"
 
-#: ../duplicity/dup_collections.py:1440
+#: ../duplicity/dup_collections.py:1443
 #, python-format
 msgid " Backup set time: %s"
 msgstr " Varmuuskopioinnin aikaraja: %s"
 
-#: ../duplicity/dup_collections.py:1441
+#: ../duplicity/dup_collections.py:1444
 #, python-format
 msgid "Total number of changes: %d"
 msgstr "Muutosten lukumäärä yhteensä: %d"
 
-#: ../duplicity/dup_collections.py:1442
+#: ../duplicity/dup_collections.py:1445
 msgid "File:"
 msgstr "Tiedosto:"
 
-#: ../duplicity/dup_main.py:114
+#: ../duplicity/dup_main.py:121
 msgid "Reuse configured PASSPHRASE as SIGN_PASSPHRASE"
 msgstr "Käytä konfiguroitua PASSPHRASE:a SIGN_PASSPHRASE:nä"
 
-#: ../duplicity/dup_main.py:125
+#: ../duplicity/dup_main.py:132
 msgid "Reuse configured SIGN_PASSPHRASE as PASSPHRASE"
 msgstr "Uudelleenkäytä määritetty SIGN_PASSPHRASE PASSPHRASE"
 
-#: ../duplicity/dup_main.py:163
+#: ../duplicity/dup_main.py:170
 msgid "Skipping passphrase input for full backup with encryption keys."
 msgstr ""
 
-#: ../duplicity/dup_main.py:168
+#: ../duplicity/dup_main.py:175
 msgid "PASSPHRASE variable not set, asking user."
 msgstr "PASSPHRASE-muuttujaa ei asetettu, kysytään käyttäjältä."
 
-#: ../duplicity/dup_main.py:183
+#: ../duplicity/dup_main.py:190
 msgid "GnuPG passphrase for signing key:"
 msgstr ""
 
-#: ../duplicity/dup_main.py:188
+#: ../duplicity/dup_main.py:195
 msgid "GnuPG passphrase for decryption:"
 msgstr ""
 
-#: ../duplicity/dup_main.py:193
+#: ../duplicity/dup_main.py:200
 msgid "Retype passphrase for signing key to confirm: "
 msgstr "Kirjoita salasana uudelleen allekirjoitettaessa avain vahvistaaksesi: "
 
-#: ../duplicity/dup_main.py:195
+#: ../duplicity/dup_main.py:202
 msgid "Retype passphrase for decryption to confirm: "
 msgstr "Kirjoita salasana uudelleen vahvistaaksesi salauksen purku: "
 
-#: ../duplicity/dup_main.py:199
+#: ../duplicity/dup_main.py:206
 msgid "First and second passphrases do not match!  Please try again."
 msgstr "Ensimmäiset ja toiset salasanat eivät täsmää! Yritä uudelleen."
 
-#: ../duplicity/dup_main.py:210
+#: ../duplicity/dup_main.py:219
 msgid "Cannot use empty passphrase with symmetric encryption!  Please try again."
 msgstr "Tyhjää salasanaa ei voi käyttää symmetrisellä salauksella! Yritä uudelleen."
 
-#: ../duplicity/dup_main.py:270
+#: ../duplicity/dup_main.py:279
 #, python-format
 msgid "File %s complete in backup set.\n"
 "Continuing restart on file %s."
 msgstr "Tiedosto %s on valmis varmuuskopiossa.\n"
 "Käynnistetään uudelleen tiedostossa %s."
 
-#: ../duplicity/dup_main.py:280
+#: ../duplicity/dup_main.py:289
 #, python-format
 msgid "File %s missing in backup set.\n"
 "Continuing restart on file %s."
 msgstr "Tiedoston %s varmuuskopio puuttuu.\n"
 "Käynnistetään uudelleen tiedostossa %s."
 
-#: ../duplicity/dup_main.py:335
+#: ../duplicity/dup_main.py:344
 #, python-format
 msgid "File %s was corrupted during upload."
 msgstr "Tiedosto %s on vioittunut latauksen aikana."
 
-#: ../duplicity/dup_main.py:365
+#: ../duplicity/dup_main.py:374
 msgid "Restarting backup, but current encryption settings do not match original settings"
 msgstr "Uudelleenkäynnistetään varmuuskopio, mutta nykyiset salausasetukset eivät vastaa alkuperäisiä asetuksia"
 
-#: ../duplicity/dup_main.py:389 ../duplicity/dup_main.py:526
+#: ../duplicity/dup_main.py:398 ../duplicity/dup_main.py:535
 #, python-format
 msgid "Processed volume %d"
 msgstr "Jalostettu äänenvoimakkuus %d"
 
-#: ../duplicity/dup_main.py:438
+#: ../duplicity/dup_main.py:447
 msgid "Skipping encryption validation due to glacier/deep storage"
 msgstr "Ohitetaan salauksen vahvistus jäätikön / syvän tallennustilan vuoksi"
 
-#: ../duplicity/dup_main.py:442
+#: ../duplicity/dup_main.py:451
 #, python-format
 msgid "Restarting after volume %s, file %s, block %s"
 msgstr "Käynnistetään uudelleen äänenvoimakkuuden %själkeen, tiedosto %s, lohko %s"
 
-#: ../duplicity/dup_main.py:494
+#: ../duplicity/dup_main.py:503
 msgid "Skipped volume upload, as effectivly nothing has changed"
 msgstr "Ohitettu äänenvoimakkuuden lataus, koska vaikuttavuus ei ole muuttunut"
 
-#: ../duplicity/dup_main.py:717
+#: ../duplicity/dup_main.py:726
 msgid "Fatal Error: Unable to start incremental backup.  Old signatures not found and incremental specified"
 msgstr "Vakava virhe: Ei voitu käynnistää inkrementaalista varmuuskopiota. Vanhoja allekirjoituksia ei löydy ja inkrementaalinen määritetty"
 
-#: ../duplicity/dup_main.py:723
+#: ../duplicity/dup_main.py:732
 msgid "No signatures found, switching to full backup."
 msgstr "Allekirjoituksia ei löytynyt, siirrytään täyteen varmuuskopiointiin."
 
-#: ../duplicity/dup_main.py:737
+#: ../duplicity/dup_main.py:746
 msgid "Backup Statistics"
 msgstr "Varmuuskopioi Tilastot"
 
-#: ../duplicity/dup_main.py:877
+#: ../duplicity/dup_main.py:886
 #, python-format
 msgid "%s not found in archive - no files restored."
 msgstr "%s ei löytynyt arkistosta - tiedostoja ei palautettu."
 
-#: ../duplicity/dup_main.py:881
+#: ../duplicity/dup_main.py:890
 msgid "No files found in archive - nothing restored."
 msgstr "Arkistosta ei löytynyt - mitään ei palautettu."
 
-#: ../duplicity/dup_main.py:926
+#: ../duplicity/dup_main.py:932
 #, python-format
 msgid "Processed volume %d of %d"
 msgstr "Käsitelty äänenvoimakkuus %d %d"
 
-#: ../duplicity/dup_main.py:980
+#: ../duplicity/dup_main.py:986
 #, python-format
 msgid "Invalid data - %s hash mismatch for file:"
 msgstr "Virheelliset tiedot - %s tiiviste ei täsmää tiedostoon:"
 
-#: ../duplicity/dup_main.py:982
+#: ../duplicity/dup_main.py:988
 #, python-format
 msgid "Calculated hash: %s"
 msgstr "Laskettu hash: %s"
 
-#: ../duplicity/dup_main.py:983
+#: ../duplicity/dup_main.py:989
 #, python-format
 msgid "Manifest hash: %s"
 msgstr "Manifest hash: %s"
 
-#: ../duplicity/dup_main.py:990 ../duplicity/util.py:110
+#: ../duplicity/dup_main.py:995 ../duplicity/util.py:114
 #, python-format
 msgid "IGNORED_ERROR: WARNING: ignoring error as requested: %s: %s"
 msgstr ""
 
-#: ../duplicity/dup_main.py:1037
+#: ../duplicity/dup_main.py:1040
 #, python-format
 msgid "Volume was signed by key %s, not %s"
 msgstr "Äänenvoimakkuuden allekirjoitti avain %s, ei %s"
 
-#: ../duplicity/dup_main.py:1069
+#: ../duplicity/dup_main.py:1072
 #, python-format
 msgid "Verify complete: %s, %s."
 msgstr "Vahvistus valmis: %s, %s."
 
-#: ../duplicity/dup_main.py:1070
+#: ../duplicity/dup_main.py:1073
 #, python-format
 msgid "%d file(s) compared"
 msgstr "%d tiedostoa verrattuna"
 
-#: ../duplicity/dup_main.py:1070
+#: ../duplicity/dup_main.py:1073
 #, python-format
 msgid "%d difference(s) found"
 msgstr "%d ero(tta) löytynyt"
 
-#: ../duplicity/dup_main.py:1089
+#: ../duplicity/dup_main.py:1092
 msgid "No extraneous files found, nothing deleted in cleanup."
 msgstr "Ulkoisia tiedostoja ei löytynyt, mitään ei poistettu cleanupista."
 
-#: ../duplicity/dup_main.py:1094
+#: ../duplicity/dup_main.py:1097
 msgid "Deleting these file(s) from backend:"
 msgstr ""
 
-#: ../duplicity/dup_main.py:1104
+#: ../duplicity/dup_main.py:1107
 msgid "Found the following file(s) to delete:"
 msgstr "Löytyi seuraavat poistettavat tiedostot:"
 
-#: ../duplicity/dup_main.py:1153
+#: ../duplicity/dup_main.py:1156
 msgid "There are backup set(s) at time(s):"
 msgstr "Varmuuskopiointiasetuksi(t) kerralla: (t):"
 
-#: ../duplicity/dup_main.py:1155
+#: ../duplicity/dup_main.py:1158
 msgid "Which can't be deleted because newer sets depend on them."
 msgstr "Joka ei voi poistaa, koska uudemmat sarjat riippuvat niistä."
 
-#: ../duplicity/dup_main.py:1162
+#: ../duplicity/dup_main.py:1165
 msgid "Current active backup chain is older than specified time.  However, it will not be deleted.  To remove all your backups, manually purge the repository."
 msgstr "Nykyinen aktiivinen varmuuskopioketju on vanhempi kuin määritelty aika. Sitä ei kuitenkaan poisteta. Poista kaikki varmuuskopiot manuaalisesti tyhjennä repo."
 
-#: ../duplicity/dup_main.py:1180
+#: ../duplicity/dup_main.py:1183
 msgid "No old backup sets found, nothing deleted."
 msgstr "Vanhoja varmuuskopiosarjoja ei löytynyt, mitään ei poistettu."
 
-#: ../duplicity/dup_main.py:1183
+#: ../duplicity/dup_main.py:1186
 msgid "Deleting backup chain(s) at time:"
 msgstr "Poistetaan varmuuskopioketjut kerralla:"
 
-#: ../duplicity/dup_main.py:1192
+#: ../duplicity/dup_main.py:1195
 #, python-format
 msgid "Deleting any incremental signature chain rooted at %s"
 msgstr "Poistetaan minkä tahansa inkrementaalisen allekirjoitusketjun juuret %s"
 
-#: ../duplicity/dup_main.py:1194
+#: ../duplicity/dup_main.py:1197
 #, python-format
 msgid "Deleting any incremental backup chain rooted at %s"
 msgstr "Poistetaan kaikki inkrementaaliset varmuuskopioketjut, jotka on juurtunut %s"
 
-#: ../duplicity/dup_main.py:1197
+#: ../duplicity/dup_main.py:1200
 #, python-format
 msgid "Deleting complete signature chain %s"
 msgstr "Poistetaan koko allekirjoitusketju %s"
 
-#: ../duplicity/dup_main.py:1199
+#: ../duplicity/dup_main.py:1202
 #, python-format
 msgid "Deleting complete backup chain %s"
 msgstr "Poistetaan koko varmuuskopioketju %s"
 
-#: ../duplicity/dup_main.py:1206
+#: ../duplicity/dup_main.py:1209
 msgid "Found old backup chain(s) at the following time:"
 msgstr "Löytyi vanhat varmuuskopioketjut seuraavalla hetkellä:"
 
-#: ../duplicity/dup_main.py:1210
+#: ../duplicity/dup_main.py:1213
 msgid "Rerun command with --force option to actually delete."
 msgstr "Suorita komento, jossa on valitsin --force poistaaksesi oikein."
 
-#: ../duplicity/dup_main.py:1313
+#: ../duplicity/dup_main.py:1316
 #, python-format
 msgid "Deleting local %s (not authoritative at backend)."
 msgstr "Poistetaan paikallinen %s (ei arvovaltainen taustaosassa)."
 
-#: ../duplicity/dup_main.py:1317
+#: ../duplicity/dup_main.py:1320
 #, python-format
 msgid "Unable to delete %s: %s"
 msgstr "%sei voitu poistaa: %s"
 
-#: ../duplicity/dup_main.py:1351 ../duplicity/dup_temp.py:296
+#: ../duplicity/dup_main.py:1354 ../duplicity/dup_temp.py:296
 #, python-format
 msgid "Failed to read %s: %s"
 msgstr "Kohdetta %sei voitu lukea: %s"
 
-#: ../duplicity/dup_main.py:1363
+#: ../duplicity/dup_main.py:1366
 #, python-format
 msgid "Copying %s to local cache."
 msgstr "Kopioidaan %s paikalliseen välimuistiin."
 
-#: ../duplicity/dup_main.py:1415
+#: ../duplicity/dup_main.py:1418
 msgid "Local and Remote metadata are synchronized, no sync needed."
 msgstr "Paikalliset ja etämetatiedot on synkronoitu, synkronointia ei tarvita."
 
-#: ../duplicity/dup_main.py:1420
+#: ../duplicity/dup_main.py:1423
 msgid "Synchronizing remote metadata to local cache..."
 msgstr "Synkronoidaan etämetatietoja paikalliseen välimuistiin..."
 
-#: ../duplicity/dup_main.py:1434
+#: ../duplicity/dup_main.py:1437
 msgid "Sync would copy the following from remote to local:"
 msgstr "Synkronointi kopioisi seuraavat tiedostot etästä paikalliseen:"
 
-#: ../duplicity/dup_main.py:1440
+#: ../duplicity/dup_main.py:1443
 msgid "Sync would remove the following spurious local files:"
 msgstr "Synkronointi poistaisi seuraavat väärät paikalliset tiedostot:"
 
-#: ../duplicity/dup_main.py:1485
+#: ../duplicity/dup_main.py:1488
 msgid "Unable to get free space on temp."
 msgstr "Ilmaisen tilan saaminen ei onnistunut."
 
-#: ../duplicity/dup_main.py:1503
+#: ../duplicity/dup_main.py:1506
 msgid "Unable to get max open files."
 msgstr "Avoimia tiedostoja ei voitu saavuttaa."
 
-#: ../duplicity/dup_main.py:1509
+#: ../duplicity/dup_main.py:1512
 msgid "Use 'ulimit -n 1024' or higher to correct.\n"
 msgstr ""
 
-#: ../duplicity/dup_main.py:1565
+#: ../duplicity/dup_main.py:1568
 msgid "RESTART: The first volume failed to upload before termination.\n"
 "         Restart is impossible...starting backup from beginning."
 msgstr "PALAUTUS: Ensimmäinen taltio epäonnistui ennen purkamista.\n"
 "         Uudelleenkäynnistys on mahdotonta...alkaa varmuuskopio alusta."
 
-#: ../duplicity/dup_main.py:1575
+#: ../duplicity/dup_main.py:1578
 #, python-format
 msgid "RESTART: Volumes %d to %d failed to upload before termination.\n"
 "         Restarting backup at volume %d."
 msgstr "RESTART: Äänenvoimakkuudet %d %d ei voitu lähettää ennen keskeytystä.\n"
 "         Uudelleenkäynnistetään varmuuskopio äänenvoimakkuudella %d."
 
-#: ../duplicity/dup_main.py:1586
+#: ../duplicity/dup_main.py:1589
 #, python-format
 msgid "RESTART: Impossible backup state: manifest has %d vols, remote has %d vols.\n"
 "         Restart is impossible ... duplicity will clean off the last partial\n"
@@ -1313,7 +1314,7 @@ msgstr "PALAUTUS: Ei mahdollista varmuuskopion tilaa: manifestissa on %d volttia
 "         Uudelleenkäynnistys on mahdotonta . . kaksoispiste puhdistaa viimeisen osittaisen\n"
 "         varmuuskopion ja käynnistää varmuuskopion alusta alkaen."
 
-#: ../duplicity/dup_main.py:1612
+#: ../duplicity/dup_main.py:1613
 msgid "                    Setting python optimization causes duplicity to fail to\n"
 "                    recognize its own backups.  Please remove PYTHONOPTIMIZE\n"
 "                    from the environment or -O and -OO from the commandline,\n"
@@ -1322,23 +1323,27 @@ msgid "                    Setting python optimization causes duplicity to fail 
 "                    "
 msgstr ""
 
-#: ../duplicity/dup_main.py:1715
+#: ../duplicity/dup_main.py:1709
 msgid "Last full backup date:"
 msgstr ""
 
-#: ../duplicity/dup_main.py:1717
+#: ../duplicity/dup_main.py:1711
 msgid "Last full backup date: none"
 msgstr "Viimeisin täysi varmuuskopiointipäivä: ei mitään"
 
-#: ../duplicity/dup_main.py:1724
+#: ../duplicity/dup_main.py:1718
 msgid "Last full backup is too old, forcing full backup"
 msgstr "Viimeisin täysi varmuuskopiointi on liian vanha, pakotetaan täysi varmuuskopiointi"
 
-#: ../duplicity/dup_main.py:1780
+#: ../duplicity/dup_main.py:1727
+msgid "Latest chain has too many incrementals, forcing full backup"
+msgstr ""
+
+#: ../duplicity/dup_main.py:1783
 msgid "When using symmetric encryption, the signing passphrase must equal the encryption passphrase."
 msgstr "Kun käytät symmetristä salausta, allekirjoitussalasanan tulee olla sama kuin salaussalasana."
 
-#: ../duplicity/dup_time.py:54
+#: ../duplicity/dup_time.py:53
 #, python-format
 msgid "Bad interval string \"%s\"\n\n"
 "Intervals are specified like 2Y (2 years) or 2h30m (2.5 hours).  The\n"
@@ -1349,7 +1354,7 @@ msgstr "Huono väli merkkijono \"%s\"\n\n"
 "sallitut erikoismerkit ovat s, m, h, D, W, M ja Y. Katso lisätietoja miehestä\n"
 "sivulta."
 
-#: ../duplicity/dup_time.py:63
+#: ../duplicity/dup_time.py:60
 #, python-format
 msgid "Bad time string \"%s\"\n\n"
 "The acceptible time strings are intervals (like \"3D64s\"), w3-datetime\n"
@@ -1381,7 +1386,7 @@ msgstr "Virhe '%s' käsittelyssä %s"
 msgid "Skipping %s because of previous error"
 msgstr "Ohitetaan %s edellisen virheen vuoksi"
 
-#: ../duplicity/librsync.py:194
+#: ../duplicity/librsync.py:177
 msgid "basis_file must be a (true) file or an object whose file attribute is the underlying true file object"
 msgstr "basis_file on (true) tiedosto tai objekti, jonka tiedosto-attribuutti on taustalla oleva tosi tiedostoobjekti"
 
@@ -1448,91 +1453,86 @@ msgstr "end_index ei täsmää"
 msgid "Hashes don't match"
 msgstr "Ihottumat eivät täsmää"
 
-#: ../duplicity/patchdir.py:73 ../duplicity/patchdir.py:80
-#, python-format
-msgid "Patching %s"
-msgstr "Paikataan %s"
-
-#: ../duplicity/patchdir.py:554
+#: ../duplicity/patchdir.py:382
 #, python-format
 msgid "Error '%s' patching %s"
 msgstr "Virhe '%s' korjauksessa %s"
 
-#: ../duplicity/patchdir.py:631
+#: ../duplicity/patchdir.py:459
 #, python-format
 msgid "Writing %s of type %s"
 msgstr "Kirjoitetaan %s tyyppiä %s"
 
-#: ../duplicity/path.py:109
+#: ../duplicity/path.py:108
 #, python-format
 msgid "WARNING: %s invalid devnums (0x%X), treating as (0, 0)."
 msgstr ""
 
-#: ../duplicity/path.py:235 ../duplicity/path.py:295
+#: ../duplicity/path.py:234 ../duplicity/path.py:294
 #, python-format
 msgid "WARNING: %s has negative mtime, treating as 0."
 msgstr ""
 
-#: ../duplicity/path.py:359
+#: ../duplicity/path.py:358
 msgid "Difference found:"
 msgstr ""
 
-#: ../duplicity/path.py:368
+#: ../duplicity/path.py:367
 #, python-format
 msgid "New file %s"
 msgstr "Uusi tiedosto %s"
 
-#: ../duplicity/path.py:371
+#: ../duplicity/path.py:370
 #, python-format
 msgid "File %s is missing"
 msgstr "Tiedosto %s puuttuu"
 
-#: ../duplicity/path.py:374
+#: ../duplicity/path.py:373
 #, python-format
 msgid "File %%s has type %s, expected %s"
 msgstr "Tiedosto %%s on tyyppi %s, odotetaan %s"
 
-#: ../duplicity/path.py:379 ../duplicity/path.py:408
+#: ../duplicity/path.py:378 ../duplicity/path.py:407
 #, python-format
 msgid "File %%s has permissions %s, expected %s"
 msgstr "Tiedosto %%s on oikeudet %s, odotetaan %s"
 
-#: ../duplicity/path.py:385
+#: ../duplicity/path.py:384
 #, python-format
 msgid "File %%s has mtime %s, expected %s"
 msgstr "Tiedosto %%s on mtime %s, odotetaan %s"
 
-#: ../duplicity/path.py:396
+#: ../duplicity/path.py:395
 #, python-format
 msgid "Data for file %s is different"
 msgstr "Tiedosto %s on erilainen"
 
-#: ../duplicity/path.py:404
+#: ../duplicity/path.py:403
 #, python-format
 msgid "Symlink %%s points to %s, expected %s"
 msgstr "Symlink %%s pistettä %s, odotetaan %s"
 
-#: ../duplicity/path.py:411
+#: ../duplicity/path.py:410
 #, python-format
 msgid "Device file %%s has numbers %s, expected %s"
 msgstr "Laitetiedosto %%s on numerot %s, odotetaan %s"
 
-#: ../duplicity/path.py:601
+#: ../duplicity/path.py:600
 #, python-format
 msgid "Making directory %s"
 msgstr "Tehdään hakemistoa %s"
 
-#: ../duplicity/path.py:611
+#: ../duplicity/path.py:610
 #, python-format
 msgid "Deleting %s"
 msgstr "Poistetaan %s"
 
-#: ../duplicity/path.py:620
+#: ../duplicity/path.py:619
 #, python-format
 msgid "Touching %s"
 msgstr "Kosketetaan %s"
 
-#: ../duplicity/path.py:628
+#: ../duplicity/path.py:625
 #, python-format
 msgid "Deleting tree %s"
 msgstr "Poistetaan puuta %s"
@@ -1553,7 +1553,7 @@ msgid "Error initializing file %s"
 msgstr "Virhe alustettaessa tiedostoa %s"
 
 #: ../duplicity/selection.py:127 ../duplicity/selection.py:167
-#: ../duplicity/selection.py:615
+#: ../duplicity/selection.py:590
 #, python-format
 msgid "Error accessing possibly locked file %s"
 msgstr "Virhe päästäessä mahdollisesti lukittuun tiedostoon %s"
@@ -1569,7 +1569,7 @@ msgstr ""
 msgid "Selecting %s"
 msgstr "Valitaan %s"
 
-#: ../duplicity/selection.py:263
+#: ../duplicity/selection.py:261
 #, python-format
 msgid "                The last file selection option is the filter option %s, which will have no\n"
 "                effect as there are no subsequent file selection options. Exiting because\n"
@@ -1578,7 +1578,7 @@ msgstr "                Viimeinen tiedoston valinta vaihtoehto on suodatin vaiht
 "                -vaikutusta, koska myöhemmin ei ole valinnanvaraa. Poistuu, koska\n"
 "                tämä ei luultavasti ole mitä tarkoitit."
 
-#: ../duplicity/selection.py:278
+#: ../duplicity/selection.py:271
 #, python-format
 msgid "                Only these filter mode options were specified:\n"
 "                    %s\n"
@@ -1589,7 +1589,7 @@ msgstr "                Vain nämä suodatintilan asetukset määritettiin:\n"
 "                Tapauksen herkkä globbing on oletuskäyttäytyminen, joten tällä ei ole vaikutusta.\n"
 "                Poistuminen, koska tämä ei luultavasti ole mitä tarkoitit."
 
-#: ../duplicity/selection.py:346
+#: ../duplicity/selection.py:334
 #, python-format
 msgid "                Fatal Error: The file specification\n"
 "                    %s\n"
@@ -1604,19 +1604,19 @@ msgstr "                Vakava virhe: Tiedostomäärittely\n"
 "                Hyödylliset tiedostomääritykset alkavat perushakemistosta tai joistakin\n"
 "                -kuvioista (kuten '**'), jotka vastaavat perushakemistoa."
 
-#: ../duplicity/selection.py:360
+#: ../duplicity/selection.py:345
 #, python-format
 msgid "Fatal Error while processing expression\n"
 "%s"
 msgstr "Vakava virhe ilmaisua\n"
 "%s käsiteltäessä"
 
-#: ../duplicity/selection.py:378
+#: ../duplicity/selection.py:363
 #, python-format
 msgid "Reading files to backup from list %s"
 msgstr "Luetaan tiedostoja varmuuskopioitavaksi listasta %s"
 
-#: ../duplicity/selection.py:403
+#: ../duplicity/selection.py:390
 #, python-format
 msgid "                Files-from list contains the absolute path:\n"
 "                    %s\n"
@@ -1627,13 +1627,13 @@ msgstr "                Luettelo sisältää absoluuttisen polku:\n"
 "                Kaikki tiedostoissa määritellyt polut on annettava suhteessa varmuuskopion\n"
 "                lähdepoluun."
 
-#: ../duplicity/selection.py:418
+#: ../duplicity/selection.py:400
 msgid "                Files-from list specified which contains no files, the backup will be empty as\n"
 "                a result. Exiting as this probably isn't what you meant,"
 msgstr "                Tiedostot luettelosta, jossa ei ole tiedostoja, varmuuskopio on tyhjä\n"
 "                tuloksena. Poistutaan, koska tämä ei luultavasti ole mitä tarkoitit,"
 
-#: ../duplicity/selection.py:435
+#: ../duplicity/selection.py:413
 #, python-format
 msgid "                Last selection expression:\n"
 "                    %s\n"
@@ -1646,12 +1646,12 @@ msgstr "                Viimeinen valintalauseke:\n"
 "                sisältää kaikki tiedostot, ilmaisu on tarpeeton. Poistuminen koska tämä\n"
 "                ei luultavasti ole sitä mitä tarkoitit."
 
-#: ../duplicity/selection.py:497
+#: ../duplicity/selection.py:472
 #, python-format
 msgid "Reading %s filelist %s"
 msgstr "Luetaan %s filelistiä %s"
 
-#: ../duplicity/selection.py:538
+#: ../duplicity/selection.py:513
 #, python-format
 msgid "Error compiling regular expression %s"
 msgstr "Virhe käännettäessä säännöllistä lauseketta %s"
@@ -1681,12 +1681,12 @@ msgstr "Unohdetaan väliaikainen tiedosto %s"
 msgid "Attempt to forget unknown tempfile %s - this is probably a bug."
 msgstr "Yritetään unohtaa tuntematon temp-tiedosto %s - tämä on luultavasti vika."
 
-#: ../duplicity/util.py:176
+#: ../duplicity/util.py:180
 #, python-format
 msgid "Acquiring lockfile %s"
 msgstr "Haetaan lukitustiedostoa %s"
 
-#: ../duplicity/util.py:191
+#: ../duplicity/util.py:195
 #, python-format
 msgid "Releasing lockfile %s"
 msgstr "Vapautetaan lukitustiedostoa %s"

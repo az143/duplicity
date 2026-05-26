@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2014 Michael Terry
 #
@@ -43,9 +43,6 @@ files_to_test.extend(glob.glob(os.path.join(_top_dir, "testing/*.py")))
 # TODO: Remove duplicity.argparse311 when py310 xgoes EOL
 files_to_test.remove(os.path.join(_top_dir, "duplicity/argparse311.py"))
 
-# TODO: remove when pylint AST builder is fixed.
-files_to_test.remove(os.path.join(_top_dir, "duplicity/backends/giobackend.py"))
-
 
 @unittest.skipIf(os.environ.get("USER", "") == "buildd", "Skip test on Launchpad")
 class CodeTest(DuplicityTestCase):
@@ -78,7 +75,7 @@ class CodeTest(DuplicityTestCase):
         """Test that we conform to PEP-8 using pycodestyle."""
         # Note that the settings, ignores etc for pycodestyle are set in pyproject.toml, not here
         print()
-        style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, "setup.cfg"))
+        style = pycodestyle.StyleGuide(config_file=os.path.join(_top_dir, ".pycodestyle"))
         result = style.check_files(files_to_test)
         self.assertEqual(
             result.total_errors,
@@ -94,7 +91,7 @@ class CodeTest(DuplicityTestCase):
                 "pylint",
                 f"--rcfile={os.path.join(_top_dir, 'pyproject.toml')}",
             ]
-            + files_to_test
+            + files_to_test,
         )
 
 

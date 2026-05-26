@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2013 Matthieu Huin
 # Copyright 2017 Xavier Lucas
@@ -39,10 +39,8 @@ class PCABackend(duplicity.backend.Backend):
             from swiftclient import Connection
             from swiftclient import ClientException
         except ImportError as e:
-            raise BackendException(
-                f"""PCA backend requires the python-swiftclient library.
-Exception: {str(e)}"""
-            )
+            raise BackendException(f"""PCA backend requires the python-swiftclient library.
+Exception: {str(e)}""")
 
         self.resp_exc = ClientException
         self.conn_cls = Connection

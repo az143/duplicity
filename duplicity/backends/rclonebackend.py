@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2019 Francesco Magno
 # Copyright 2019 Kenneth Loafman
@@ -95,8 +95,10 @@ class RcloneBackend(duplicity.backend.Backend):
                 size = -1
             elif rc == 0:
                 size = int(o)
-        finally:
-            return {"size": size}
+        except Exception as e:
+            log.Debug(f"Failed to query file size for {remote_filename}: {e}")
+            return {"size": None}
+        return {"size": size}
 
     def _delete(self, remote_filename):
         remote_filename = os.fsdecode(remote_filename)

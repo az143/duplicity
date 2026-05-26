@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2022 Kenneth Loafman
 #
@@ -134,10 +134,7 @@ class WarnAsyncStoreConstAction(argparse._StoreConstAction):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        log.Warn(
-            _(
-                dedent(
-                    """
+        log.Warn(_(dedent("""
                     ----------------------------------------------------------------
                     | WARNING: replaced with `--concurrency`                       |
                     | Use of the --asynchronous-upload option was known to be      |
@@ -148,10 +145,7 @@ class WarnAsyncStoreConstAction(argparse._StoreConstAction):
                     | See: https://gitlab.com/duplicity/duplicity/-/issues/745 and |
                     | https://gitlab.com/duplicity/duplicity/-/merge_requests/153  |
                     ----------------------------------------------------------------
-                    """
-                )
-            )
-        )
+                    """)))
         setattr(namespace, self.dest, self.const)
 
 
@@ -160,7 +154,7 @@ class SetLogTimestampAction(argparse._StoreConstAction):
         super().__init__(option_strings, dest, **kwargs)
 
     def __call__(self, parser, namespace, values, option_string=None):
-        log._log_timestamp = True
+        log.add_timestamp()
 
 
 def _check_int(val):

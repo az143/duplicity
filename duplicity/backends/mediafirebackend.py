@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2016 Roman Yepishev
 #
@@ -38,10 +38,8 @@ class MediafireBackend(duplicity.backend.Backend):
         try:
             import mediafire.client
         except ImportError as e:
-            raise BackendException(
-                f"""Mediafire backend requires the mediafire library.
-Exception: {str(e)}"""
-            )
+            raise BackendException(f"""Mediafire backend requires the mediafire library.
+Exception: {str(e)}""")
 
         duplicity.backend.Backend.__init__(self, parsed_url)
 

@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -74,19 +74,6 @@ class S3Boto3Backend(duplicity.backend.Backend):
         from boto3.s3.transfer import S3UploadFailedError, TransferConfig
         from botocore.exceptions import ClientError
 
-        if not (boto3.__version__ < "1.36.0" and botocore.__version__ < "1.36.0"):
-            # TODO: remove this workaround when issue #870 is fixed.
-            # https://github.com/boto/boto3/issues/2913
-            log.Warn(
-                "WARNING: Using boto3 >= 1,36.0 may result in errors, so we qre applying\n"
-                "the workaround for https://gitlab.com/duplicity/duplicity/-/issues/870\n"
-                "    export AWS_REQUEST_CHECKSUM_CALCULATION=when_required\n"
-                "    export AWS_RESPONSE_CHECKSUM_VALIDATION=when_required\n"
-                "NOTE: This workaround is temporary and will be removed when issue is fixed.\n."
-            )
-            os.environ["AWS_REQUEST_CHECKSUM_CALCULATION"] = "when_required"
-            os.environ["AWS_RESPONSE_CHECKSUM_VALIDATION"] = "when_required"
-
         duplicity.backend.Backend.__init__(self, parsed_url)
 
         # This folds the null prefix and all null parts, which means that:
@@ -108,6 +95,25 @@ class S3Boto3Backend(duplicity.backend.Backend):
         self.s3 = None
         self.bucket = None
         self.tracker = UploadProgressTracker()
+
+        if not (boto3.__version__ < "1.36.0" and botocore.__version__ < "1.36.0"):
+            # this is an issue with 3rd party s3 implementations only
+            # likely when an endpoint is given that resides not under amazonaws.com
+            # in time that workaround will probably not be needed anymore
+            # https://github.com/boto/boto3/issues/2913
+            import re
+
+            if config.s3_endpoint_url and not re.match(
+                pattern="(?i).*\\.amazonaws\\.com(/+)?$", string=config.s3_endpoint_url
+            ):
+                log.Notice(
+                    "WARNING: If boto3 >= 1,36.0 with non-amazon s3 services"
+                    " results in checksum errors preventing uploads you may try"
+                    " the following workaround. set the following env vars\n\n"
+                    "    export AWS_REQUEST_CHECKSUM_CALCULATION=when_required\n"
+                    "    export AWS_RESPONSE_CHECKSUM_VALIDATION=when_required\n\n"
+                    "see https://gitlab.com/duplicity/duplicity/-/issues/870 for details."
+                )
 
     def reset_connection(self):
         self.bucket = None
@@ -202,10 +208,11 @@ class S3Boto3Backend(duplicity.backend.Backend):
             )
         except S3UploadFailedError as e:
             if boto3.__version__ > "1.36.0" or botocore.__version__ > "1.36.0":
-                log.FatalError(
+                raise FatalBackendException(
                     f"Failed to upload file {remote_filename}, got S3UploadFailedError\n"
                     f"See https://gitlab.com/duplicity/duplicity/-/issues/870 for details.\n"
-                    f"Quick fix is: [sudo] pip3 install boto3<1.36.0 botocore<1.36.0"
+                    f"Quick fix is: [sudo] pip3 install boto3<1.36.0 botocore<1.36.0\n"
+                    f"API-Error: {e}"
                 )
             else:
                 raise e

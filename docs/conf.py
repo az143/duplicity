@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Configuration file for the Sphinx documentation builder.
 #
@@ -20,12 +20,15 @@ sys.path.insert(0, os.path.abspath(".."))
 # sys.path.insert(0, os.path.abspath("../testing"))
 # sys.path.insert(0, os.path.abspath("../tools"))
 
+from duplicity import __version__
 
 # -- Project information -----------------------------------------------------
 
 project = "duplicity"
 copyright = "2025, Duplicity Team"  # pylint: disable=redefined-builtin
 author = "Duplicity Team"
+version = f"{__version__}.split('.')[0:3]"
+release = f"{__version__}"
 
 
 # -- General configuration ---------------------------------------------------
@@ -36,9 +39,11 @@ author = "Duplicity Team"
 extensions = [
     "myst_parser",
     "sphinx.ext.autodoc",
+    "sphinx.ext.apidoc",
     "sphinx.ext.doctest",
     "sphinx.ext.todo",
     "sphinx.ext.viewcode",
+    "sphinx_rtd_dark_mode",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -75,7 +80,7 @@ master_doc = "index"
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = "sphinx_rtd_theme"
+html_theme = "sphinx_rtd_dark_mode"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -107,4 +112,4 @@ source_suffix = {
 # -- Options for todo extension ----------------------------------------------
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = True
+todo_include_todos = False

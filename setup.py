@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -25,12 +25,6 @@ import os
 import shutil
 import subprocess
 import sys
-import warnings
-
-warnings.filterwarnings("ignore", message="setup.py install is deprecated")
-warnings.filterwarnings("ignore", message="easy_install command is deprecated")
-warnings.filterwarnings("ignore", message="pyproject.toml does not contain a tool.setuptools_scm section")
-warnings.filterwarnings("ignore", message="Configuring installation scheme with distutils config files")
 
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
@@ -38,11 +32,11 @@ from setuptools.command.build_ext import build_ext
 # check that we can function here
 if os.environ.get("PYTEST_VERSION") is not None:
     pass
-elif not ((3, 9) <= sys.version_info[:2] <= (3, 14)):
-    print("Sorry, duplicity requires version 3.9 thru 3.14 of Python.", file=sys.stderr)
+elif not ((3, 10) <= sys.version_info[:2]):
+    print("Sorry, duplicity requires Python version 3.10.", file=sys.stderr)
     sys.exit(1)
 
-Version: str = "3.0.6.3"
+Version: str = "3.0.8.dev5"
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
 ext_modules = list()

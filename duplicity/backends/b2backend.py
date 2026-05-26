@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright (c) 2015 Matthew Bentley
 #
@@ -73,7 +73,8 @@ class B2Backend(duplicity.backend.Backend):
         try:  # figure out what version of b2sdk we have
             from b2sdk import __version__ as VERSION  # pylint: disable=import-error
 
-            v_split = VERSION.split(".")
+            v_public = VERSION.partition("+")[0]  # ignore local version identifier if present
+            v_split = v_public.split(".")
             self.v_num = [int(x) for x in v_split]
         except Exception as e:
             self.v_num = [0, 0, 0]

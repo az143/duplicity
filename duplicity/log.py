@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -40,7 +40,6 @@ MAX = 9
 PREFIX = ""
 
 _logger = None
-_log_timestamp = False
 
 
 def DupToLoggerLevel(verb):
@@ -321,7 +320,6 @@ def setup():
     Initialize logging
     """
     global _logger
-    global _log_timestamp
     if _logger:
         return
 
@@ -333,18 +331,12 @@ def setup():
 
     # stdout and stderr are for different logging levels
     outHandler = logging.StreamHandler(sys.stdout)
-    if _log_timestamp:
-        outHandler.setFormatter(DetailFormatter())
-    else:
-        outHandler.setFormatter(PrettyProgressFormatter())
+    outHandler.setFormatter(PrettyProgressFormatter())
     outHandler.addFilter(OutFilter())
     _logger.addHandler(outHandler)
 
     errHandler = logging.StreamHandler(sys.stderr)
-    if _log_timestamp:
-        errHandler.setFormatter(DetailFormatter())
-    else:
-        errHandler.setFormatter(PrettyProgressFormatter())
+    errHandler.setFormatter(PrettyProgressFormatter())
     errHandler.addFilter(ErrFilter())
     _logger.addHandler(errHandler)
 
@@ -388,7 +380,7 @@ class DetailFormatter(logging.Formatter):
         # standard 'levelname'.  This is because the standard 'levelname' can
         # be adjusted by any library anywhere in our stack without us knowing.
         # But we control 'levelName'.
-        logging.Formatter.__init__(self, "%(asctime)s %(levelName)s %(message)s")
+        logging.Formatter.__init__(self, "%(asctime)s %(levelName)-6s %(message)s")
 
     def format(self, record):
         s = logging.Formatter.format(self, record)
@@ -450,6 +442,28 @@ def add_file(filename):
     handler.setFormatter(MachineFormatter())
     handler.addFilter(MachineFilter())
     _logger.addHandler(handler)
+
+
+def add_timestamp():
+    """
+    Add timestamp to logs written
+    """
+    global _logger
+
+    # remove all handlers
+    for handler in _logger.handlers[:]:
+        _logger.removeHandler(handler)
+
+    # stdout and stderr are for different logging levels
+    outHandler = logging.StreamHandler(sys.stdout)
+    outHandler.setFormatter(DetailFormatter())
+    outHandler.addFilter(OutFilter())
+    _logger.addHandler(outHandler)
+
+    errHandler = logging.StreamHandler(sys.stderr)
+    errHandler.setFormatter(DetailFormatter())
+    errHandler.addFilter(ErrFilter())
+    _logger.addHandler(errHandler)
 
 
 def setverbosity(verb):

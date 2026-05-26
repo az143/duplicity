@@ -7,7 +7,6 @@ import re
 from pprint import pprint as print
 import matplotlib.pyplot as plt
 
-
 DEST_DIR = "/tmp/back-cc-test"
 
 stats = {}

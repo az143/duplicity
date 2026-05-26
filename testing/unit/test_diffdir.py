@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -72,7 +72,7 @@ class DDTest(UnitTestCase):
         select2 = selection.Select(Path(dirname))
         select2.set_iter()
         diffdir.write_block_iter(
-            diffdir.DirDelta(select2, sigtar_fp),
+            diffdir.DirDelta_WriteSig(select2, sigtar_fp, None),
             f"{_runtest_dir}/testfiles/output/difftar",
         )
 
@@ -98,7 +98,7 @@ class DDTest(UnitTestCase):
         select2 = selection.Select(Path(f"{_runtest_dir}/testfiles/various_file_types"))
         select2.set_iter()
         diffdir.write_block_iter(
-            diffdir.DirDelta(select2, sigtar_fp),
+            diffdir.DirDelta_WriteSig(select2, sigtar_fp, None),
             f"{_runtest_dir}/testfiles/output/difftar",
         )
 
@@ -119,7 +119,7 @@ class DDTest(UnitTestCase):
 
         sigtar_fp = open(f"{_runtest_dir}/testfiles/output/dir1.sigtar", "rb")
         sel2 = selection.Select(Path(f"{_runtest_dir}/testfiles/dir2"))
-        delta_tar = diffdir.DirDelta(sel2.set_iter(), sigtar_fp)
+        delta_tar = diffdir.DirDelta_WriteSig(sel2.set_iter(), sigtar_fp, None)
         diffdir.write_block_iter(delta_tar, f"{_runtest_dir}/testfiles/output/dir1dir2.difftar")
 
         changed_files = [
@@ -147,7 +147,7 @@ class DDTest(UnitTestCase):
 
         sigtar_fp = open(f"{_runtest_dir}/testfiles/output/dir2.sigtar", "rb")
         sel2 = selection.Select(Path(f"{_runtest_dir}/testfiles/dir3"))
-        delta_tar = diffdir.DirDelta(sel2.set_iter(), sigtar_fp)
+        delta_tar = diffdir.DirDelta_WriteSig(sel2.set_iter(), sigtar_fp, None)
         diffdir.write_block_iter(delta_tar, f"{_runtest_dir}/testfiles/output/dir2dir3.difftar")
 
         buffer = b""
@@ -199,7 +199,9 @@ class DDTest(UnitTestCase):
             incsig = Path(f"{_runtest_dir}/testfiles/output/incsig." + dirname)
 
             # Write old-style delta to deltadir1
-            diffdir.write_block_iter(diffdir.DirDelta(get_sel(cur_dir), old_full_sigs.open("rb")), delta1)
+            diffdir.write_block_iter(
+                diffdir.DirDelta_WriteSig(get_sel(cur_dir), old_full_sigs.open("rb"), None), delta1
+            )
 
             # Write new signature and delta to deltadir2 and sigdir2, compare
             block_iter = diffdir.DirDelta_WriteSig(

@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -69,9 +69,7 @@ class StatsObjTest(UnitTestCase):
 
         self.set_obj(s)
         stats_string = s.get_stats_string()
-        assert (
-            stats_string
-            == """\
+        assert stats_string == """\
 StartTime 13.00 (Thu Jan  1 00:00:13 1970)
 EndTime 14.00 (Thu Jan  1 00:00:14 1970)
 ElapsedTime 1.00 (1 second)
@@ -86,8 +84,7 @@ ChangedDeltaSize 9 (9 bytes)
 DeltaEntries 10
 RawDeltaSize 11 (11 bytes)
 TotalDestinationSizeChange 12 (12 bytes)
-"""
-        ), f"'{stats_string}'"
+""", f"'{stats_string}'"
 
     def test_line_string(self):
         """Test conversion to a single line"""

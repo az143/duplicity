@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -21,7 +21,7 @@
 
 import gettext
 
-__version__: str = "3.0.6.3"
-__reldate__: str = "December 05, 2025"
+__version__: str = "3.0.8.dev5"
+__reldate__: str = "May 12, 2026"
 
 gettext.install("duplicity", names=["ngettext"])

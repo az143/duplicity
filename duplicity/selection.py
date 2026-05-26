@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -258,31 +258,21 @@ class Select(object):
         # Sanity checks on --filter-* options for the benefit of users
         if argtuples and argtuples[-1][0].startswith("--filter-"):
             log.FatalError(
-                dedent(
-                    _(
-                        """\
+                dedent(_("""\
                 The last file selection option is the filter option %s, which will have no
                 effect as there are no subsequent file selection options. Exiting because
-                this probably isn't what you meant."""
-                    )
-                )
-                % (argtuples[-1][0],),
+                this probably isn't what you meant.""")) % (argtuples[-1][0],),
                 log.ErrorCode.trailing_filter,
             )
         f_opt = set(opt[0] for opt in argtuples if opt[0].startswith("--filter-"))
         f_def = ("--filter-globbing", "--filter-strictcase")
         if f_opt and all(opt in f_def for opt in f_opt):
             log.FatalError(
-                dedent(
-                    _(
-                        """\
+                dedent(_("""\
                 Only these filter mode options were specified:
                     %s
                 Case sensitive globbing is the default behaviour and so this has no effect.
-                Exiting because this probably isn't what you meant."""
-                    )
-                )
-                % (", ".join(f_opt),),
+                Exiting because this probably isn't what you meant.""")) % (", ".join(f_opt),),
                 log.ErrorCode.redundant_filter,
             )
 
@@ -341,18 +331,13 @@ class Select(object):
         # Internal, used by ParseArgs.
         if isinstance(exc, FilePrefixError):
             log.FatalError(
-                dedent(
-                    _(
-                        """\
+                dedent(_("""\
                 Fatal Error: The file specification
                     %s
                 cannot match any files in the base directory
                     %s
                 Useful file specifications begin with the base directory or some
-                pattern (such as '**') which matches the base directory."""
-                    )
-                )
-                % (exc, self.prefix),
+                pattern (such as '**') which matches the base directory.""")) % (exc, self.prefix),
                 log.ErrorCode.file_prefix_error,
             )
         elif isinstance(exc, GlobbingError):
@@ -402,28 +387,19 @@ class Select(object):
 
         if absolute_path:
             log.FatalError(
-                dedent(
-                    _(
-                        """\
+                dedent(_("""\
                 Files-from list contains the absolute path:
                     %s
                 All paths specified in a files-from list must be given relative to the backup
-                source path."""
-                    )
-                )
-                % (absolute_path,),
+                source path.""")) % (absolute_path,),
                 log.ErrorCode.absolute_files_from,
             )
 
         if not filelist:
             log.FatalError(
-                dedent(
-                    _(
-                        """\
+                dedent(_("""\
                 Files-from list specified which contains no files, the backup will be empty as
-                a result. Exiting as this probably isn't what you meant,"""
-                    )
-                ),
+                a result. Exiting as this probably isn't what you meant,""")),
                 log.ErrorCode.empty_files_from,
             )
 
@@ -434,17 +410,12 @@ class Select(object):
         # Internal. Used by ParseArgs.
         if self.selection_functions and not self.selection_functions[-1].exclude:
             log.FatalError(
-                dedent(
-                    _(
-                        """\
+                dedent(_("""\
                 Last selection expression:
                     %s
                 only specifies that files be included.  Because the default is to
                 include all files, the expression is redundant.  Exiting because this
-                probably isn't what you meant."""
-                    )
-                )
-                % (self.selection_functions[-1].name,),
+                probably isn't what you meant.""")) % (self.selection_functions[-1].name,),
                 log.ErrorCode.redundant_inclusion,
             )
 

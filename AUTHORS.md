@@ -32,7 +32,7 @@ Duplicity Authors
 - Stefan Breunig <stefan-duplicity@breunig.xyz>
 - Steve Tynor <steve.tynor@gmail.com>
 - Thomas Harning Jr <harningt@gmail.com>
-- Thomas Laubrock
+- Thomas Laubrock <duplicity-talk@schmu.net>
 - Tomas Vondra (Launchpad id: tomas-v)
 - Xavier Lucas <xavier.lucas@corp.ovh.com>
 - Yigal Asnis

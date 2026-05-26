@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2009 Eric EJ Johnson
 #
@@ -39,10 +39,8 @@ class CloudFilesBackend(duplicity.backend.Backend):
             from cloudfiles import consts
             from cloudfiles.errors import NoSuchObject
         except ImportError as e:
-            raise BackendException(
-                f"""Cloudfiles backend requires the cloudfiles library available from Rackspace.
-Exception: {str(e)}"""
-            )
+            raise BackendException(f"""Cloudfiles backend requires the cloudfiles library available from Rackspace.
+Exception: {str(e)}""")
 
         self.resp_exc = ResponseError
         conn_kwargs = {}

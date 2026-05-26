@@ -1,8 +1,54 @@
 
-(Unreleased) / 2025-12-05
+(Unreleased) / 2026-05-12
 =========================
 
 
+
+rel.3.0.8.dev5 / 2026-05-12
+===========================
+
+ * 3997156c:chg: Update README-RELEASE.md.
+ * 0f5430db:fix: Fix so GNUPGHOME is not changed in production.
+ * 53cc9659:fix: lower boto warning log level, rephrase.
+ * 88bfc75e:chg: Misc cleanups for developers
+ * 4b0bb8d5:chg: Update 'release pip version' in README-RELEASE.md.
+
+rel.3.0.8.dev4 / 2026-03-31
+===========================
+
+ * c17b03bc:fix: try/except block masking real S3UploadFailedError
+ * db127ce5:new: Add --full-if-n-inc flag for count-based full backup.
+ * dc977419:fix: Simplify swig module definition.
+ * 0de30e69:chg: Adjust to newer sphinx.
+ * c1883117:fix: Add templates for bug and feature requests.
+ * 39150d34:fix: delete unused Path.patch_with_attribs.
+ * 1a7c6790:fix: Remove support for Python 2.
+ * 564dd593:fix: fix flag name --gpg-agent -> --use-agent.
+ * 866680d0:chg: Multiple changes for 2026 are planned
+ * 29e00b55:fix: Fix incompatibility with Python 3.14.
+ * 50faabfc:chg: Partial fix for #924.
+ * 00ae7687:fix: webdav, always send warmup OPTIONS request, prevent loop
+ * 37841a0e:fix: Handle local version identifiers in b2backend
+
+rel.3.0.8.dev3 / 2026-01-14
+===========================
+
+ * 3475dd05:fix: Unnecessary passphrase prompt with --encrypt-key --no-check-remote.
+ * b8508f6d:chg: Remove slow marker from tests.
+
+rel.3.0.8.dev2 / 2026-01-14
+===========================
+
+
+rel.3.0.7 / 2025-12-31
+======================
+
+ * ad175c22:fix: replace custom deltree with built-in shutil.rmtree.
+ * 101be7fd:fix: delete duplicate code in DirDelta.
+ * c0d3e72d:fix: webdavs with "--concurrency 1" failed because of missing auth header
+ * a08f8bef:fix: disable s3 checksum workaround, warn only...
+ * f7055a7a:fix: --log-timestamp no longer working.
+ * ac163d5e:fix: Combined fix to related issues 912 and 914
 
 rel.3.0.6.3 / 2025-12-05
 ========================

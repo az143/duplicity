@@ -1,6 +1,6 @@
 [project]
 name = "duplicity"
-version = "3.0.6.3"
+version = "3.0.8.dev5"
 dynamic = ["dependencies"]
 description = "Encrypted backup using rsync algorithm"
 authors = [
@@ -11,7 +11,7 @@ maintainers = [
     { name = "Thomas Laubrock" },
 ]
 readme = { file = "README.md", content-type = "text/markdown" }
-requires-python = "> 3.8, < 3.15"
+requires-python = ">=3.10"
 # not all LP builders will take license=
 #license = "GPL-2.0-or-later"
 classifiers = [
@@ -21,7 +21,6 @@ classifiers = [
     "Operating System :: POSIX",
     "Programming Language :: C",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -93,7 +92,6 @@ exclude = [
 [tool.black]
 line-length = 120
 target-version = [
-    "py39",
     "py310",
     "py311",
     "py312",
@@ -106,17 +104,13 @@ target-version = [
 line-length = 120
 dry-run = true
 aggressive = true
+transform-concats = true
 transform-joins = true
 # TODO: Remove duplicity.argparse311 when py310 goes EOL
 exclude = ["argparse311"]
 
 
 [tool.pytest.ini_options]
-filterwarnings = [
-    "ignore:.*use of fork\\(\\).*:DeprecationWarning",
-    "ignore:.*ssl.PROTOCOL_TLS is deprecated.*:DeprecationWarning",
-    "ignore:.*pkg_resources.*:DeprecationWarning",
-]
 addopts = [
     "--capture=fd",
     "--failed-first",
@@ -125,9 +119,6 @@ addopts = [
     "-p no:hypothesis",
     "-p no:randomly",
     "-p no:xdist",
-]
-markers = [
-    "slow: test runs >= 10 secs",
 ]
 testpaths = [
     "testing/test_code.py",
@@ -157,39 +148,39 @@ archs = [
     "aarch64",
 ]
 build = [
-    "cp{39,310,311,312,313,314}-manylinux_aarch64",
-    "cp{39,310,311,312,313,314}-manylinux_x86_64",
+    "cp{310,311,312,313,314}-manylinux_aarch64",
+    "cp{310,311,312,313,314}-manylinux_x86_64",
 ]
 
 
 [tool.pylint]
-jobs = 8
+jobs = 0
 errors-only = "yes"
 ignore = "_librsync.so"
 msg-template = '{path}:{line}: [{msg_id}({symbol}), {obj}] {msg}'
 disable = [
-        "C",
-        "R",
-        "invalid-name",
-        "line-too-long",
-        "missing-function-docstring",
-        "missing-module-docstring",
-        "no-member",
-        "no-name-in-module",
-        "not-callable",
-        "possibly-used-before-assignment",
-        "raise-missing-from",
-        "unexpected-keyword-arg",
-        "undefined-variable",
-        "wrong-import-order",
-        "wrong-import-position",
+    "C",
+    "R",
+    "invalid-name",
+    "line-too-long",
+    "missing-function-docstring",
+    "missing-module-docstring",
+    "no-member",
+    "no-name-in-module",
+    "not-callable",
+    "possibly-used-before-assignment",
+    "raise-missing-from",
+    "unexpected-keyword-arg",
+    "undefined-variable",
+    "wrong-import-order",
+    "wrong-import-position",
 ]
 enable = [
-        "unused-argument",
-        "access-member-before-definition",
-        "unused-wildcard-import",
-        "redefined-builtin",
-        "bad-indentation",
-        "mixed-indentation",
-        "unreachable",
+    "unused-argument",
+    "access-member-before-definition",
+    "unused-wildcard-import",
+    "redefined-builtin",
+    "bad-indentation",
+    "mixed-indentation",
+    "unreachable",
 ]

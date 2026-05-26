@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2022 Kenneth Loafman
 #
@@ -173,37 +173,23 @@ def parse_cmdline_options(arglist):
     for opt in remainder:
         if opt.startswith("-"):
             if opt in changed_options:
-                command_line_error(
-                    dedent(
-                        f"""\
+                command_line_error(dedent(f"""\
                         Option '{opt} was changed in 2.0.0.
                             --file-to-restore to --path-to-restore
                             --do-not-restore-ownership to --no-restore-ownership
-                            """
-                    )
-                )
+                            """))
             elif opt in removed_options:
                 removed_commands_string = "\n".join(f"    {c}" for c in sorted(removed_options))
-                command_line_error(
-                    dedent(
-                        f"""\
+                command_line_error(dedent(f"""\
                         Option '{opt}' was removed in 2.0.0.
                         The following options were deprecated and removed in 2.0.0
-                        """
-                    )
-                    + f"{removed_commands_string}"
-                )
+                        """) + f"{removed_commands_string}")
             elif opt in removed_backup_options and args.action in ("backup", "full", "incremental"):
                 removed_commands_string = "\n".join(f"    {c}" for c in sorted(removed_backup_options))
-                command_line_error(
-                    dedent(
-                        f"""\
+                command_line_error(dedent(f"""\
                         Option '{opt}' was removed for backup actions in 2.0.0.
                         The following options were deprecated and removed in 2.0.0
-                        """
-                    )
-                    + f"{removed_commands_string}"
-                )
+                        """) + f"{removed_commands_string}")
 
     # check for proper action
     if remainder and remainder[0] in all_commands:
@@ -280,7 +266,7 @@ def process_command_line(cmdline_list):
         and len(config.gpg_profile.hidden_recipients) == 0
     ):
         log.Warn(
-            "Option --gpg-agent is unsafe with symmetric encryption.\n"
+            "Option --use-agent is unsafe with symmetric encryption.\n"
             "Refer to https://gitlab.com/duplicity/duplicity/-/issues/799 for more information."
         )
 

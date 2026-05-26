@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -33,7 +33,6 @@ class CleanupTest(FunctionalTestCase):
     Test cleanup using duplicity binary
     """
 
-    @pytest.mark.slow
     def test_cleanup_after_partial(self):
         """
         Regression test for https://bugs.launchpad.net/bugs/409593

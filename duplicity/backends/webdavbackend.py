@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2002 Ben Escoto
 # Copyright 2007 Kenneth Loafman
@@ -191,19 +191,18 @@ class WebDAVBackend(duplicity.backend.Backend):
         else:
             raise FatalBackendException(_("WebDAV Unknown URI scheme: %s") % self.parsed_url.scheme)
 
-        if self.username or self.password:
-            # Workaround cpython http.client issue
-            # https://github.com/python/cpython/issues/70107
-            self.conn.request("OPTIONS", self.directory, None)
-            response = self.conn.getresponse()
-            response.read()
-            response.close()
+        # Workaround cpython http.client issue
+        # https://github.com/python/cpython/issues/70107
+        # PUT may not return a proper error when ran as first request but throw SSL-EOF-Error or hang
+        # as a workaround we run an OPTIONS request to make sure that PUT is never the first request
+        response = self.request("OPTIONS", self.directory, None, connect=False)
+        response.close()
 
     def _close(self):
         if self.conn:
             self.conn.close()
 
-    def request(self, method, path, data=None, redirected=0):
+    def request(self, method, path, data=None, redirected=0, connect=True):
         """
         Wraps the connection.request method to retry once if authentication is
         required
@@ -220,12 +219,15 @@ class WebDAVBackend(duplicity.backend.Backend):
             return headers_copy
 
         self._close()  # or we get previous request's data or exception
-        self.connect()
+        if connect:
+            self.connect()
 
         quoted_path = urllib.parse.quote(path, "/:~")
 
         if self.digest_challenge is not None:
             self.headers["Authorization"] = self.get_digest_authorization(path)
+        elif self.username or self.password:
+            self.headers["Authorization"] = self.get_basic_authorization()
 
         log.Debug(_("WebDAV %s %s request with headers: %s ") % (method, quoted_path, munge_headers(self.headers)))
         log.Debug(_("WebDAV data length: %s ") % sys.getsizeof(data))
@@ -245,6 +247,7 @@ class WebDAVBackend(duplicity.backend.Backend):
                 return self.request(method, self.directory, data, redirected + 1)
             else:
                 raise FatalBackendException(_("WebDAV missing location header in redirect response."))
+        # mainly for digest-auth to recalculate with response values
         elif response.status == 401:
             response.read()
             response.close()
@@ -271,21 +274,12 @@ class WebDAVBackend(duplicity.backend.Backend):
             try:
                 return self.get_kerberos_authorization()
             except ImportError:
-                log.Warn(
-                    _(
-                        "python-kerberos needed to use kerberos \
-                          authorization, falling back to basic auth."
-                    )
-                )
+                log.Warn(_("python-kerberos needed to use kerberos \
+                          authorization, falling back to basic auth."))
                 return self.get_basic_authorization()
             except Exception as e:
-                log.Warn(
-                    _(
-                        "Kerberos authorization failed: %s.\
-                          Falling back to basic auth."
-                    )
-                    % e
-                )
+                log.Warn(_("Kerberos authorization failed: %s.\
+                          Falling back to basic auth.") % e)
                 return self.get_basic_authorization()
         elif token.lower() == "basic":
             return self.get_basic_authorization()

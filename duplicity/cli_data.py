@@ -1,4 +1,4 @@
-# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; encoding:utf-8 -*-
+# -*- Mode:Python; indent-tabs-mode:nil; tab-width:4; coding:utf-8 -*-
 #
 # Copyright 2022 Kenneth Loafman
 #
@@ -354,6 +354,12 @@ OptionKwargs = dict(
         help="Perform full backup if last full is older than 'time'",
         default=dflt(config.full_if_older_than),
     ),
+    full_if_n_inc=dict(
+        metavar=_("number"),
+        type=int,
+        help="Perform full backup if latest chain has N or more incremental backups",
+        default=dflt(config.full_if_n_inc),
+    ),
     gpg_binary=dict(
         metavar=_("path"),
         type=check_file,
@@ -446,9 +452,9 @@ OptionKwargs = dict(
         type=set_log_file,
         help="Logging filename to use",
     ),
-    # log_timestamp is directly applied in SetLogTimestampAction(), not saved in config
+    # log_timestamp is directly applied in set_log_timestamp(), not saved in config
     log_timestamp=dict(
-        dest="",
+        nargs=0,
         action=SetLogTimestampAction,
         help="Whether to include timestamp and level in log",
         default=dflt(False),
@@ -996,9 +1002,7 @@ trans = {
     "remote": _("remote"),
 }
 
-help_url_formats = (
-    _("Backends and their URL formats:")
-    + f"""
+help_url_formats = _("Backends and their URL formats:") + f"""
   azure://{trans['container_name']}
   b2://{trans['account_id']}[:{trans['application_key']}]@{trans['bucket_name']}/[{trans['some_dir']}/]
   boto3+s3://{trans['bucket_name']}[/{trans['prefix']}]
@@ -1033,4 +1037,3 @@ help_url_formats = (
   webdav://{trans['user']}[:{trans['password']}]@{trans['other_host']}/{trans['some_dir']}
   webdavs://{trans['user']}[:{trans['password']}]@{trans['other_host']}/{trans['some_dir']}
 """
-)
