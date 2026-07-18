@@ -1,11 +1,11 @@
 --- a/requirements.txt
 +++ b/requirements.txt
-@@ -3,31 +3,32 @@
+@@ -3,30 +3,30 @@
  
  fasteners>=0.19
  python-gettext>=5.0
 -setuptools>=78.1.0
-+#setuptools>=78.1.0
++# setuptools>=78.1.0
  
  ##### backend libraries #####
  
@@ -31,12 +31,11 @@
 -pysocks  # optional httplib2 dep, needed for proxy support
 -jottalib
 -keyring
+-mediafire
+-megatools
 +#pysocks  # optional httplib2 dep, needed for proxy support
 +#jottalib
 +#keyring
- lxml
--mediafire
--megatools
 +#mediafire
 +#megatools
  paramiko
@@ -51,4 +50,3 @@
  requests
 -requests-oauthlib
 +#requests-oauthlib
-+

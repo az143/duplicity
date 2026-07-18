@@ -35,3 +35,4 @@ testing/gnupg/.gpg-v21-migrated
 testing/gnupg/random_seed
 venv*/
 wheelhouse/
+.pc

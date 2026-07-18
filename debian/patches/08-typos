@@ -8,7 +8,7 @@ Subject: typos
 
 --- a/man/duplicity.1
 +++ b/man/duplicity.1
-@@ -373,8 +373,8 @@ Alternatively you might choose
+@@ -384,8 +384,8 @@ Alternatively you might choose
  .TP
  .BI "--concurrency " number
  Give the number of background process that should be use to run concurrent
@@ -19,7 +19,7 @@ Subject: typos
  The intended end-result is a faster backup, because the local
  CPU and your bandwidth can be more consistently utilized. Use of this
  option implies additional need for disk space in the temporary storage
-@@ -723,10 +723,10 @@ section for more information.
+@@ -734,10 +734,10 @@ section for more information.
  .TP
  .BI --jsonstat
  Record statistic data similar to the default stats printed at the end of a
@@ -32,7 +32,7 @@ Subject: typos
  "jsonstat" as extension.
  .B collection-status --show-changes-in-set <index> --jsonstat
  adds data collected in the backup job and switch the output format to json.
-@@ -1833,7 +1833,7 @@ If the pattern starts with "ignorecase:"
+@@ -1863,7 +1863,7 @@ If the pattern starts with "ignorecase:"
  this prefix will be removed and any character in the string can be
  replaced with an upper- or lowercase version of itself. This prefix is a
  legacy feature supported for shell globbing selection conditions only,
