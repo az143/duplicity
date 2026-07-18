@@ -1,6 +1,6 @@
 name: duplicity
-version: 3.0.8.dev5
-license: GPL-2.0
+version: 3.1.0
+license: GPL-2.0-or-later
 summary: Efficient, encrypted backup to local or remote hosts
 description: |
   Duplicity backs directories by producing encrypted tar-format volumes and uploading
@@ -9,6 +9,7 @@ description: |
   the last backup. Because duplicity uses GnuPG to encrypt and/or sign these archives,
   they will be safe from spying and/or modification by the server.
 
+type: app
 grade: stable
 confinement: classic
 base: core24
@@ -22,7 +23,7 @@ apps:
         command: bin/duplicity-launcher.sh
     # the following two debug apps allow printing env in snap for debug purposes,
     # to help pinning snap startup issues (missing libs, _rsync module ...)
-    # duplity.debug : unmodified PATH/PYTHONPATH
+    # duplicity.debug : unmodified PATH/PYTHONPATH
     debug:
         command: bin/duplicity-launcher.sh
         environment:
@@ -133,4 +134,3 @@ parts:
             - libxslt1.1
         build-attributes:
             - enable-patchelf
-

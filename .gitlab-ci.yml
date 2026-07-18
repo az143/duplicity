@@ -163,7 +163,7 @@ website:
 
 # run cibuildwheel for all pythons and arches we support
 # see config in pyproject.toml
-wheels:
+wheels-linux:
     stage: deploy
     when: manual
     image: python:3.13
@@ -183,6 +183,7 @@ wheels:
     script:
         # install cibuildwheel and build wheels
         - curl -sSL https://get.docker.com/ | sh
+        - python -m pip install --upgrade pip
         - python -m pip install cibuildwheel>=3.1.4
         - cibuildwheel --output-dir wheelhouse --platform linux
         - python -m pip install build
@@ -192,7 +193,44 @@ wheels:
         - python -m pip install twine
         - resp="$(curl -X POST "https://pypi.org/_/oidc/mint-token" -d "{\"token\":\"${PYPI_ID_TOKEN}\"}")"
         - publish_token="$(python -c "import json; print(json.loads('${resp}')['token'])")"
-        - TWINE_USERNAME=__token__ TWINE_PASSWORD=${publish_token} twine upload --skip-existing wheelhouse/*
+        - TWINE_USERNAME=__token__ TWINE_PASSWORD=${publish_token} python -m twine upload --skip-existing wheelhouse/*
+    artifacts:
+        paths:
+            - wheelhouse/
+
+# run cibuildwheel for all pythons and arches we support
+# see config in pyproject.toml
+wheels-macos:
+    stage: deploy
+    when: manual
+    tags: [saas-macos-medium-m1]
+    image: macos-26-xcode-26
+    # make a docker daemon available for cibuildwheel to use
+    services:
+        - name: docker:dind
+          entrypoint: ["env", "-u", "DOCKER_HOST"]
+          command: ["dockerd-entrypoint.sh"]
+    variables:
+        DOCKER_HOST: tcp://docker:2375/
+        DOCKER_DRIVER: overlay2
+        # See https://github.com/docker-library/docker/pull/166
+        DOCKER_TLS_CERTDIR: ""
+    id_tokens:
+        PYPI_ID_TOKEN:
+            aud: pypi
+    script:
+        # install cibuildwheel and build wheels
+        - python -m pip install --upgrade pip
+        - python -m pip install cibuildwheel>=3.1.4
+        - python -m cibuildwheel --output-dir wheelhouse --platform macos
+        - python -m pip install build
+        - brew update ; brew install intltool python@3.13
+        - python -m build --sdist --outdir wheelhouse .
+        # upload to pypi
+        - python -m pip install twine
+        - resp="$(curl -X POST "https://pypi.org/_/oidc/mint-token" -d "{\"token\":\"${PYPI_ID_TOKEN}\"}")"
+        - publish_token="$(python -c "import json; print(json.loads('${resp}')['token'])")"
+        - TWINE_USERNAME=__token__ TWINE_PASSWORD=${publish_token} python -m twine upload --skip-existing wheelhouse/*
     artifacts:
         paths:
             - wheelhouse/

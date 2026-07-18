@@ -1,8 +1,18 @@
 
-(Unreleased) / 2026-05-12
-=========================
+rel.3.1.0 / 2026-06-16
+======================
 
+ * 821a8cda:chg: Merge branch dev into main.
+ * eeb5d106:chg: Replace setup.py with modern python-build for sdist
 
+rel.3.1.0.dev0 / 2026-06-04
+===========================
+
+ * 5c4cdc2f:new: Now do pip builds for macOS and Linux
+ * 0140a374:new: Add include/exclude restore filtering using archive-relative paths
+ * 46a4796b:chg: Update snapcraft.yaml for license, type, and typo fixes.
+ * 143373b8:chg: Use `--build-on` for snapcraft remote-build.
+ * 182d6e33:chg: Use `python3 -m build` for sdist in release-prep.
 
 rel.3.0.8.dev5 / 2026-05-12
 ===========================

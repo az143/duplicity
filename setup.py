@@ -32,11 +32,13 @@ from setuptools.command.build_ext import build_ext
 # check that we can function here
 if os.environ.get("PYTEST_VERSION") is not None:
     pass
-elif not ((3, 10) <= sys.version_info[:2]):
-    print("Sorry, duplicity requires Python version 3.10.", file=sys.stderr)
+elif os.environ.get("CIBUILDWHEEL") is not None:
+    pass
+elif not ((3, 10) <= sys.version_info[:2] <= (3, 14)):
+    print("Sorry, duplicity requires Python version 3.10 thru 3.14.", file=sys.stderr)
     sys.exit(1)
 
-Version: str = "3.0.8.dev5"
+Version: str = "3.1.0"
 
 # READTHEDOCS uses setup.py sdist but can't handle extensions
 ext_modules = list()

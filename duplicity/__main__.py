@@ -62,8 +62,10 @@ def dup_run():
     # check that we can function here
     if os.environ.get("PYTEST_VERSION") is not None:
         pass
-    elif not ((3, 9) <= sys.version_info[:2] <= (3, 14)):
-        print("Sorry, duplicity requires version 3.9 thru 3.14 of Python.", file=sys.stderr)
+    elif os.environ.get("CIBUILDWHEEL") is not None:
+        pass
+    elif not ((3, 10) <= sys.version_info[:2] <= (3, 14)):
+        print("Sorry, duplicity requires Python version 3.10 thru 3.14.", file=sys.stderr)
         sys.exit(1)
 
     try:

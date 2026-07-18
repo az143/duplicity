@@ -20,7 +20,6 @@ httplib2
 pysocks  # optional httplib2 dep, needed for proxy support
 jottalib
 keyring
-lxml
 mediafire
 megatools
 paramiko

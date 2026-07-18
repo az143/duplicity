@@ -1,6 +1,6 @@
 [project]
 name = "duplicity"
-version = "3.0.8.dev5"
+version = "3.1.0"
 dynamic = ["dependencies"]
 description = "Encrypted backup using rsync algorithm"
 authors = [
@@ -128,14 +128,16 @@ testpaths = [
 
 
 [tool.cibuildwheel]
-
-before-all = [
-    # WARNING: wheel builds are RedHat based, not Debian.
-    "yum update -y",
-    "yum install -y gcc gcc-c++ make git intltool librsync-devel",
-    "yum install -y libffi-devel openssl-devel openssl tzdata",
-    "yum install -y libxml2-devel libxslt-devel",
-    "python -m pip install -q -r requirements.txt",
+before-build = [
+    # Clean up stale build folders and old egg-info before compiling each wheel
+    # to build_ext with proper python version.  Build any extensions needed.
+    # make sure we build_ext with the current python
+    "rm -rf build/ *.egg-info",
+    "rm -rf .setuptools-cmake-build _skbuild",
+    # install all the python requirements but not lxml
+    "python -m pip install -q --upgrade pip",
+    "grep -v lxml requirements.txt > requirements.whl",
+    "python -m pip install -q -r requirements.whl",
     "python ./setup.py build_ext",
 ]
 
@@ -143,13 +145,44 @@ before-all = [
 build-option = "--use-pep517"
 
 [tool.cibuildwheel.linux]
+before-all = [
+    # WARNING: wheel builds are RedHat-based, not Debian.
+    "yum update -y",
+    "yum install -y gcc gcc-c++ make git intltool librsync-devel",
+    "yum install -y libffi-devel openssl-devel openssl tzdata",
+    "yum install -y libxml2-devel libxslt-devel python3-lxml",
+]
 archs = [
-    "x86_64",
     "aarch64",
+#    "armv7l",  # is 32-bit
+#    "ppc64le",  # lxml build fails
+#    "riscv64",  # no librsync-devel
+#    "s390x",  # lxml build fails
+    "x86_64",
 ]
 build = [
     "cp{310,311,312,313,314}-manylinux_aarch64",
+#    "cp{310,311,312,313,314}-manylinux_armv7l",  # is 32-bit
+#    "cp{310,311,312,313,314}-manylinux_ppc64le",  # lxml build fails
+#    "cp{310,311,312,313,314}-manylinux_riscv64",  # no librsync-devel
+#    "cp{310,311,312,313,314}-manylinux_s390x",  # lxml build fails
     "cp{310,311,312,313,314}-manylinux_x86_64",
+]
+
+[tool.cibuildwheel.macos]
+environment = "LIBRSYNC_DIR=$HOMEBREW_PREFIX MACOSX_DEPLOYMENT_TARGET=26.0"
+before-all = [
+    # install packages using homebrew
+    "echo $LIBRSYNC_DIR",
+    "brew install cmake intltool librsync",
+]
+archs = [
+    "arm64",
+    "x86_64",
+]
+build = [
+    "cp{310,311,312,313,314}-macosx_arm64",
+    "cp{310,311,312,313,314}-macosx_x86_64",
 ]
 
 

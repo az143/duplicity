@@ -57,6 +57,7 @@ from duplicity import (
     patchdir,
     path,
     progress,
+    selection,
     tempdir,
     util,
 )
@@ -908,6 +909,9 @@ def restore_get_patched_rop_iter(col_stats):
         f"available chains: {col_stats.all_backup_chains}"
     )
     backup_setlist = backup_chain.get_sets_at_time(time)
+    restore_selection = None
+    if config.action == "restore" and config.select_opts:
+        restore_selection = selection.get_restore_selection(config.select_opts, config.select_files)
     num_vols = 0
     for s in backup_setlist:
         num_vols += len(s)
@@ -957,7 +961,10 @@ def restore_get_patched_rop_iter(col_stats):
 
     fileobj_iters = list(map(get_fileobj_iter, backup_setlist))
     tarfiles = list(map(patchdir.TarFile_FromFileobjs, fileobj_iters))
-    return patchdir.tarfiles2rop_iter(tarfiles, index)
+    rop_iter = patchdir.tarfiles2rop_iter(tarfiles, index)
+    if restore_selection:
+        rop_iter = selection.filter_restore_path_iter(rop_iter, restore_selection)
+    return rop_iter
 
 
 def restore_get_enc_fileobj(backend, filename, volume_info):

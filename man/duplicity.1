@@ -1,4 +1,4 @@
-.TH DUPLICITY 1 "May 12, 2026" "Version 3.0.8.dev5" "User Manuals" \"  -*- nroff -*-
+.TH DUPLICITY 1 "June 16, 2026" "Version 3.1.0" "User Manuals" \"  -*- nroff -*-
 .\" disable justification (adjust text to left margin only)
 .\" command line examples stay readable through that
 .ad l
@@ -29,7 +29,7 @@ source_url target_directory
 target_url
 
 .B duplicity [restore]
-.I [options] [--path-to-restore <relpath>] [--time time]
+.I [options] [--path-to-restore <relpath> | file selection options] [--time time]
 source_url target_directory
 
 .B duplicity remove-older-than <time>
@@ -215,10 +215,21 @@ the other hand if the archive has been deleted or corrupted, this
 action will not detect it.
 
 .TP
-.BI "restore, rb " "[--path-to-restore <relpath>] [--time <time>] <url> <target_folder>"
+.BI "restore, rb " "[--path-to-restore <relpath> | file selection options] [--time <time>] <url> <target_folder>"
 You can restore the full monty or selected folders/files from a specific time.
 Use the relative path as it is printed by
 .BR list-current-files .
+.br
+For pattern-based restore filtering, file selection options such as
+.BR --include ,
+.BR --exclude ,
+.BR --include-regexp ,
+and
+.BR --exclude-regexp
+also match paths relative to the archive root, as printed by
+.BR list-current-files .
+These file selection options cannot be combined with
+.BR --path-to-restore .
 Usually not needed as duplicity enters restore mode when it detects that the URL
 comes before the local folder.
 
@@ -1658,6 +1669,25 @@ system, unless
 .B "--files-from"
 has been specified in which case the passed list of individual files
 is used instead.
+During restore, supported file selection options filter archive-relative
+paths, matching the names printed by
+.BR list-current-files ,
+and are mutually exclusive with
+.BR --path-to-restore .
+Restore file selection patterns must be relative to the archive root,
+may optionally start with
+.BR ./ ,
+and must not be absolute or contain
+.B .
+or
+.B ..
+path elements.
+Options requiring live source filesystem semantics, such as
+.BR --exclude-if-present ,
+.BR --exclude-other-filesystems ,
+and
+.BR --files-from ,
+are not supported during restore.
 
 The file selection system comprises a number of file
 selection conditions, which are set using one of the following command

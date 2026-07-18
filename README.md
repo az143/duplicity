@@ -15,6 +15,7 @@ sudo apt-get install -y \
         openssl \
         par2 \
         python3-dev \
+        python3-lxml \
         python3-pip \
         python3-venv \
         python3 \
@@ -42,7 +43,7 @@ packaging tools like this:
 ```shell
 sudo python3 -m pip install --upgrade pip pipx
 ````
-**NOTE: _Failure to upgrade will probably result in a failed install._  <--IMPORTANT!**  
+**NOTE: _Failure to upgrade will probably result in a failed install._  ←IMPORTANT!**  
 
 To make sure the pipx dirs are on your path do:
 ```shell

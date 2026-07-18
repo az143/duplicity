@@ -33,4 +33,4 @@ else
 fi
 
 # build snap via remote build on LP
-snapcraft remote-build --build-for=${BUILD} --launchpad-accept-public-upload
+snapcraft remote-build --build-on=${BUILD} --launchpad-accept-public-upload

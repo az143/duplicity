@@ -320,6 +320,24 @@ def process_command_line(cmdline_list):
     # count is only used by the remove-* commands
     config.keep_chains = config.count
 
+    # restore selection uses archive-relative paths and is applied while restoring
+    if config.action == "restore" and config.select_opts:
+        if config.restore_path:
+            command_line_error(
+                "--path-to-restore cannot be combined with restore file selection options. "
+                "Use --path-to-restore for one archive path, or --include/--exclude for pattern-based restore."
+            )
+        unsupported_restore_selection = {
+            "--exclude-if-present",
+            "--exclude-other-filesystems",
+            "--files-from",
+        }
+        unsupported = sorted({opt for opt, _arg in config.select_opts if opt in unsupported_restore_selection})
+        if unsupported:
+            command_line_error(
+                "The following file selection options are not supported for restore: " + ", ".join(unsupported)
+            )
+
     # selection only applies to certain commands
     if config.action in ["full", "inc", "verify"]:
         set_selection()

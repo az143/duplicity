@@ -21,13 +21,16 @@
 
 
 import filecmp
+import io
 import os
 import unittest
 
 from testing.functional import (
     _runtest_dir,
+    CmdError,
     FunctionalTestCase,
 )
+from duplicity import log
 
 
 class RestoreTest(FunctionalTestCase):
@@ -54,6 +57,20 @@ class RestoreTest(FunctionalTestCase):
             f"file://{_runtest_dir}/testfiles/output",
             f"./",
         ]
+
+    def directory_tree_to_list_of_lists(self, parent_directory):
+        directory_list = []
+        for _root, dirs, files in os.walk(parent_directory):
+            to_add = []
+            if dirs:
+                dirs.sort()
+                to_add = dirs
+            if files:
+                files.sort()
+                to_add += files
+            if to_add:
+                directory_list.append(to_add)
+        return directory_list
 
     def test_restore_to_nonexisting_dir(self):
         """
@@ -146,6 +163,149 @@ class RestoreTest(FunctionalTestCase):
                 pass
         else:
             self.fail(f"{__name__} passed and should have failed with 11.")
+
+    def test_restore_include_exclude_archive_relative(self):
+        """
+        Expected behaviour is restore filtering with archive-relative include/exclude patterns.
+        """
+        self.backup("full", "testfiles/select2")
+        self.restore(
+            options=[
+                "--include",
+                "1/1sub1/1sub1sub1/1sub1sub1_file.txt",
+                "--exclude",
+                "**",
+            ]
+        )
+        restored = self.directory_tree_to_list_of_lists("testfiles/restore_out")
+        self.assertEqual(
+            restored,
+            [
+                ["1"],
+                ["1sub1"],
+                ["1sub1sub1"],
+                ["1sub1sub1_file.txt"],
+            ],
+        )
+
+    def test_restore_include_accepts_leading_dot_slash(self):
+        """
+        Expected behaviour is restore filtering accepts a leading ./ on archive-relative patterns.
+        """
+        self.backup("full", "testfiles/select2")
+        self.restore(
+            options=[
+                "--include",
+                "./1/1sub1/1sub1sub1/1sub1sub1_file.txt",
+                "--exclude",
+                "**",
+            ]
+        )
+        restored = self.directory_tree_to_list_of_lists("testfiles/restore_out")
+        self.assertEqual(
+            restored,
+            [
+                ["1"],
+                ["1sub1"],
+                ["1sub1sub1"],
+                ["1sub1sub1_file.txt"],
+            ],
+        )
+
+    def test_restore_include_precedence_over_later_exclude(self):
+        """
+        Expected behaviour is first matching restore selection wins, matching backup selection precedence.
+        """
+        self.backup("full", "testfiles/select2")
+        self.restore(
+            options=[
+                "--include",
+                "3/3sub3/3sub3sub2/3sub3sub2_file.txt",
+                "--exclude",
+                "3",
+                "--exclude",
+                "**",
+            ]
+        )
+        restored = self.directory_tree_to_list_of_lists("testfiles/restore_out")
+        self.assertEqual(
+            restored,
+            [
+                ["3"],
+                ["3sub3"],
+                ["3sub3sub2"],
+                ["3sub3sub2_file.txt"],
+            ],
+        )
+
+    def test_restore_include_regexp_archive_relative(self):
+        """
+        Expected behaviour is restore filtering with archive-relative regular expressions.
+        """
+        self.backup("full", "testfiles/select2")
+        self.restore(options=["--include-regexp", r"1\.py$", "--exclude", "**"])
+        restored = self.directory_tree_to_list_of_lists("testfiles/restore_out")
+        self.assertEqual(restored, [["1.py"]])
+
+    def test_restore_exclude_prunes_archive_relative_subtree(self):
+        """
+        Expected behaviour is an excluded restore directory prevents restoring descendants by default.
+        """
+        self.backup("full", "testfiles/select2")
+        self.restore(options=["--exclude", "1"])
+        restored = self.directory_tree_to_list_of_lists("testfiles/restore_out")
+        self.assertNotIn("1", restored[0])
+        self.assertIn("2", restored[0])
+        self.assertIn("3", restored[0])
+
+    def test_restore_include_filelist_archive_relative(self):
+        """
+        Expected behaviour is restore filtering with archive-relative include filelists.
+        """
+        with io.open("testfiles/restore-include.txt", "w") as f:
+            f.write("1/1sub1/1sub1sub1/1sub1sub1_file.txt\n")
+        self.backup("full", "testfiles/select2")
+        self.restore(options=["--include-filelist", "testfiles/restore-include.txt", "--exclude", "**"])
+        restored = self.directory_tree_to_list_of_lists("testfiles/restore_out")
+        self.assertEqual(
+            restored,
+            [
+                ["1"],
+                ["1sub1"],
+                ["1sub1sub1"],
+                ["1sub1sub1_file.txt"],
+            ],
+        )
+
+    def test_restore_path_to_restore_excludes_selection_options(self):
+        """
+        Expected behaviour is --path-to-restore cannot be mixed with restore include/exclude filtering.
+        """
+        self.backup("full", "testfiles/select2")
+        with self.assertRaises(CmdError) as context:
+            self.restore(file_to_restore="1", options=["--include", "1/**", "--exclude", "**"])
+        self.assertEqual(context.exception.exit_status, log.ErrorCode.user_error)
+
+    def test_restore_rejects_unsupported_selection_options(self):
+        """
+        Expected behaviour is restore rejects selection options that require live filesystem semantics.
+        """
+        self.backup("full", "testfiles/select2")
+        with self.assertRaises(CmdError) as context:
+            self.restore(options=["--exclude-if-present", "marker"])
+        self.assertEqual(context.exception.exit_status, log.ErrorCode.user_error)
+
+    def test_restore_rejects_invalid_archive_relative_patterns(self):
+        """
+        Expected behaviour is restore rejects absolute and non-canonical archive-relative path patterns.
+        """
+        self.backup("full", "testfiles/select2")
+        invalid_patterns = ["/1", "../1", "1/../1sub1", "1/./1sub1"]
+        for pattern in invalid_patterns:
+            with self.subTest(pattern=pattern):
+                with self.assertRaises(CmdError) as context:
+                    self.restore(options=["--include", pattern, "--exclude", "**"])
+                self.assertEqual(context.exception.exit_status, log.ErrorCode.file_prefix_error)
 
 
 if __name__ == "__main__":

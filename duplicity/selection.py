@@ -702,3 +702,162 @@ class Select(object):
                 return None
 
         return test_fn
+
+
+class _ArchivePath(object):
+    """Adapter exposing an archive ROPath with an archive-relative name."""
+
+    def __init__(self, ropath):
+        self.ropath = ropath
+        self.index = ropath.index
+        if self.index:
+            self.uc_name = os.fsdecode(b"/".join(self.index))
+        else:
+            self.uc_name = ""
+
+    def __getattr__(self, attr):
+        return getattr(self.ropath, attr)
+
+
+class ArchiveSelect(Select):
+    """Apply selection rules to archive-relative restore paths.
+
+    Restore paths are matched in the namespace printed by list-current-files
+    and accepted by --path-to-restore, not in the original source filesystem
+    namespace used by backup selection.
+    """
+
+    def __init__(self):
+        super().__init__(Path(b"."))
+
+    @staticmethod
+    def _normalize_archive_pattern(pattern):
+        while pattern.startswith("./"):
+            pattern = pattern[2:]
+        if pattern.startswith("/"):
+            raise FilePrefixError(pattern)
+        if any(part in (".", "..") for part in pattern.split("/") if part):
+            raise FilePrefixError(pattern)
+        return pattern
+
+    def parse_catch_error(self, exc):
+        """Deal with restore archive-relative selection errors."""
+        if isinstance(exc, FilePrefixError):
+            log.FatalError(
+                dedent(_("""\
+                Fatal Error: Restore file selection pattern
+                    %s
+                is invalid. Restore file selection patterns must be relative to the
+                archive root, using paths as printed by list-current-files, and must
+                not be absolute or contain '.' or '..' path elements.""")) % (exc,),
+                log.ErrorCode.file_prefix_error,
+            )
+        else:
+            super().parse_catch_error(exc)
+
+    def glob_get_sf(self, glob_str, include, ignore_case=False):
+        """Return archive-relative selection function based on glob_str."""
+        glob_str = self._normalize_archive_pattern(glob_str)
+        if glob_str == "**":
+            sel_func = lambda path: include
+        else:
+            sel_func = select_fn_from_glob(glob_str, include, ignore_case)
+
+        sel_func.exclude = not include
+        sel_func.name = (
+            f"archive shell glob {include and 'include' or 'exclude'} " f"{ignore_case and 'no-' or ''}case: {glob_str}"
+        )
+        return sel_func
+
+    def literal_get_sf(self, lit_str, include, ignore_case=False):
+        """Return archive-relative selection function based on literal string."""
+        lit_str = self._normalize_archive_pattern(lit_str)
+        sel_func = self.select_fn_from_literal(lit_str, include, ignore_case)
+        sel_func.exclude = not include
+        sel_func.name = (
+            f"archive literal string {include and 'include' or 'exclude'} "
+            f"{ignore_case and 'no-' or ''}case: {lit_str}"
+        )
+        return sel_func
+
+    def exclude_older_get_sf(self, date):
+        """Return archive-relative selection function based on archived mtime."""
+
+        def sel_func(path):
+            if not path.isreg():
+                return None
+            if path.getmtime() < date:
+                return 0
+            return None
+
+        sel_func.exclude = True
+        sel_func.name = f"Select older than {date}"
+        return sel_func
+
+
+def get_restore_selection(argtuples, filelists):
+    """Return an archive-relative selector for restore filtering."""
+    sel = ArchiveSelect()
+    sel.ParseArgs(argtuples, filelists)
+    return sel
+
+
+def filter_restore_path_iter(path_iter, sel):
+    """Yield selected restore ROPaths, including deferred parent directories."""
+    deferred_dirs = []
+    excluded_dirs = []
+    yielded_dirs = set()
+
+    def is_ancestor(parent_index, child_index):
+        return parent_index == child_index[: len(parent_index)]
+
+    def prune_deferred_dirs(index):
+        while deferred_dirs and not is_ancestor(deferred_dirs[-1].index, index):
+            deferred_dirs.pop()
+
+    def prune_excluded_dirs(index):
+        while excluded_dirs and not is_ancestor(excluded_dirs[-1], index):
+            excluded_dirs.pop()
+
+    def is_excluded_by_parent(index):
+        return excluded_dirs and is_ancestor(excluded_dirs[-1], index)
+
+    def yield_deferred_dirs():
+        for deferred_dir in deferred_dirs:
+            if deferred_dir.index not in yielded_dirs:
+                yielded_dirs.add(deferred_dir.index)
+                yield deferred_dir
+        del deferred_dirs[:]
+
+    def close_unselected(ropath):
+        fileobj = getattr(ropath, "fileobj", None)
+        if fileobj:
+            try:
+                fileobj.close()
+            except Exception:
+                pass
+
+    for ropath in path_iter:
+        prune_deferred_dirs(ropath.index)
+        prune_excluded_dirs(ropath.index)
+        if is_excluded_by_parent(ropath.index):
+            close_unselected(ropath)
+            continue
+
+        if ropath.index == ():
+            if ropath.index not in yielded_dirs:
+                deferred_dirs.append(ropath)
+            continue
+
+        result = sel.Select(_ArchivePath(ropath))
+        if result == 1:
+            yield from yield_deferred_dirs()
+            if ropath.isdir():
+                yielded_dirs.add(ropath.index)
+            yield ropath
+        elif result == 2 and ropath.isdir() and ropath.index not in yielded_dirs:
+            deferred_dirs.append(ropath)
+        else:
+            if result == 0 and ropath.isdir():
+                excluded_dirs.append(ropath.index)
+            close_unselected(ropath)
