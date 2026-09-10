@@ -1,0 +1,34 @@
+--- a/duplicity/__main__.py
++++ b/duplicity/__main__.py
+@@ -64,14 +64,6 @@ def with_tempdir(fn):
+ 
+ 
+ def dup_run():
+-    # check that we can function here
+-    if os.environ.get("PYTEST_VERSION") is not None:
+-        pass
+-    elif os.environ.get("CIBUILDWHEEL") is not None:
+-        pass
+-    elif not ((3, 10) <= sys.version_info[:2] <= (3, 14)):
+-        print("Sorry, duplicity requires Python version 3.10 thru 3.14.", file=sys.stderr)
+-        sys.exit(1)
+ 
+     try:
+         log.setup()
+--- a/setup.py
++++ b/setup.py
+@@ -29,14 +29,6 @@ import sys
+ from setuptools import setup, Extension
+ from setuptools.command.build_ext import build_ext
+ 
+-# check that we can function here
+-if os.environ.get("PYTEST_VERSION") is not None:
+-    pass
+-elif os.environ.get("CIBUILDWHEEL") is not None:
+-    pass
+-elif not ((3, 10) <= sys.version_info[:2] <= (3, 14)):
+-    print("Sorry, duplicity requires Python version 3.10 thru 3.14.", file=sys.stderr)
+-    sys.exit(1)
+ 
+ Version: str = "3.1.0"
+ 

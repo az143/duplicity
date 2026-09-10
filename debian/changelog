@@ -1,3 +1,9 @@
+duplicity (3.1.0-2) unstable; urgency=high
+
+  * allow duplicity to be built with python 3.15 (closes: #1147125)
+
+ -- Alexander Zangerl <az@debian.org>  Thu, 10 Sep 2026 10:06:09 +1000
+
 duplicity (3.1.0-1) unstable; urgency=medium
 
   * new upstream release (closes: #1120839, #977546)
